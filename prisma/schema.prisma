@@ -1,0 +1,144 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  role      UserRole @default(USER)
+  image     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders Order[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
+
+model Product {
+  id                  String        @id @default(cuid())
+  name                Json // { en: "Gold Ring", ar: "خاتم ذهبي" }
+  slug                String        @unique
+  description         Json?
+  subtitle            Json?
+  price               Decimal       @db.Decimal(10, 2)
+  priceBeforeDiscount Decimal?      @db.Decimal(10, 2)
+  wrappingPrice       Decimal?      @db.Decimal(10, 2)
+  images              String[]
+  status              ProductStatus @default(ACTIVE)
+  featured            Boolean       @default(false)
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  orderItems OrderItem[]
+
+  @@map("products")
+}
+
+enum ProductStatus {
+  ACTIVE
+  INACTIVE
+  OUT_OF_STOCK
+}
+
+model Order {
+  id              String        @id @default(cuid())
+  orderNumber     String        @unique @default(cuid())
+  customerName    String
+  customerPhone   String
+  customerEmail   String?
+  shippingAddress Json
+  totalAmount     Decimal       @db.Decimal(10, 2)
+  wrappingCost    Decimal?      @db.Decimal(10, 2)
+  needsWrapping   Boolean       @default(false)
+  status          OrderStatus   @default(PENDING)
+  paymentStatus   PaymentStatus @default(PENDING)
+  paymentUrl      String?
+  paymentMethod   String?
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  customer   User?       @relation(fields: [customerId], references: [id])
+  customerId String?
+  items      OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id         String  @id @default(cuid())
+  quantity   Int     @default(1)
+  unitPrice  Decimal @db.Decimal(10, 2)
+  totalPrice Decimal @db.Decimal(10, 2)
+
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId   String
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+
+  @@map("order_items")
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+model Contact {
+  id        String        @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String
+  status    ContactStatus @default(NEW)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@map("contacts")
+}
+
+enum ContactStatus {
+  NEW
+  REPLIED
+  RESOLVED
+}
+
+model Setting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value Json
+
+  @@map("settings")
+}
