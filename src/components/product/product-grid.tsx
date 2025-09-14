@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ShoppingCart, Eye } from 'lucide-react'
-import Image from 'next/image'
 import Link from 'next/link'
 
 interface ProductGridProps {
@@ -36,23 +35,16 @@ export function ProductGrid({ products }: ProductGridProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {products.map((product) => (
-        <Card key={product.id} className="group hover:shadow-xl transition-shadow duration-300">
+        <Card key={product.id} className="jewelry-card jewelry-card-hover group">
           <CardHeader className="p-0 relative">
-            {/* Product Image */}
-            <div className="relative aspect-square overflow-hidden rounded-t-lg bg-gradient-to-br from-amber-50 to-rose-50">
-              {product.images[0] ? (
-                <Image
-                  src={product.images[0]}
-                  alt={product.name[currentLang]}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-6xl">
+            {/* Product Image Placeholder with Beautiful Background */}
+            <div className="relative aspect-square overflow-hidden rounded-t-lg bg-gradient-to-br from-amber-50 via-rose-50 to-amber-100">
+              <div className="w-full h-full flex items-center justify-center">
+                <div className="text-8xl opacity-30 transform group-hover:scale-110 transition-transform duration-500">
                   💍
                 </div>
-              )}
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               
               {/* Badges */}
               <div className="absolute top-3 left-3 space-y-2">
@@ -100,12 +92,12 @@ export function ProductGrid({ products }: ProductGridProps) {
 
             {/* Price */}
             <div className="flex items-center gap-2">
-              <span className="text-lg font-bold text-amber-600">
-                {product.price} {currentLang === 'ar' ? 'ر.س' : 'SAR'}
+              <span className="price-text text-lg">
+                {product.price.toLocaleString()} {currentLang === 'ar' ? 'ر.س' : 'SAR'}
               </span>
               {product.priceBeforeDiscount && (
                 <span className="text-sm text-neutral-400 line-through">
-                  {product.priceBeforeDiscount} {currentLang === 'ar' ? 'ر.س' : 'SAR'}
+                  {product.priceBeforeDiscount.toLocaleString()} {currentLang === 'ar' ? 'ر.س' : 'SAR'}
                 </span>
               )}
             </div>
@@ -114,13 +106,13 @@ export function ProductGrid({ products }: ProductGridProps) {
             <div className="flex gap-2 pt-2">
               <Button 
                 size="sm" 
-                className="flex-1 bg-amber-600 hover:bg-amber-700"
+                className="flex-1 btn-primary focus-ring"
                 onClick={() => handleAddToCart(product)}
               >
                 <ShoppingCart className="h-4 w-4 mr-2" />
                 {currentLang === 'ar' ? 'إضافة للسلة' : 'Add to Cart'}
               </Button>
-              <Button size="sm" variant="outline" asChild>
+              <Button size="sm" variant="outline" asChild className="focus-ring">
                 <Link href={`/products/${product.slug}`}>
                   {currentLang === 'ar' ? 'عرض' : 'View'}
                 </Link>

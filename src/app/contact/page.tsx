@@ -1,7 +1,7 @@
 'use client'
 
 import { useAtom } from 'jotai'
-import { currentLangAtom, contactsAtom } from '@/lib/atoms'
+import { currentLangAtom } from '@/lib/atoms'
 import { ContactForm } from '@/components/forms/contact-form'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { MapPin, Phone, Mail, Clock } from 'lucide-react'

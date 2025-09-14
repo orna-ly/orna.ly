@@ -15,7 +15,6 @@ import {
   ShoppingBag, 
   Mail, 
   TrendingUp, 
-  Users,
   Star,
   AlertCircle,
   CheckCircle
@@ -39,8 +38,6 @@ export default function AdminDashboard() {
   const featuredProducts = products.filter(p => p.featured).length
   const totalOrders = orders.length
   const pendingOrders = orders.filter(o => o.status === 'NEW').length
-  const processingOrders = orders.filter(o => o.status === 'PROCESSING').length
-  const totalContacts = contacts.length
   const newContacts = contacts.filter(c => c.status === 'NEW').length
   const totalRevenue = orders.reduce((sum, order) => sum + order.totalAmount, 0)
   const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0

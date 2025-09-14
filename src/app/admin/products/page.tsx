@@ -2,18 +2,16 @@
 
 import { useAtom } from 'jotai'
 import { useEffect } from 'react'
-import { productsAtom, currentLangAtom, loadingAtom } from '@/lib/atoms'
+import { productsAtom, currentLangAtom } from '@/lib/atoms'
 import { mockProducts } from '@/lib/mock-data'
 import { ProductsDataTable } from '@/components/admin/products-data-table'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Plus, Package, Star, TrendingUp, AlertTriangle } from 'lucide-react'
-import Link from 'next/link'
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useAtom(productsAtom)
   const [currentLang] = useAtom(currentLangAtom)
-  const [loading] = useAtom(loadingAtom)
 
   // Initialize products
   useEffect(() => {

@@ -5,28 +5,24 @@ const nextConfig: NextConfig = {
     // Enable the latest features
   },
   images: {
-    domains: ['localhost', 'orna.ly'],
+    domains: ["localhost", "orna.ly"],
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: '**',
+        protocol: "https",
+        hostname: "**",
       },
     ],
   },
-  // Support for both LTR and RTL
-  i18n: {
-    locales: ['ar', 'en'],
-    defaultLocale: 'ar',
-    localeDetection: true,
-  },
+  // i18n is handled by the app router with Jotai state management
+  // Removed i18n config as it's not supported in App Router
   async rewrites() {
     return [
       {
-        source: '/api/:path*',
-        destination: 'http://localhost:8000/api/:path*' // Laravel API when ready
-      }
-    ]
-  }
+        source: "/api/:path*",
+        destination: "http://localhost:8000/api/:path*", // Laravel API when ready
+      },
+    ];
+  },
 };
 
 export default nextConfig;

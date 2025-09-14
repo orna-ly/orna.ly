@@ -49,15 +49,15 @@ export function Header() {
   ]
 
   return (
-    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b">
-      <div className="max-w-7xl mx-auto px-4">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-neutral-200 shadow-sm">
+      <div className="container-width">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-to-r from-amber-500 to-rose-500 rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-lg">O</span>
+          <Link href="/" className="flex items-center space-x-3 focus-ring rounded-lg">
+            <div className="w-12 h-12 gradient-gold rounded-full flex items-center justify-center shadow-md">
+              <span className="text-white font-bold text-xl">O</span>
             </div>
-            <span className="font-bold text-xl text-neutral-900">
+            <span className="font-bold text-2xl gradient-text-gold">
               {currentLang === 'ar' ? 'مجوهرات أورنا' : 'Orna Jewelry'}
             </span>
           </Link>
@@ -102,16 +102,16 @@ export function Header() {
           {/* Actions */}
           <div className="flex items-center space-x-4">
             {/* Language Toggle */}
-            <Button variant="ghost" size="icon" onClick={toggleLang}>
-              <Globe className="h-5 w-5" />
+            <Button variant="ghost" size="icon" onClick={toggleLang} className="focus-ring hover:bg-amber-50">
+              <Globe className="h-5 w-5 text-neutral-600" />
             </Button>
 
             {/* Cart */}
-            <Button variant="ghost" size="icon" asChild className="relative">
+            <Button variant="ghost" size="icon" asChild className="relative focus-ring hover:bg-amber-50">
               <Link href="/cart">
-                <ShoppingCart className="h-5 w-5" />
+                <ShoppingCart className="h-5 w-5 text-neutral-600" />
                 {cartItemsCount > 0 && (
-                  <Badge variant="destructive" className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs">
+                  <Badge className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs bg-amber-600 hover:bg-amber-700 animate-pulse">
                     {cartItemsCount}
                   </Badge>
                 )}

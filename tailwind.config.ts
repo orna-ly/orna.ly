@@ -1,12 +1,12 @@
-import type { Config } from "tailwindcss"
+import type { Config } from "tailwindcss";
 
 const config: Config = {
-  darkMode: ["class"],
+  darkMode: "class",
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
   ],
   prefix: "",
   theme: {
@@ -19,7 +19,7 @@ const config: Config = {
     },
     extend: {
       fontFamily: {
-        arabic: ['Noto Sans Arabic', 'sans-serif'],
+        arabic: ["Noto Sans Arabic", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -30,11 +30,11 @@ const config: Config = {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
-          50: '#fef3e2',
-          100: '#fde4b6',
-          500: '#f59e0b',
-          600: '#d97706',
-          700: '#b45309',
+          50: "#fef3e2",
+          100: "#fde4b6",
+          500: "#f59e0b",
+          600: "#d97706",
+          700: "#b45309",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -61,19 +61,19 @@ const config: Config = {
           foreground: "hsl(var(--card-foreground))",
         },
         amber: {
-          50: '#fef3e2',
-          100: '#fde4b6',
-          500: '#f59e0b',
-          600: '#d97706',
-          700: '#b45309',
+          50: "#fef3e2",
+          100: "#fde4b6",
+          500: "#f59e0b",
+          600: "#d97706",
+          700: "#b45309",
         },
         rose: {
-          50: '#fff1f2',
-          100: '#ffe4e6',
-          500: '#f43f5e',
-          600: '#e11d48',
-          700: '#be123c',
-        }
+          50: "#fff1f2",
+          100: "#ffe4e6",
+          500: "#f43f5e",
+          600: "#e11d48",
+          700: "#be123c",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -96,7 +96,8 @@ const config: Config = {
       },
     },
   },
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   plugins: [require("tailwindcss-animate")],
-} satisfies Config
+} satisfies Config;
 
-export default config
+export default config;
