@@ -73,12 +73,12 @@ export function Header() {
                         {item.name[currentLang as keyof typeof item.name]}
                       </NavigationMenuTrigger>
                       <NavigationMenuContent>
-                        <div className="p-4 space-y-2 min-w-[200px]">
+                        <div className="p-6 space-y-2 min-w-[240px] bg-white border border-neutral-200 rounded-lg shadow-lg">
                           {item.children.map((child) => (
                             <Link
                               key={child.href}
                               href={child.href}
-                              className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100 rounded-md transition-colors"
+                              className="block px-4 py-3 text-sm text-neutral-700 hover:bg-amber-50 hover:text-amber-700 rounded-md transition-colors font-medium"
                             >
                               {child.name[currentLang as keyof typeof child.name]}
                             </Link>

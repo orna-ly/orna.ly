@@ -68,17 +68,24 @@ export default function AdminLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-neutral-50">
+    <div className="flex min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100">
       {/* Sidebar */}
-      <div className="w-64 bg-white border-r border-neutral-200 flex flex-col">
+      <div className="w-64 bg-white border-r border-neutral-200 shadow-lg flex flex-col">
         {/* Admin Header */}
-        <div className="p-6 border-b border-neutral-200">
-          <h2 className="text-lg font-semibold text-neutral-900">
-            {currentLang === 'ar' ? 'لوحة الإدارة' : 'Admin Panel'}
-          </h2>
-          <p className="text-sm text-neutral-600">
-            {currentLang === 'ar' ? 'مجوهرات أورنا' : 'Orna Jewelry'}
-          </p>
+        <div className="p-6 border-b border-neutral-200 bg-gradient-to-r from-amber-50 to-rose-50">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 gradient-gold rounded-lg flex items-center justify-center shadow-md">
+              <span className="text-white font-bold">O</span>
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-neutral-900">
+                {currentLang === 'ar' ? 'لوحة الإدارة' : 'Admin Panel'}
+              </h2>
+              <p className="text-sm text-neutral-600">
+                {currentLang === 'ar' ? 'مجوهرات أورنا' : 'Orna Jewelry'}
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Navigation */}
@@ -92,10 +99,10 @@ export default function AdminLayout({
                 key={item.href}
                 href={item.href}
                 className={`
-                  flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
+                  flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 group
                   ${active 
-                    ? 'bg-amber-100 text-amber-900' 
-                    : 'text-neutral-700 hover:bg-neutral-100'
+                    ? 'bg-gradient-to-r from-amber-100 to-amber-50 text-amber-900 shadow-md border border-amber-200' 
+                    : 'text-neutral-700 hover:bg-gradient-to-r hover:from-neutral-100 hover:to-neutral-50 hover:shadow-sm'
                   }
                 `}
               >
@@ -130,10 +137,16 @@ export default function AdminLayout({
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Header */}
-        <header className="bg-white border-b border-neutral-200 px-6 py-4">
+        <header className="bg-white/80 backdrop-blur-md border-b border-neutral-200 px-6 py-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-neutral-900">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                <span className="text-sm text-green-600 font-medium">
+                  {currentLang === 'ar' ? 'متصل' : 'Online'}
+                </span>
+              </div>
+              <h1 className="text-3xl font-bold gradient-text-gold">
                 {pathname === '/admin' && (currentLang === 'ar' ? 'لوحة التحكم' : 'Dashboard')}
                 {pathname === '/admin/products' && (currentLang === 'ar' ? 'إدارة المنتجات' : 'Product Management')}
                 {pathname === '/admin/orders' && (currentLang === 'ar' ? 'إدارة الطلبات' : 'Order Management')}
@@ -143,8 +156,8 @@ export default function AdminLayout({
               </h1>
             </div>
             <div className="flex items-center gap-4">
-              <Badge variant="outline">
-                {currentLang === 'ar' ? 'مدير' : 'Admin'}
+              <Badge className="bg-gradient-to-r from-amber-100 to-amber-50 text-amber-800 border-amber-200 px-3 py-1">
+                {currentLang === 'ar' ? 'مدير النظام' : 'System Admin'}
               </Badge>
             </div>
           </div>

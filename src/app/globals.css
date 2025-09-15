@@ -55,13 +55,46 @@
     @apply bg-white text-neutral-900 font-sans antialiased;
   }
   
-  /* RTL Support */
+  /* RTL/LTR Support */
   [dir="rtl"] {
     direction: rtl;
   }
   
   [dir="ltr"] {
     direction: ltr;
+  }
+  
+  /* RTL-specific styling */
+  [dir="rtl"] .rtl\:text-right {
+    text-align: right;
+  }
+  
+  [dir="rtl"] .rtl\:text-left {
+    text-align: left;
+  }
+  
+  [dir="rtl"] .rtl\:ml-0 {
+    margin-left: 0;
+  }
+  
+  [dir="rtl"] .rtl\:mr-2 {
+    margin-right: 0.5rem;
+  }
+  
+  [dir="rtl"] .rtl\:flex-row-reverse {
+    flex-direction: row-reverse;
+  }
+  
+  /* Language-specific transitions */
+  [dir="rtl"] .rtl\:group-hover\:-translate-x-1:hover {
+    transform: translateX(-0.25rem);
+  }
+  
+  /* Smooth direction transitions */
+  * {
+    transition-property: margin, padding, transform, opacity;
+    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
   }
 }
 

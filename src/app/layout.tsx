@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Provider } from 'jotai'
-import { Header } from '@/components/layout/header'
+import { LayoutContent } from '@/components/layout/layout-content'
 import "./globals.css";
 
 const geistSans = Geist({
@@ -27,13 +27,10 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white`}
       >
         <Provider>
-          <Header />
-          <main>
-            {children}
-          </main>
+          <LayoutContent>{children}</LayoutContent>
         </Provider>
       </body>
     </html>

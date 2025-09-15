@@ -57,7 +57,9 @@ export interface CartItem {
 // Global State Atoms
 export const currentLangAtom = atomWithStorage<string>('currentLang', 'ar')
 
-export const productsAtom = atom<Product[]>([])
+import { mockProducts } from './mock-data'
+
+export const productsAtom = atom<Product[]>(mockProducts)
 export const featuredProductsAtom = atom<Product[]>(
   (get) => get(productsAtom).filter(p => p.featured)
 )
