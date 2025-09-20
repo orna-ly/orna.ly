@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 export default function AdminLayout({
   children,
@@ -23,6 +24,13 @@ export default function AdminLayout({
 }) {
   const [currentLang] = useAtom(currentLangAtom)
   const pathname = usePathname()
+  const [isAuthed, setIsAuthed] = useState(true)
+
+  useEffect(() => {
+    // Best-effort check by calling a lightweight endpoint or decoding cookie server-side via middleware.
+    // Here we assume middleware protects routes; keep a local flag true.
+    setIsAuthed(true)
+  }, [])
 
   const navigation = [
     {

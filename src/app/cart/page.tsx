@@ -94,7 +94,7 @@ export default function CartPage() {
                             </p>
                           )}
                           <p className="text-lg font-bold text-amber-600 mt-2">
-                            {item.product.price} {currentLang === 'ar' ? 'ر.س' : 'SAR'}
+                            {formatPrice(item.product.price, 'LYD', currentLang)}
                           </p>
                         </div>
                         
@@ -151,7 +151,7 @@ export default function CartPage() {
                           {currentLang === 'ar' ? 'المجموع الفرعي:' : 'Subtotal:'} 
                         </span>
                         <span className="text-lg font-bold text-neutral-900 ml-2">
-                          {item.product.price * item.quantity} {currentLang === 'ar' ? 'ر.س' : 'SAR'}
+                          {formatPrice(item.product.price * item.quantity, 'LYD', currentLang)}
                         </span>
                       </div>
                     </div>
@@ -173,17 +173,17 @@ export default function CartPage() {
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
                     <span>{currentLang === 'ar' ? 'المجموع الفرعي:' : 'Subtotal:'}</span>
-                    <span>{cartTotal} {currentLang === 'ar' ? 'ر.س' : 'SAR'}</span>
+                    <span>{formatPrice(cartTotal, 'LYD', currentLang)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span>{currentLang === 'ar' ? 'الشحن:' : 'Shipping:'}</span>
-                    <span>{shippingCost} {currentLang === 'ar' ? 'ر.س' : 'SAR'}</span>
+                    <span>{formatPrice(shippingCost, 'LYD', currentLang)}</span>
                   </div>
                   <div className="border-t pt-3">
                     <div className="flex justify-between font-semibold text-lg">
                       <span>{currentLang === 'ar' ? 'المجموع:' : 'Total:'}</span>
                       <span className="text-amber-600">
-                        {finalTotal} {currentLang === 'ar' ? 'ر.س' : 'SAR'}
+                        {formatPrice(finalTotal, 'LYD', currentLang)}
                       </span>
                     </div>
                   </div>

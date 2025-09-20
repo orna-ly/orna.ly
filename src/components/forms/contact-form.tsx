@@ -188,7 +188,7 @@ export function ContactForm() {
           type="tel"
           value={formData.phone}
           onChange={(e) => handleChange('phone', e.target.value)}
-          placeholder={currentLang === 'ar' ? '+966 50 123 4567' : '+966 50 123 4567'}
+          placeholder={currentLang === 'ar' ? '+218 91 123 4567' : '+218 91 123 4567'}
         />
       </div>
 

@@ -6,9 +6,12 @@ import {
   productsAtom, 
   ordersAtom, 
   contactsAtom, 
-  currentLangAtom 
+  currentLangAtom,
+  loadProductsAtom,
+  loadOrdersAtom,
+  loadContactsAtom
 } from '@/lib/atoms'
-import { mockProducts, mockOrders, mockContacts } from '@/lib/mock-data'
+import { formatPrice } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { 
   Package, 
@@ -21,23 +24,26 @@ import {
 } from 'lucide-react'
 
 export default function AdminDashboard() {
-  const [products, setProducts] = useAtom(productsAtom)
-  const [orders, setOrders] = useAtom(ordersAtom)
-  const [contacts, setContacts] = useAtom(contactsAtom)
+  const [products] = useAtom(productsAtom)
+  const [orders] = useAtom(ordersAtom)
+  const [contacts] = useAtom(contactsAtom)
   const [currentLang] = useAtom(currentLangAtom)
+  const [, loadProducts] = useAtom(loadProductsAtom)
+  const [, loadOrders] = useAtom(loadOrdersAtom)
+  const [, loadContacts] = useAtom(loadContactsAtom)
 
   // Initialize data
   useEffect(() => {
-    if (products.length === 0) setProducts(mockProducts)
-    if (orders.length === 0) setOrders(mockOrders)
-    if (contacts.length === 0) setContacts(mockContacts)
-  }, [products.length, orders.length, contacts.length, setProducts, setOrders, setContacts])
+    if (products.length === 0) void loadProducts()
+    if (orders.length === 0) void loadOrders()
+    if (contacts.length === 0) void loadContacts()
+  }, [products.length, orders.length, contacts.length, loadProducts, loadOrders, loadContacts])
 
   // Calculate stats
   const totalProducts = products.length
   const featuredProducts = products.filter(p => p.featured).length
   const totalOrders = orders.length
-  const pendingOrders = orders.filter(o => o.status === 'NEW').length
+  const pendingOrders = orders.filter(o => o.status === 'PENDING').length
   const newContacts = contacts.filter(c => c.status === 'NEW').length
   const totalRevenue = orders.reduce((sum, order) => sum + order.totalAmount, 0)
   const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0
@@ -69,7 +75,7 @@ export default function AdminDashboard() {
     },
     {
       title: { ar: 'إجمالي الإيرادات', en: 'Total Revenue' },
-      value: `${totalRevenue.toLocaleString()} ${currentLang === 'ar' ? 'ر.س' : 'SAR'}`,
+      value: formatPrice(totalRevenue, 'LYD', currentLang),
       icon: TrendingUp,
       change: '+15%',
       changeType: 'increase' as const,

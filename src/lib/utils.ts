@@ -8,13 +8,14 @@ export function cn(...inputs: ClassValue[]) {
 // Format price with proper localization
 export function formatPrice(
   price: number,
-  currency: string = "SAR",
+  currency: string = "LYD",
   locale: string = "ar"
 ) {
   if (locale === "ar") {
-    return `${price.toLocaleString("ar-SA")} ر.س`;
+    // Libya Arabic formatting
+    return `${price.toLocaleString("ar-LY")} د.ل`;
   }
-  return `${price.toLocaleString("en-US")} ${currency}`;
+  return `${price.toLocaleString("en-LY")} ${currency}`;
 }
 
 // Truncate text with ellipsis

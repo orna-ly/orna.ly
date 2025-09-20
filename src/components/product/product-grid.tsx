@@ -7,6 +7,9 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ShoppingCart, Eye } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
+import { createPlaceholderImage } from '@/lib/image-utils'
+import { formatPrice } from '@/lib/utils'
 
 interface ProductGridProps {
   products: Product[]
@@ -37,15 +40,20 @@ export function ProductGrid({ products }: ProductGridProps) {
       {products.map((product) => (
         <Card key={product.id} className="jewelry-card jewelry-card-hover group">
           <CardHeader className="p-0 relative">
-            {/* Product Image Placeholder with Beautiful Background */}
-            <div className="relative aspect-square overflow-hidden rounded-t-lg bg-gradient-to-br from-amber-50 via-rose-50 to-amber-100">
-              <div className="w-full h-full flex items-center justify-center">
-                <div className="text-8xl opacity-30 transform group-hover:scale-110 transition-transform duration-500">
-                  💍
-                </div>
-              </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              
+            {/* Product Image with optimization */}
+            <div className="relative aspect-square overflow-hidden rounded-t-lg">
+              <Image
+                src={(product.images?.[0] as string) || '/orna/pear.jpg'}
+                alt={product.name[currentLang]}
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                priority={false}
+                placeholder="blur"
+                blurDataURL={createPlaceholderImage(300, 300, 'Orna')}
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
               {/* Badges */}
               <div className="absolute top-3 left-3 space-y-2">
                 {product.featured && (
@@ -93,11 +101,11 @@ export function ProductGrid({ products }: ProductGridProps) {
             {/* Price */}
             <div className="flex items-center gap-2">
               <span className="price-text text-lg">
-                {product.price.toLocaleString()} {currentLang === 'ar' ? 'ر.س' : 'SAR'}
+                {formatPrice(product.price, 'LYD', currentLang)}
               </span>
               {product.priceBeforeDiscount && (
                 <span className="text-sm text-neutral-400 line-through">
-                  {product.priceBeforeDiscount.toLocaleString()} {currentLang === 'ar' ? 'ر.س' : 'SAR'}
+                  {formatPrice(product.priceBeforeDiscount, 'LYD', currentLang)}
                 </span>
               )}
             </div>

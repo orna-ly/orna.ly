@@ -88,7 +88,7 @@ export default function AdminProductsPage() {
             <div className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-green-600" />
               <span className="text-2xl font-bold">
-                {averagePrice} {currentLang === 'ar' ? 'ر.س' : 'SAR'}
+                {formatPrice(averagePrice, 'LYD', currentLang)}
               </span>
             </div>
           </CardContent>

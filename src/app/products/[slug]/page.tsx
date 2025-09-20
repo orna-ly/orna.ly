@@ -6,9 +6,10 @@ import { useParams } from 'next/navigation'
 import { 
   currentLangAtom, 
   addToCartAtom, 
-  productsAtom 
+  productsAtom,
+  loadProductsAtom
 } from '@/lib/atoms'
-import { mockProducts, getProductBySlug } from '@/lib/mock-data'
+import { fetchProducts } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -17,6 +18,7 @@ import { ShoppingCart, Heart, Share2, ArrowLeft, Check } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Product } from '@/lib/atoms'
+import { formatPrice } from '@/lib/utils'
 
 export default function ProductDetailPage() {
   const params = useParams()
@@ -24,21 +26,32 @@ export default function ProductDetailPage() {
   
   const [currentLang] = useAtom(currentLangAtom)
   const [, addToCart] = useAtom(addToCartAtom)
-  const [products, setProducts] = useAtom(productsAtom)
+  const [products] = useAtom(productsAtom)
+  const [, loadProducts] = useAtom(loadProductsAtom)
   const [product, setProduct] = useState<Product | null>(null)
   const [selectedImage, setSelectedImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
   const [addedToCart, setAddedToCart] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   // Initialize products and find current product
   useEffect(() => {
-    if (products.length === 0) {
-      setProducts(mockProducts)
+    const initializeProduct = async () => {
+      setLoading(true)
+      
+      // Load products if not already loaded
+      if (products.length === 0) {
+        await loadProducts()
+      }
+      
+      // Find the product by slug
+      const foundProduct = products.find(p => p.slug === slug)
+      setProduct(foundProduct || null)
+      setLoading(false)
     }
-    
-    const foundProduct = getProductBySlug(slug) || products.find(p => p.slug === slug)
-    setProduct(foundProduct || null)
-  }, [slug, products, setProducts])
+
+    initializeProduct()
+  }, [slug, products, loadProducts])
 
   const handleAddToCart = () => {
     if (product) {
@@ -48,6 +61,35 @@ export default function ProductDetailPage() {
       setAddedToCart(true)
       setTimeout(() => setAddedToCart(false), 2000)
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-neutral-50 py-16">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div className="space-y-4">
+              <div className="aspect-square bg-neutral-200 rounded-xl animate-pulse" />
+              <div className="flex gap-2">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="w-20 h-20 bg-neutral-200 rounded-lg animate-pulse" />
+                ))}
+              </div>
+            </div>
+            <div className="space-y-6">
+              <div className="h-8 bg-neutral-200 rounded animate-pulse" />
+              <div className="h-6 bg-neutral-200 rounded animate-pulse w-3/4" />
+              <div className="h-12 bg-neutral-200 rounded animate-pulse w-1/2" />
+              <div className="space-y-2">
+                <div className="h-4 bg-neutral-200 rounded animate-pulse" />
+                <div className="h-4 bg-neutral-200 rounded animate-pulse" />
+                <div className="h-4 bg-neutral-200 rounded animate-pulse w-3/4" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   if (!product) {
@@ -94,14 +136,17 @@ export default function ProductDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Product Images */}
           <div className="space-y-4">
-            <div className="relative aspect-square bg-white rounded-xl overflow-hidden">
-              <Image
-                src={product.images[selectedImage] || '/placeholder.jpg'}
-                alt={product.name[currentLang]}
-                fill
-                className="object-cover"
-                priority
-              />
+            <div 
+              className="relative aspect-square bg-white rounded-xl overflow-hidden bg-cover bg-center bg-no-repeat"
+              style={{
+                backgroundImage: `url(${product.images[selectedImage] || '/placeholder.jpg'})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat'
+              }}
+            >
+              {/* Fallback gradient background */}
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-50 via-rose-50 to-amber-100" />
               {product.featured && (
                 <Badge className="absolute top-4 left-4 bg-amber-600 hover:bg-amber-700">
                   {currentLang === 'ar' ? 'مميز' : 'Featured'}
@@ -122,16 +167,18 @@ export default function ProductDetailPage() {
                   <button
                     key={index}
                     onClick={() => setSelectedImage(index)}
-                    className={`relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 ${
+                    className={`relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 bg-cover bg-center bg-no-repeat ${
                       selectedImage === index ? 'border-amber-600' : 'border-neutral-200'
                     }`}
+                    style={{
+                      backgroundImage: `url(${image})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      backgroundRepeat: 'no-repeat'
+                    }}
                   >
-                    <Image
-                      src={image}
-                      alt={`${product.name[currentLang]} ${index + 1}`}
-                      fill
-                      className="object-cover"
-                    />
+                    {/* Fallback gradient background */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-amber-50 via-rose-50 to-amber-100" />
                   </button>
                 ))}
               </div>
@@ -154,11 +201,11 @@ export default function ProductDetailPage() {
             {/* Price */}
             <div className="flex items-center gap-4">
               <span className="text-3xl font-bold text-amber-600">
-                {product.price} {currentLang === 'ar' ? 'ر.س' : 'SAR'}
+                {formatPrice(product.price, 'LYD', currentLang)}
               </span>
               {product.priceBeforeDiscount && (
                 <span className="text-xl text-neutral-400 line-through">
-                  {product.priceBeforeDiscount} {currentLang === 'ar' ? 'ر.س' : 'SAR'}
+                  {formatPrice(product.priceBeforeDiscount, 'LYD', currentLang)}
                 </span>
               )}
             </div>
@@ -247,7 +294,7 @@ export default function ProductDetailPage() {
                     <div className="flex justify-between">
                       <span>{currentLang === 'ar' ? 'تغليف هدايا:' : 'Gift Wrapping:'}</span>
                       <span className="font-medium">
-                        {product.wrappingPrice} {currentLang === 'ar' ? 'ر.س' : 'SAR'}
+                        {formatPrice(product.wrappingPrice, 'LYD', currentLang)}
                       </span>
                     </div>
                   )}

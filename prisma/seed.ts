@@ -1,6 +1,30 @@
 import { PrismaClient } from '../src/generated/prisma'
+import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
+
+async function ensureAdmin() {
+  const adminEmail = process.env.SEED_ADMIN_EMAIL || 'admin@orna.local'
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD || 'ChangeMe123!'
+  const existing = await prisma.user.findUnique({ where: { email: adminEmail } })
+  if (existing) return existing
+  const passwordHash = await bcrypt.hash(adminPassword, 10)
+  // Store hash in image field temporarily? Schema has no password; add Setting token.
+  const user = await prisma.user.create({
+    data: {
+      email: adminEmail,
+      name: 'Admin',
+      role: 'ADMIN',
+      image: undefined
+    }
+  })
+  await prisma.setting.upsert({
+    where: { key: `cred:${user.id}` },
+    update: { value: { passwordHash } },
+    create: { key: `cred:${user.id}`, value: { passwordHash } }
+  })
+  return user
+}
 
 async function main() {
   console.log('🌱 Starting database seed...')
@@ -11,6 +35,10 @@ async function main() {
   await prisma.contact.deleteMany()
   await prisma.product.deleteMany()
   await prisma.user.deleteMany()
+
+  // Ensure admin
+  const admin = await ensureAdmin()
+  console.log(`✅ Seeded admin: ${admin.email}`)
 
   // Create products
   const products = await Promise.all([
@@ -33,8 +61,8 @@ async function main() {
         priceBeforeDiscount: 2100,
         wrappingPrice: 100,
         images: [
-          '/images/products/golden-hope-ring-1.jpg',
-          '/images/products/golden-hope-ring-2.jpg'
+          '/orna/خاتم الآمل(1).JPG',
+          '/orna/1.jpeg'
         ],
         featured: true,
         status: 'ACTIVE'
@@ -54,7 +82,8 @@ async function main() {
         price: 3200,
         wrappingPrice: 150,
         images: [
-          '/images/products/tahitian-pearl-necklace-1.jpg'
+          '/orna/سلسال اللؤلؤ التاهيتي مع الباروك.JPG',
+          '/orna/2.jpeg'
         ],
         featured: true,
         status: 'ACTIVE'
@@ -79,9 +108,9 @@ async function main() {
         priceBeforeDiscount: 5000,
         wrappingPrice: 200,
         images: [
-          '/images/products/white-peacock-set-1.jpg',
-          '/images/products/white-peacock-set-2.jpg',
-          '/images/products/white-peacock-set-3.jpg'
+          '/orna/طقم الطاووس الآبيض.JPG',
+          '/orna/3.jpeg',
+          '/orna/4.jpeg'
         ],
         featured: true,
         status: 'ACTIVE'
@@ -101,7 +130,8 @@ async function main() {
         price: 2800,
         wrappingPrice: 120,
         images: [
-          '/images/products/diamond-earrings-1.jpg'
+          '/orna/5.jpeg',
+          '/orna/6.jpeg'
         ],
         featured: false,
         status: 'ACTIVE'
@@ -121,7 +151,8 @@ async function main() {
         price: 1650,
         wrappingPrice: 80,
         images: [
-          '/images/products/rose-bracelet-1.jpg'
+          '/orna/7.jpeg',
+          '/orna/8.jpeg'
         ],
         featured: false,
         status: 'ACTIVE'
@@ -137,7 +168,7 @@ async function main() {
       data: {
         name: 'فاطمة خالد',
         email: 'fatima@example.com',
-        phone: '+966501112233',
+        phone: '+21891112233',
         subject: 'استفسار عن المنتجات',
         message: 'أريد معرفة المزيد عن مجموعة الخواتم الذهبية وأسعارها',
         status: 'NEW'
@@ -147,7 +178,7 @@ async function main() {
       data: {
         name: 'محمد عبدالله',
         email: 'mohammed@example.com',
-        phone: '+966554433221',
+        phone: '+21894433221',
         subject: 'طلب عرض سعر خاص',
         message: 'أرغب في الحصول على عرض سعر خاص لطقم كامل من المجوهرات',
         status: 'REPLIED'
@@ -162,7 +193,7 @@ async function main() {
     prisma.order.create({
       data: {
         customerName: 'سارة أحمد محمد',
-        customerPhone: '+966501234567',
+        customerPhone: '+218911234567',
         customerEmail: 'sara@example.com',
         shippingAddress: {
           address: 'حي النرجس، شارع الملك فهد، الرياض',
@@ -188,7 +219,7 @@ async function main() {
     prisma.order.create({
       data: {
         customerName: 'أحمد محمد علي',
-        customerPhone: '+966557654321',
+        customerPhone: '+218947654321',
         customerEmail: 'ahmed@example.com',
         shippingAddress: {
           address: 'حي الملقا، طريق الملك عبدالعزيز، الرياض',

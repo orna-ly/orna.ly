@@ -33,7 +33,7 @@ export default function Home() {
     {
       icon: Truck,
       title: { ar: 'توصيل سريع', en: 'Fast Delivery' },
-      description: { ar: 'توصيل مجاني في جميع أنحاء المملكة', en: 'Free delivery across the Kingdom' }
+      description: { ar: 'توصيل سريع داخل ليبيا', en: 'Fast delivery across Libya' }
     },
     {
       icon: Award,

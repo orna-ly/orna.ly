@@ -47,25 +47,25 @@ export function ProductFilters() {
   const priceRanges = [
     {
       id: 'under-1000',
-      name: { ar: 'أقل من 1000 ر.س', en: 'Under 1000 SAR' },
+      name: { ar: 'أقل من 1000 د.ل', en: 'Under 1000 LYD' },
       min: 0,
       max: 1000
     },
     {
       id: '1000-2000',
-      name: { ar: '1000 - 2000 ر.س', en: '1000 - 2000 SAR' },
+      name: { ar: '1000 - 2000 د.ل', en: '1000 - 2000 LYD' },
       min: 1000,
       max: 2000
     },
     {
       id: '2000-3000',
-      name: { ar: '2000 - 3000 ر.س', en: '2000 - 3000 SAR' },
+      name: { ar: '2000 - 3000 د.ل', en: '2000 - 3000 LYD' },
       min: 2000,
       max: 3000
     },
     {
       id: 'above-3000',
-      name: { ar: 'أكثر من 3000 ر.س', en: 'Above 3000 SAR' },
+      name: { ar: 'أكثر من 3000 د.ل', en: 'Above 3000 LYD' },
       min: 3000,
       max: Infinity
     }

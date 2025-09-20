@@ -2,7 +2,8 @@
 
 import { useAtom } from 'jotai'
 import { useState } from 'react'
-import { currentLangAtom, cartItemsAtom, createOrder } from '@/lib/api'
+import { currentLangAtom, cartItemsAtom } from '@/lib/atoms'
+import { createOrder } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -10,6 +11,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ShoppingCart, Check, AlertCircle } from 'lucide-react'
 import type { CartItem } from '@/lib/atoms'
+import Image from 'next/image'
+import { formatPrice } from '@/lib/utils'
 
 interface OrderFormProps {
   onOrderCreated?: (orderId: string) => void
@@ -30,6 +33,7 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
   })
   
   const [needsWrapping, setNeedsWrapping] = useState(false)
+  const [paymentMethod, setPaymentMethod] = useState<'card'|'apple_pay'|'stc_pay'|'cod'>('card')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState('')
@@ -117,6 +121,7 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
         totalAmount: totals.total,
         wrappingCost: needsWrapping ? totals.wrappingCost : 0,
         needsWrapping,
+        paymentMethod,
         notes: formData.notes,
         items: cartItems.map(item => ({
           productId: item.product.id,
@@ -145,6 +150,7 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
           notes: ''
         })
         setNeedsWrapping(false)
+        setPaymentMethod('card')
         
         // Reset submitted state after 5 seconds
         setTimeout(() => setSubmitted(false), 5000)
@@ -256,7 +262,7 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
                 type="tel"
                 value={formData.customerPhone}
                 onChange={(e) => handleChange('customerPhone', e.target.value)}
-                placeholder={currentLang === 'ar' ? '+966 50 123 4567' : '+966 50 123 4567'}
+                placeholder={currentLang === 'ar' ? '+218 91 123 4567' : '+218 91 123 4567'}
                 className={errors.customerPhone ? 'border-red-300' : ''}
               />
               {errors.customerPhone && (
@@ -381,6 +387,36 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
+          {/* Payment Methods */}
+          <div>
+            <p className="text-sm font-medium text-neutral-700 mb-2">
+              {currentLang === 'ar' ? 'طريقة الدفع' : 'Payment Method'}
+            </p>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { key: 'card', labelAr: 'بطاقة بنكية', labelEn: 'Card', icon: '/orna/visa.svg' },
+                { key: 'apple_pay', labelAr: 'ابل باي', labelEn: 'Apple Pay', icon: '/orna/apple-pay.svg' },
+                { key: 'stc_pay', labelAr: 'STC Pay', labelEn: 'STC Pay', icon: '/orna/unionpay.svg' },
+                { key: 'cod', labelAr: 'الدفع عند الاستلام', labelEn: 'Cash on Delivery', icon: '/orna/mast  ercard.svg' }
+              ].map((m) => (
+                <button
+                  key={m.key}
+                  type="button"
+                  onClick={() => setPaymentMethod(m.key as any)}
+                  className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${
+                    paymentMethod === m.key ? 'border-amber-600 bg-amber-50' : 'border-neutral-200 hover:bg-neutral-50'
+                  }`}
+                >
+                  <div className="relative w-8 h-6">
+                    <Image src={m.icon} alt={m.labelEn} fill className="object-contain" />
+                  </div>
+                  <span className="text-sm">
+                    {currentLang === 'ar' ? m.labelAr : m.labelEn}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
           {/* Cart Items */}
           <div className="space-y-3">
             {cartItems.map((item) => (
@@ -389,12 +425,12 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
                   <p className="font-medium text-sm">
                     {item.product.name[currentLang]}
                   </p>
-                  <p className="text-xs text-neutral-500">
+                <p className="text-xs text-neutral-500">
                     {currentLang === 'ar' ? 'الكمية:' : 'Qty:'} {item.quantity}
                   </p>
                 </div>
                 <p className="font-medium">
-                  {item.product.price * item.quantity} {currentLang === 'ar' ? 'ر.س' : 'SAR'}
+                  {formatPrice(item.product.price * item.quantity, 'LYD', currentLang)}
                 </p>
               </div>
             ))}
@@ -404,25 +440,25 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
           <div className="space-y-2 pt-4 border-t">
             <div className="flex justify-between text-sm">
               <span>{currentLang === 'ar' ? 'المجموع الفرعي:' : 'Subtotal:'}</span>
-              <span>{totals.subtotal} {currentLang === 'ar' ? 'ر.س' : 'SAR'}</span>
+              <span>{formatPrice(totals.subtotal, 'LYD', currentLang)}</span>
             </div>
             
             {needsWrapping && totals.wrappingCost > 0 && (
               <div className="flex justify-between text-sm">
                 <span>{currentLang === 'ar' ? 'التغليف:' : 'Wrapping:'}</span>
-                <span>{totals.wrappingCost} {currentLang === 'ar' ? 'ر.س' : 'SAR'}</span>
+                <span>{formatPrice(totals.wrappingCost, 'LYD', currentLang)}</span>
               </div>
             )}
             
             <div className="flex justify-between text-sm">
               <span>{currentLang === 'ar' ? 'الشحن:' : 'Shipping:'}</span>
-              <span>{totals.shippingCost} {currentLang === 'ar' ? 'ر.س' : 'SAR'}</span>
+              <span>{formatPrice(totals.shippingCost, 'LYD', currentLang)}</span>
             </div>
             
             <div className="flex justify-between font-semibold text-lg border-t pt-2">
               <span>{currentLang === 'ar' ? 'المجموع الكلي:' : 'Total:'}</span>
               <span className="text-amber-600">
-                {totals.total} {currentLang === 'ar' ? 'ر.س' : 'SAR'}
+                {formatPrice(totals.total, 'LYD', currentLang)}
               </span>
             </div>
           </div>

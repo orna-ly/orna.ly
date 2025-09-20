@@ -8,24 +8,25 @@ import {
   searchQueryAtom, 
   filterCategoryAtom 
 } from '@/lib/atoms'
-import { mockProducts } from '@/lib/mock-data'
+import { loadProductsAtom } from '@/lib/atoms'
 import { ProductGrid } from '@/components/product/product-grid'
 import { ProductFilters } from '@/components/product/product-filters'
 import { Input } from '@/components/ui/input'
 import { Search } from 'lucide-react'
 
 export default function ProductsPage() {
-  const [products, setProducts] = useAtom(productsAtom)
+  const [products] = useAtom(productsAtom)
   const [currentLang] = useAtom(currentLangAtom)
   const [searchQuery, setSearchQuery] = useAtom(searchQueryAtom)
   const [filterCategory] = useAtom(filterCategoryAtom)
+  const [, loadProducts] = useAtom(loadProductsAtom)
 
-  // Initialize products from mock data
+  // Ensure products are loaded from backend
   useEffect(() => {
     if (products.length === 0) {
-      setProducts(mockProducts)
+      void loadProducts()
     }
-  }, [products.length, setProducts])
+  }, [products.length, loadProducts])
 
   const filteredProducts = useMemo(() => {
     let filtered = products

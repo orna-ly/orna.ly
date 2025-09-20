@@ -136,7 +136,7 @@ export default function AdminOrdersPage() {
                   {currentLang === 'ar' ? 'إجمالي المبيعات' : 'Total Revenue'}
                 </p>
                 <p className="text-3xl font-bold text-amber-600">
-                  {totalRevenue.toLocaleString()} {currentLang === 'ar' ? 'ر.س' : 'SAR'}
+                  {formatPrice(totalRevenue, 'LYD', currentLang)}
                 </p>
               </div>
               <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
@@ -237,7 +237,7 @@ export default function AdminOrdersPage() {
                     </TableCell>
                     <TableCell>
                       <div className="font-bold text-amber-600">
-                        {order.totalAmount.toLocaleString()} {currentLang === 'ar' ? 'ر.س' : 'SAR'}
+                        {formatPrice(order.totalAmount, 'LYD', currentLang)}
                       </div>
                     </TableCell>
                     <TableCell>

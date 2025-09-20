@@ -14,14 +14,14 @@ export default function ContactPage() {
       icon: MapPin,
       title: { ar: 'العنوان', en: 'Address' },
       content: { 
-        ar: 'الرياض، المملكة العربية السعودية', 
+        ar: 'طرابلس، ليبيا', 
         en: 'Riyadh, Saudi Arabia' 
       }
     },
     {
       icon: Phone,
       title: { ar: 'الهاتف', en: 'Phone' },
-      content: '+966 50 123 4567'
+      content: '+218 91 123 4567'
     },
     {
       icon: Mail,
