@@ -2,17 +2,18 @@
 
 import { useAtom } from 'jotai'
 import { useState } from 'react'
-import { currentLangAtom, contactsAtom } from '@/lib/atoms'
+import { currentLangAtom, contactsAtom, loadContactsAtom } from '@/lib/atoms'
+import { createContact } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent } from '@/components/ui/card'
-import { Send, Check } from 'lucide-react'
-import type { Contact } from '@/lib/atoms'
+import { Send, Check, AlertCircle } from 'lucide-react'
 
 export function ContactForm() {
   const [currentLang] = useAtom(currentLangAtom)
   const [contacts, setContacts] = useAtom(contactsAtom)
+  const [, loadContacts] = useAtom(loadContactsAtom)
   
   const [formData, setFormData] = useState({
     name: '',
@@ -24,6 +25,7 @@ export function ContactForm() {
   
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [submitError, setSubmitError] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
 
   const validateForm = () => {
@@ -59,38 +61,46 @@ export function ContactForm() {
     }
     
     setIsSubmitting(true)
+    setSubmitError('')
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    // Add to contacts atom (in real app, this would be an API call)
-    const newContact: Contact = {
-      id: Date.now().toString(),
-      name: formData.name,
-      email: formData.email,
-      phone: formData.phone || undefined,
-      subject: formData.subject,
-      message: formData.message,
-      status: 'NEW',
-      createdAt: new Date()
+    try {
+      const result = await createContact({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone || undefined,
+        subject: formData.subject,
+        message: formData.message
+      })
+      
+      if (result.error) {
+        setSubmitError(result.error)
+      } else {
+        // Reload contacts to get the latest data
+        await loadContacts()
+        
+        setSubmitted(true)
+        
+        // Reset form
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          subject: '',
+          message: ''
+        })
+        
+        // Reset submitted state after 3 seconds
+        setTimeout(() => setSubmitted(false), 3000)
+      }
+    } catch (error) {
+      setSubmitError(
+        currentLang === 'ar' 
+          ? 'حدث خطأ أثناء إرسال الرسالة. يرجى المحاولة مرة أخرى.'
+          : 'An error occurred while sending the message. Please try again.'
+      )
+    } finally {
+      setIsSubmitting(false)
     }
-    
-    setContacts([...contacts, newContact])
-    
-    setIsSubmitting(false)
-    setSubmitted(true)
-    
-    // Reset form
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      subject: '',
-      message: ''
-    })
-    
-    // Reset submitted state after 3 seconds
-    setTimeout(() => setSubmitted(false), 3000)
   }
 
   const handleChange = (field: string, value: string) => {
@@ -123,6 +133,18 @@ export function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Error Message */}
+      {submitError && (
+        <Card className="border-red-200 bg-red-50">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-red-600" />
+              <p className="text-red-700 text-sm">{submitError}</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Name Field */}
       <div>
         <label className="block text-sm font-medium text-neutral-700 mb-2">

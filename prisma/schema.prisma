@@ -6,12 +6,11 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model User {
@@ -40,10 +39,10 @@ model Product {
   slug                String        @unique
   description         Json?
   subtitle            Json?
-  price               Decimal       @db.Decimal(10, 2)
-  priceBeforeDiscount Decimal?      @db.Decimal(10, 2)
-  wrappingPrice       Decimal?      @db.Decimal(10, 2)
-  images              String[]
+  price               Float
+  priceBeforeDiscount Float?
+  wrappingPrice       Float?
+  images              Json
   status              ProductStatus @default(ACTIVE)
   featured            Boolean       @default(false)
   createdAt           DateTime      @default(now())
@@ -67,8 +66,8 @@ model Order {
   customerPhone   String
   customerEmail   String?
   shippingAddress Json
-  totalAmount     Decimal       @db.Decimal(10, 2)
-  wrappingCost    Decimal?      @db.Decimal(10, 2)
+  totalAmount     Float
+  wrappingCost    Float?
   needsWrapping   Boolean       @default(false)
   status          OrderStatus   @default(PENDING)
   paymentStatus   PaymentStatus @default(PENDING)
@@ -88,8 +87,8 @@ model Order {
 model OrderItem {
   id         String  @id @default(cuid())
   quantity   Int     @default(1)
-  unitPrice  Decimal @db.Decimal(10, 2)
-  totalPrice Decimal @db.Decimal(10, 2)
+  unitPrice  Float
+  totalPrice Float
 
   order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId   String
