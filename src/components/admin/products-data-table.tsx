@@ -1,7 +1,7 @@
 'use client'
 
 import { useAtom } from 'jotai'
-import { currentLangAtom, type Product } from '@/lib/atoms'
+import { currentLangAtom, type Product, loadProductsAtom } from '@/lib/atoms'
 import { 
   Table, 
   TableBody, 
@@ -28,16 +28,22 @@ interface ProductsDataTableProps {
 
 export function ProductsDataTable({ products }: ProductsDataTableProps) {
   const [currentLang] = useAtom(currentLangAtom)
+  const [, loadProducts] = useAtom(loadProductsAtom)
 
   const handleCopyId = (id: string) => {
     navigator.clipboard.writeText(id)
     // You could add a toast notification here
   }
 
-  const handleDelete = (productId: string) => {
-    // In a real app, this would make an API call
-    console.log('Delete product:', productId)
-    // You could add a confirmation dialog here
+  const handleDelete = async (productId: string) => {
+    if (!confirm(currentLang === 'ar' ? 'تأكيد حذف المنتج؟' : 'Delete this product?')) return
+    try {
+      const res = await fetch(`/api/products/${productId}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Failed to delete')
+      await loadProducts()
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   if (products.length === 0) {
@@ -121,11 +127,11 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
               <TableCell>
                 <div>
                   <div className="font-medium">
-                    {product.price.toLocaleString()} {currentLang === 'ar' ? 'ر.س' : 'SAR'}
+                    {new Intl.NumberFormat(currentLang === 'ar' ? 'ar-LY' : 'en-LY').format(product.price)} {currentLang === 'ar' ? 'د.ل' : 'LYD'}
                   </div>
                   {product.priceBeforeDiscount && (
                     <div className="text-sm text-neutral-500 line-through">
-                      {product.priceBeforeDiscount.toLocaleString()} {currentLang === 'ar' ? 'ر.س' : 'SAR'}
+                      {new Intl.NumberFormat(currentLang === 'ar' ? 'ar-LY' : 'en-LY').format(product.priceBeforeDiscount)} {currentLang === 'ar' ? 'د.ل' : 'LYD'}
                     </div>
                   )}
                   {product.priceBeforeDiscount && (

@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import Image from "next/image";
+import NextImage from "next/image";
 import { createPlaceholderImage } from "@/lib/image-utils";
 
 import Autoplay from "embla-carousel-autoplay";
@@ -68,7 +68,7 @@ export function HeroCarousel() {
             <CarouselItem key={index} className="relative h-full w-full">
               {/* Background Image */}
               <div className="absolute inset-0">
-                <Image
+                <NextImage
                   src={slide.image}
                   alt={typeof slide.title === 'string' ? slide.title : slide.title[currentLang]}
                   fill

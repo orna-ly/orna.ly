@@ -2,8 +2,7 @@
 
 import { useAtom } from 'jotai'
 import { useEffect } from 'react'
-import { contactsAtom, currentLangAtom } from '@/lib/atoms'
-import { mockContacts } from '@/lib/mock-data'
+import { contactsAtom, currentLangAtom, loadContactsAtom } from '@/lib/atoms'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -28,15 +27,16 @@ import {
 } from 'lucide-react'
 
 export default function AdminContactsPage() {
-  const [contacts, setContacts] = useAtom(contactsAtom)
+  const [contacts] = useAtom(contactsAtom)
   const [currentLang] = useAtom(currentLangAtom)
+  const [, loadContacts] = useAtom(loadContactsAtom)
 
-  // Initialize contacts
+  // Load contacts from backend
   useEffect(() => {
     if (contacts.length === 0) {
-      setContacts(mockContacts)
+      void loadContacts()
     }
-  }, [contacts.length, setContacts])
+  }, [contacts.length, loadContacts])
 
   const newContacts = contacts.filter(c => c.status === 'NEW').length
   const readContacts = contacts.filter(c => c.status === 'READ').length

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { requireAdmin } from '@/lib/admin-auth'
 
 export async function GET(
   request: NextRequest,
@@ -34,6 +35,9 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
+    if (!requireAdmin(request)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
     const body = await request.json()
     
     const product = await prisma.product.update({
@@ -69,6 +73,9 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    if (!requireAdmin(request)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
     await prisma.product.delete({
       where: {
         id: params.id

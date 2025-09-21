@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { requireAdmin } from '@/lib/admin-auth'
 
 export async function GET(request: NextRequest) {
   try {
@@ -53,6 +54,10 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    // AuthZ: admin only
+    if (!requireAdmin(request)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
     const body = await request.json()
     
     const product = await prisma.product.create({
