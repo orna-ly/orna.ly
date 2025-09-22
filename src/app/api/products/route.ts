@@ -70,6 +70,7 @@ export async function POST(request: NextRequest) {
         priceBeforeDiscount: body.priceBeforeDiscount,
         wrappingPrice: body.wrappingPrice,
         images: body.images,
+        stockQuantity: body.stockQuantity ?? 0,
         featured: body.featured || false,
         status: body.status || 'ACTIVE'
       }

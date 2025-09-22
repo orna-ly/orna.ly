@@ -4,7 +4,7 @@ import { useAtom } from "jotai";
 import { useEffect } from "react";
 import { ordersAtom, currentLangAtom, loadOrdersAtom } from "@/lib/atoms";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+// import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -31,7 +31,6 @@ import {
   Truck,
   CheckCircle,
   Clock,
-  AlertCircle,
 } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 
@@ -39,6 +38,21 @@ export default function AdminOrdersPage() {
   const [orders] = useAtom(ordersAtom);
   const [currentLang] = useAtom(currentLangAtom);
   const [, loadOrders] = useAtom(loadOrdersAtom);
+  
+  const updateOrder = async (orderId: string, data: { status?: string; paymentStatus?: string }) => {
+    try {
+      const res = await fetch(`/api/orders/${orderId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        credentials: 'include'
+      })
+      if (!res.ok) throw new Error('Failed to update order')
+      await loadOrders()
+    } catch (e) {
+      console.error(e)
+    }
+  }
 
   // Load orders from backend
   useEffect(() => {
@@ -57,22 +71,22 @@ export default function AdminOrdersPage() {
     0
   );
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "PENDING":
-        return <Clock className="h-4 w-4 text-orange-500" />;
-      case "PROCESSING":
-        return <Truck className="h-4 w-4 text-blue-500" />;
-      case "SHIPPED":
-        return <Truck className="h-4 w-4 text-purple-500" />;
-      case "DELIVERED":
-        return <CheckCircle className="h-4 w-4 text-green-500" />;
-      case "CANCELLED":
-        return <AlertCircle className="h-4 w-4 text-red-500" />;
-      default:
-        return <Clock className="h-4 w-4 text-gray-500" />;
-    }
-  };
+  // const getStatusIcon = (status: string) => {
+  //   switch (status) {
+  //     case "PENDING":
+  //       return <Clock className="h-4 w-4 text-orange-500" />;
+  //     case "PROCESSING":
+  //       return <Truck className="h-4 w-4 text-blue-500" />;
+  //     case "SHIPPED":
+  //       return <Truck className="h-4 w-4 text-purple-500" />;
+  //     case "DELIVERED":
+  //       return <CheckCircle className="h-4 w-4 text-green-500" />;
+  //     case "CANCELLED":
+  //       return <AlertCircle className="h-4 w-4 text-red-500" />;
+  //     default:
+  //       return <Clock className="h-4 w-4 text-gray-500" />;
+  //   }
+  // };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -281,12 +295,8 @@ export default function AdminOrdersPage() {
                   <TableHead>
                     {currentLang === "ar" ? "المبلغ" : "Amount"}
                   </TableHead>
-                  <TableHead>
-                    {currentLang === "ar" ? "حالة الطلب" : "Status"}
-                  </TableHead>
-                  <TableHead>
-                    {currentLang === "ar" ? "الدفع" : "Payment"}
-                  </TableHead>
+                  <TableHead>{currentLang === "ar" ? "حالة الطلب" : "Status"}</TableHead>
+                  <TableHead>{currentLang === "ar" ? "الدفع" : "Payment"}</TableHead>
                   <TableHead>
                     {currentLang === "ar" ? "التاريخ" : "Date"}
                   </TableHead>
@@ -334,35 +344,31 @@ export default function AdminOrdersPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge
-                        className={`${getStatusColor(
-                          order.status
-                        )} flex items-center gap-1 w-fit`}
-                      >
-                        {getStatusIcon(order.status)}
-                        {order.status === "PENDING" &&
-                          (currentLang === "ar" ? "معلق" : "Pending")}
-                        {order.status === "PROCESSING" &&
-                          (currentLang === "ar"
-                            ? "قيد المعالجة"
-                            : "Processing")}
-                        {order.status === "SHIPPED" &&
-                          (currentLang === "ar" ? "تم الشحن" : "Shipped")}
-                        {order.status === "DELIVERED" &&
-                          (currentLang === "ar" ? "تم التوصيل" : "Delivered")}
-                      </Badge>
+                      <Select onValueChange={(val) => updateOrder(order.id, { status: val })}>
+                        <SelectTrigger className={`w-40 ${getStatusColor(order.status)}`}>
+                          <SelectValue placeholder={order.status} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="PENDING">{currentLang === 'ar' ? 'معلق' : 'Pending'}</SelectItem>
+                          <SelectItem value="PROCESSING">{currentLang === 'ar' ? 'قيد المعالجة' : 'Processing'}</SelectItem>
+                          <SelectItem value="SHIPPED">{currentLang === 'ar' ? 'تم الشحن' : 'Shipped'}</SelectItem>
+                          <SelectItem value="DELIVERED">{currentLang === 'ar' ? 'تم التوصيل' : 'Delivered'}</SelectItem>
+                          <SelectItem value="CANCELLED">{currentLang === 'ar' ? 'أُلغي' : 'Cancelled'}</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </TableCell>
                     <TableCell>
-                      <Badge
-                        className={getPaymentStatusColor(order.paymentStatus)}
-                      >
-                        {order.paymentStatus === "PAID" &&
-                          (currentLang === "ar" ? "مدفوع" : "Paid")}
-                        {order.paymentStatus === "PENDING" &&
-                          (currentLang === "ar" ? "معلق" : "Pending")}
-                        {order.paymentStatus === "FAILED" &&
-                          (currentLang === "ar" ? "فشل" : "Failed")}
-                      </Badge>
+                      <Select onValueChange={(val) => updateOrder(order.id, { paymentStatus: val })}>
+                        <SelectTrigger className={`w-36 ${getPaymentStatusColor(order.paymentStatus)}`}>
+                          <SelectValue placeholder={order.paymentStatus} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="PAID">{currentLang === 'ar' ? 'مدفوع' : 'Paid'}</SelectItem>
+                          <SelectItem value="PENDING">{currentLang === 'ar' ? 'معلق' : 'Pending'}</SelectItem>
+                          <SelectItem value="FAILED">{currentLang === 'ar' ? 'فشل' : 'Failed'}</SelectItem>
+                          <SelectItem value="REFUNDED">{currentLang === 'ar' ? 'مستَرد' : 'Refunded'}</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </TableCell>
                     <TableCell>
                       <div className="text-sm">

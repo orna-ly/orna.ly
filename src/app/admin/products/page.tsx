@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 
 export default function AdminProductsPage() {
   const [products] = useAtom(productsAtom)
@@ -26,6 +27,7 @@ export default function AdminProductsPage() {
     price: '',
     priceBeforeDiscount: '',
     wrappingPrice: '',
+    stockQuantity: '',
     images: '', // comma separated
     featured: false,
     subtitleAr: '',
@@ -39,6 +41,12 @@ export default function AdminProductsPage() {
     if (products.length === 0) {
       void loadProducts()
     }
+    // open create dialog if ?create=1
+    try {
+      // @ts-ignore
+      const sp = new URLSearchParams(window.location.search)
+      if (sp.get('create') === '1') setOpen(true)
+    } catch {}
   }, [products.length, loadProducts])
 
   const handleCreate = async (e: React.FormEvent) => {
@@ -51,6 +59,7 @@ export default function AdminProductsPage() {
         price: parseFloat(form.price || '0'),
         priceBeforeDiscount: form.priceBeforeDiscount ? parseFloat(form.priceBeforeDiscount) : undefined,
         wrappingPrice: form.wrappingPrice ? parseFloat(form.wrappingPrice) : undefined,
+        stockQuantity: form.stockQuantity ? parseInt(form.stockQuantity) : 0,
         images: form.images.split(',').map(s => s.trim()).filter(Boolean),
         featured: form.featured,
         subtitle: { ar: form.subtitleAr, en: form.subtitleEn },
@@ -65,7 +74,7 @@ export default function AdminProductsPage() {
       if (!res.ok) throw new Error('Failed to create product')
       setOpen(false)
       setForm({
-        nameAr: '', nameEn: '', slug: '', price: '', priceBeforeDiscount: '', wrappingPrice: '', images: '', featured: false,
+        nameAr: '', nameEn: '', slug: '', price: '', priceBeforeDiscount: '', wrappingPrice: '', stockQuantity: '', images: '', featured: false,
         subtitleAr: '', subtitleEn: '', descriptionAr: '', descriptionEn: ''
       })
       // refresh list
@@ -106,7 +115,7 @@ export default function AdminProductsPage() {
               {currentLang === 'ar' ? 'منتج جديد' : 'New Product'}
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="bg-white">
             <DialogHeader>
               <DialogTitle>{currentLang === 'ar' ? 'إضافة منتج' : 'Add Product'}</DialogTitle>
             </DialogHeader>
@@ -118,6 +127,7 @@ export default function AdminProductsPage() {
                 <Input placeholder={currentLang === 'ar' ? 'السعر' : 'Price'} type="number" value={form.price} onChange={e=>setForm(f=>({...f,price:e.target.value}))} />
                 <Input placeholder={currentLang === 'ar' ? 'السعر قبل الخصم' : 'Price Before Discount'} type="number" value={form.priceBeforeDiscount} onChange={e=>setForm(f=>({...f,priceBeforeDiscount:e.target.value}))} />
                 <Input placeholder={currentLang === 'ar' ? 'سعر التغليف' : 'Wrapping Price'} type="number" value={form.wrappingPrice} onChange={e=>setForm(f=>({...f,wrappingPrice:e.target.value}))} />
+                <Input placeholder={currentLang === 'ar' ? 'الكمية بالمخزون' : 'Stock Quantity'} type="number" value={form.stockQuantity} onChange={e=>setForm(f=>({...f,stockQuantity:e.target.value}))} />
                 <Input placeholder={currentLang === 'ar' ? 'روابط الصور (مفصولة بفواصل)' : 'Image URLs (comma-separated)'} value={form.images} onChange={e=>setForm(f=>({...f,images:e.target.value}))} className="col-span-2" />
                 <Input placeholder={currentLang === 'ar' ? 'العنوان الفرعي (عربي)' : 'Subtitle (AR)'} value={form.subtitleAr} onChange={e=>setForm(f=>({...f,subtitleAr:e.target.value}))} />
                 <Input placeholder="Subtitle (EN)" value={form.subtitleEn} onChange={e=>setForm(f=>({...f,subtitleEn:e.target.value}))} />

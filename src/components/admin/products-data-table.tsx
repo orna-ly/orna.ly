@@ -21,6 +21,11 @@ import {
 import { MoreHorizontal, Edit, Eye, Trash2, Copy } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useState } from 'react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 
 interface ProductsDataTableProps {
   products: Product[]
@@ -29,6 +34,59 @@ interface ProductsDataTableProps {
 export function ProductsDataTable({ products }: ProductsDataTableProps) {
   const [currentLang] = useAtom(currentLangAtom)
   const [, loadProducts] = useAtom(loadProductsAtom)
+  const [editing, setEditing] = useState<Product | null>(null)
+  const [saving, setSaving] = useState(false)
+  const [form, setForm] = useState({
+    price: '',
+    priceBeforeDiscount: '',
+    wrappingPrice: '',
+    stockQuantity: '',
+    featured: false,
+    status: 'ACTIVE',
+    images: ''
+  })
+
+  const openEdit = (p: Product) => {
+    setEditing(p)
+    setForm({
+      price: String(p.price ?? ''),
+      priceBeforeDiscount: p.priceBeforeDiscount != null ? String(p.priceBeforeDiscount) : '',
+      wrappingPrice: p.wrappingPrice != null ? String(p.wrappingPrice) : '',
+      stockQuantity: (p as any).stockQuantity != null ? String((p as any).stockQuantity) : '0',
+      featured: p.featured,
+      status: p.status,
+      images: (p.images || []).join(', ')
+    })
+  }
+
+  const saveEdit = async () => {
+    if (!editing) return
+    setSaving(true)
+    try {
+      const body: any = {
+        price: parseFloat(form.price || '0'),
+        priceBeforeDiscount: form.priceBeforeDiscount ? parseFloat(form.priceBeforeDiscount) : undefined,
+        wrappingPrice: form.wrappingPrice ? parseFloat(form.wrappingPrice) : undefined,
+        stockQuantity: form.stockQuantity ? parseInt(form.stockQuantity) : 0,
+        featured: form.featured,
+        status: form.status,
+        images: form.images.split(',').map(s => s.trim()).filter(Boolean)
+      }
+      const res = await fetch(`/api/products/${editing.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        credentials: 'include'
+      })
+      if (!res.ok) throw new Error('Failed to save')
+      setEditing(null)
+      await loadProducts()
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setSaving(false)
+    }
+  }
 
   const handleCopyId = (id: string) => {
     navigator.clipboard.writeText(id)
@@ -38,7 +96,7 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
   const handleDelete = async (productId: string) => {
     if (!confirm(currentLang === 'ar' ? 'تأكيد حذف المنتج؟' : 'Delete this product?')) return
     try {
-      const res = await fetch(`/api/products/${productId}`, { method: 'DELETE' })
+      const res = await fetch(`/api/products/${productId}`, { method: 'DELETE', credentials: 'include' })
       if (!res.ok) throw new Error('Failed to delete')
       await loadProducts()
     } catch (err) {
@@ -186,7 +244,7 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
                         {currentLang === 'ar' ? 'عرض' : 'View'}
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => openEdit(product)}>
                       <Edit className="h-4 w-4 mr-2" />
                       {currentLang === 'ar' ? 'تعديل' : 'Edit'}
                     </DropdownMenuItem>
@@ -209,5 +267,42 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
         </TableBody>
       </Table>
     </div>
+  )
+}
+
+// Edit Dialog
+export function EditProductDialog({ editing, setEditing, form, setForm, onSave, saving }: any) {
+  if (!editing) return null
+  return (
+    <Dialog open={!!editing} onOpenChange={(o)=>!o && setEditing(null)}>
+      <DialogContent className="bg-white">
+        <DialogHeader>
+          <DialogTitle>{'Edit Product'}</DialogTitle>
+        </DialogHeader>
+        <div className="grid grid-cols-2 gap-3">
+          <Input placeholder={'Price'} type="number" value={form.price} onChange={e=>setForm((f:any)=>({...f,price:e.target.value}))} />
+          <Input placeholder={'Price Before Discount'} type="number" value={form.priceBeforeDiscount} onChange={e=>setForm((f:any)=>({...f,priceBeforeDiscount:e.target.value}))} />
+          <Input placeholder={'Wrapping Price'} type="number" value={form.wrappingPrice} onChange={e=>setForm((f:any)=>({...f,wrappingPrice:e.target.value}))} />
+          <Input placeholder={'Stock Quantity'} type="number" value={form.stockQuantity} onChange={e=>setForm((f:any)=>({...f,stockQuantity:e.target.value}))} />
+          <div className="flex items-center gap-2">
+            <Checkbox id="featured" checked={form.featured} onCheckedChange={(v:any)=>setForm((f:any)=>({...f,featured:!!v}))} />
+            <label htmlFor="featured">Featured</label>
+          </div>
+          <Select value={form.status} onValueChange={(v)=>setForm((f:any)=>({...f,status:v}))}>
+            <SelectTrigger className="w-full"><SelectValue placeholder="Status" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ACTIVE">ACTIVE</SelectItem>
+              <SelectItem value="INACTIVE">INACTIVE</SelectItem>
+              <SelectItem value="OUT_OF_STOCK">OUT_OF_STOCK</SelectItem>
+            </SelectContent>
+          </Select>
+          <Input className="col-span-2" placeholder={'Image URLs (comma-separated)'} value={form.images} onChange={e=>setForm((f:any)=>({...f,images:e.target.value}))} />
+        </div>
+        <div className="flex justify-end gap-2 mt-4">
+          <Button variant="outline" onClick={()=>setEditing(null)}>Cancel</Button>
+          <Button onClick={onSave} disabled={saving} className="bg-amber-600 hover:bg-amber-700">{saving ? 'Saving...' : 'Save'}</Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }

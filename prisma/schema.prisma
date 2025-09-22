@@ -43,6 +43,7 @@ model Product {
   priceBeforeDiscount Float?
   wrappingPrice       Float?
   images              Json
+  stockQuantity       Int           @default(0)
   status              ProductStatus @default(ACTIVE)
   featured            Boolean       @default(false)
   createdAt           DateTime      @default(now())

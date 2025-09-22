@@ -22,6 +22,7 @@ import {
   AlertCircle,
   CheckCircle
 } from 'lucide-react'
+import Link from 'next/link'
 
 export default function AdminDashboard() {
   const [products] = useAtom(productsAtom)
@@ -222,8 +223,9 @@ export default function AdminDashboard() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card className="p-4 hover:bg-neutral-50 cursor-pointer transition-colors">
-              <div className="text-center">
+            <Link href="/admin/products?create=1">
+              <Card className="p-4 hover:bg-neutral-50 cursor-pointer transition-colors">
+                <div className="text-center">
                 <Package className="h-8 w-8 text-amber-600 mx-auto mb-2" />
                 <h3 className="font-medium">
                   {currentLang === 'ar' ? 'إضافة منتج جديد' : 'Add New Product'}
@@ -231,11 +233,13 @@ export default function AdminDashboard() {
                 <p className="text-sm text-neutral-600 mt-1">
                   {currentLang === 'ar' ? 'إضافة منتج جديد للمتجر' : 'Add a new product to the store'}
                 </p>
-              </div>
-            </Card>
+                </div>
+              </Card>
+            </Link>
 
-            <Card className="p-4 hover:bg-neutral-50 cursor-pointer transition-colors">
-              <div className="text-center">
+            <Link href="/admin/orders">
+              <Card className="p-4 hover:bg-neutral-50 cursor-pointer transition-colors">
+                <div className="text-center">
                 <ShoppingBag className="h-8 w-8 text-blue-600 mx-auto mb-2" />
                 <h3 className="font-medium">
                   {currentLang === 'ar' ? 'معالجة الطلبات' : 'Process Orders'}
@@ -243,11 +247,13 @@ export default function AdminDashboard() {
                 <p className="text-sm text-neutral-600 mt-1">
                   {currentLang === 'ar' ? 'معالجة الطلبات المعلقة' : 'Process pending orders'}
                 </p>
-              </div>
-            </Card>
+                </div>
+              </Card>
+            </Link>
 
-            <Card className="p-4 hover:bg-neutral-50 cursor-pointer transition-colors">
-              <div className="text-center">
+            <Link href="/admin/contacts">
+              <Card className="p-4 hover:bg-neutral-50 cursor-pointer transition-colors">
+                <div className="text-center">
                 <Mail className="h-8 w-8 text-green-600 mx-auto mb-2" />
                 <h3 className="font-medium">
                   {currentLang === 'ar' ? 'الرد على الرسائل' : 'Reply to Messages'}
@@ -255,8 +261,9 @@ export default function AdminDashboard() {
                 <p className="text-sm text-neutral-600 mt-1">
                   {currentLang === 'ar' ? 'الرد على استفسارات العملاء' : 'Reply to customer inquiries'}
                 </p>
-              </div>
-            </Card>
+                </div>
+              </Card>
+            </Link>
           </div>
         </CardContent>
       </Card>

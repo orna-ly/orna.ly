@@ -53,6 +53,7 @@ export async function PUT(
         priceBeforeDiscount: body.priceBeforeDiscount,
         wrappingPrice: body.wrappingPrice,
         images: body.images,
+        stockQuantity: body.stockQuantity,
         featured: body.featured,
         status: body.status
       }

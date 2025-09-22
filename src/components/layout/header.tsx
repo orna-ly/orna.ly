@@ -4,7 +4,8 @@ import { useAtom } from 'jotai'
 import { 
   currentLangAtom, 
   cartItemsAtom, 
-  mobileMenuOpenAtom 
+  mobileMenuOpenAtom,
+  settingsAtom
 } from '@/lib/atoms'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -17,6 +18,7 @@ export function Header() {
   const [currentLang, setCurrentLang] = useAtom(currentLangAtom)
   const [cartItems] = useAtom(cartItemsAtom)
   const [mobileMenuOpen, setMobileMenuOpen] = useAtom(mobileMenuOpenAtom)
+  const [settings] = useAtom(settingsAtom)
 
   const toggleLang = () => {
     setCurrentLang(currentLang === 'ar' ? 'en' : 'ar')
@@ -58,7 +60,7 @@ export function Header() {
               <span className="text-white font-bold text-xl">O</span>
             </div>
             <span className="font-bold text-2xl gradient-text-gold">
-              {currentLang === 'ar' ? 'مجوهرات أورنا' : 'Orna Jewelry'}
+              {settings['store:name'] || (currentLang === 'ar' ? 'مجوهرات أورنا' : 'Orna Jewelry')}
             </span>
           </Link>
 

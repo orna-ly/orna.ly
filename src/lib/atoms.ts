@@ -66,6 +66,11 @@ export interface Contact {
   updatedAt: Date;
 }
 
+export interface SettingKV<T = unknown> {
+  key: string;
+  value: T;
+}
+
 export interface CartItem {
   product: Product;
   quantity: number;
@@ -90,6 +95,7 @@ export const cartTotalAtom = atom((get) =>
 
 export const ordersAtom = atom<Order[]>([]);
 export const contactsAtom = atom<Contact[]>([]);
+export const settingsAtom = atom<Record<string, unknown>>({});
 
 // UI State Atoms
 export const mobileMenuOpenAtom = atom(false);
@@ -142,6 +148,23 @@ export const loadContactsAtom = atom(null, async (get, set) => {
     }
   } catch (error) {
     console.error("Error loading contacts:", error);
+  } finally {
+    set(loadingAtom, false);
+  }
+});
+
+// Settings Loading Atom
+export const loadSettingsAtom = atom(null, async (get, set) => {
+  set(loadingAtom, true);
+  try {
+    const response = await fetch('/api/settings');
+    if (!response.ok) throw new Error('Failed to fetch settings');
+    const data = (await response.json()) as SettingKV<unknown>[];
+    const map: Record<string, unknown> = {};
+    data.forEach((s) => { map[s.key] = s.value; });
+    set(settingsAtom, map);
+  } catch (error) {
+    console.error('Error loading settings:', error);
   } finally {
     set(loadingAtom, false);
   }
