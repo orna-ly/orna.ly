@@ -149,14 +149,14 @@ export default function AdminDashboard() {
                       {order.totalAmount} {currentLang === 'ar' ? 'ر.س' : 'SAR'}
                     </p>
                     <div className="flex items-center gap-1">
-                      {order.status === 'NEW' && <AlertCircle className="h-3 w-3 text-orange-500" />}
+                      {order.status === 'PENDING' && <AlertCircle className="h-3 w-3 text-orange-500" />}
                       {order.status === 'PROCESSING' && <CheckCircle className="h-3 w-3 text-blue-500" />}
                       <span className={`text-xs ${
-                        order.status === 'NEW' ? 'text-orange-600' :
+                        order.status === 'PENDING' ? 'text-orange-600' :
                         order.status === 'PROCESSING' ? 'text-blue-600' :
                         'text-green-600'
                       }`}>
-                        {order.status === 'NEW' && (currentLang === 'ar' ? 'جديد' : 'New')}
+                        {order.status === 'PENDING' && (currentLang === 'ar' ? 'قيد الانتظار' : 'Pending')}
                         {order.status === 'PROCESSING' && (currentLang === 'ar' ? 'قيد المعالجة' : 'Processing')}
                       </span>
                     </div>

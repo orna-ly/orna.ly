@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     }
     // Read password hash from settings (cred:<userId>)
     const cred = await prisma.setting.findUnique({ where: { key: `cred:${user.id}` } })
-    const passwordHash = cred?.value?.passwordHash as string | undefined
+    const passwordHash = (cred?.value as { passwordHash?: string })?.passwordHash
     if (!passwordHash) {
       return NextResponse.json({ error: 'Auth not configured' }, { status: 500 })
     }

@@ -10,7 +10,6 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ShoppingCart, Check, AlertCircle } from 'lucide-react'
-import type { CartItem } from '@/lib/atoms'
 import Image from 'next/image'
 import { formatPrice } from '@/lib/utils'
 
@@ -155,7 +154,7 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
         // Reset submitted state after 5 seconds
         setTimeout(() => setSubmitted(false), 5000)
       }
-    } catch (error) {
+    } catch {
       setSubmitError(
         currentLang === 'ar' 
           ? 'حدث خطأ أثناء إنشاء الطلب. يرجى المحاولة مرة أخرى.'
@@ -402,7 +401,7 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
                 <button
                   key={m.key}
                   type="button"
-                  onClick={() => setPaymentMethod(m.key as any)}
+                  onClick={() => setPaymentMethod(m.key as 'card'|'apple_pay'|'stc_pay'|'cod')}
                   className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${
                     paymentMethod === m.key ? 'border-amber-600 bg-amber-50' : 'border-neutral-200 hover:bg-neutral-50'
                   }`}

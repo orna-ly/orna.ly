@@ -6,12 +6,7 @@ export interface ImageOptimizationOptions {
   format?: 'webp' | 'jpeg' | 'png';
 }
 
-export function getOptimizedImageUrl(
-  src: string, 
-  options: ImageOptimizationOptions = {}
-): string {
-  const { width = 800, height = 600, quality = 75, format = 'jpeg' } = options;
-  
+export function getOptimizedImageUrl(src: string): string {
   // For now, return the original src since we're not using Next.js Image optimization
   // In production, you could integrate with a CDN or image optimization service
   return src;

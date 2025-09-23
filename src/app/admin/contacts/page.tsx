@@ -39,14 +39,14 @@ export default function AdminContactsPage() {
   }, [contacts.length, loadContacts])
 
   const newContacts = contacts.filter(c => c.status === 'NEW').length
-  const readContacts = contacts.filter(c => c.status === 'READ').length
+  const resolvedContacts = contacts.filter(c => c.status === 'RESOLVED').length
   const repliedContacts = contacts.filter(c => c.status === 'REPLIED').length
   const totalContacts = contacts.length
 
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'NEW': return <AlertCircle className="h-4 w-4 text-red-500" />
-      case 'READ': return <Eye className="h-4 w-4 text-blue-500" />
+      case 'RESOLVED': return <CheckCircle className="h-4 w-4 text-green-500" />
       case 'REPLIED': return <CheckCircle className="h-4 w-4 text-green-500" />
       default: return <MessageCircle className="h-4 w-4 text-gray-500" />
     }
@@ -55,7 +55,7 @@ export default function AdminContactsPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'NEW': return 'bg-red-100 text-red-800 border-red-200'
-      case 'READ': return 'bg-blue-100 text-blue-800 border-blue-200'
+      case 'RESOLVED': return 'bg-blue-100 text-blue-800 border-blue-200'
       case 'REPLIED': return 'bg-green-100 text-green-800 border-green-200'
       default: return 'bg-gray-100 text-gray-800 border-gray-200'
     }
@@ -86,12 +86,12 @@ export default function AdminContactsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-neutral-600 mb-2">
-                  {currentLang === 'ar' ? 'مقروءة' : 'Read'}
+                  {currentLang === 'ar' ? 'محلولة' : 'Resolved'}
                 </p>
-                <p className="text-3xl font-bold text-blue-600">{readContacts}</p>
+                <p className="text-3xl font-bold text-blue-600">{resolvedContacts}</p>
               </div>
               <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                <Eye className="h-6 w-6 text-blue-600" />
+                <CheckCircle className="h-6 w-6 text-blue-600" />
               </div>
             </div>
           </CardContent>
@@ -180,7 +180,7 @@ export default function AdminContactsPage() {
                       <Badge className={`${getStatusColor(contact.status)} flex items-center gap-1 w-fit`}>
                         {getStatusIcon(contact.status)}
                         {contact.status === 'NEW' && (currentLang === 'ar' ? 'جديد' : 'New')}
-                        {contact.status === 'READ' && (currentLang === 'ar' ? 'مقروء' : 'Read')}
+                        {contact.status === 'RESOLVED' && (currentLang === 'ar' ? 'محلول' : 'Resolved')}
                         {contact.status === 'REPLIED' && (currentLang === 'ar' ? 'تم الرد' : 'Replied')}
                       </Badge>
                     </TableCell>

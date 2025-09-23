@@ -1,9 +1,11 @@
 'use client'
 
 import { useAtom } from 'jotai'
-import { currentLangAtom } from '@/lib/atoms'
+import { currentLangAtom, isAdminAtom, loadCurrentUserAtom, logoutAtom } from '@/lib/atoms'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { 
   LayoutDashboard, 
   Package, 
@@ -15,7 +17,6 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
 
 export default function AdminLayout({
   children,
@@ -23,14 +24,52 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   const [currentLang] = useAtom(currentLangAtom)
+  const [isAdmin] = useAtom(isAdminAtom)
+  const [, loadCurrentUser] = useAtom(loadCurrentUserAtom)
+  const [, logout] = useAtom(logoutAtom)
   const pathname = usePathname()
-  const [isAuthed, setIsAuthed] = useState(true)
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(true)
+
+  const handleLogout = async () => {
+    await logout()
+    router.push('/login')
+  }
 
   useEffect(() => {
-    // Best-effort check by calling a lightweight endpoint or decoding cookie server-side via middleware.
-    // Here we assume middleware protects routes; keep a local flag true.
-    setIsAuthed(true)
-  }, [])
+    const checkAuth = async () => {
+      await loadCurrentUser()
+      setIsLoading(false)
+    }
+    checkAuth()
+  }, [loadCurrentUser])
+
+  useEffect(() => {
+    if (!isLoading && !isAdmin) {
+      router.push('/login?redirect=' + encodeURIComponent(pathname))
+    }
+  }, [isLoading, isAdmin, router, pathname])
+
+  // Show loading while checking authentication
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-neutral-50 to-neutral-100">
+        <div className="text-center">
+          <div className="w-12 h-12 gradient-gold rounded-full flex items-center justify-center shadow-md mb-4 mx-auto animate-pulse">
+            <span className="text-white font-bold text-xl">O</span>
+          </div>
+          <p className="text-neutral-600">
+            {currentLang === 'ar' ? 'جار التحقق من الصلاحيات...' : 'Checking permissions...'}
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  // Don't render admin content if not admin (will redirect)
+  if (!isAdmin) {
+    return null
+  }
 
   const navigation = [
     {
@@ -135,7 +174,11 @@ export default function AdminLayout({
               {currentLang === 'ar' ? 'زيارة الموقع' : 'Visit Site'}
             </Link>
           </Button>
-          <Button variant="ghost" className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50">
+          <Button 
+            variant="ghost" 
+            className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+            onClick={handleLogout}
+          >
             <LogOut className="h-4 w-4 mr-2" />
             {currentLang === 'ar' ? 'تسجيل الخروج' : 'Logout'}
           </Button>

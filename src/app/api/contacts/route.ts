@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { ContactStatus } from '@prisma/client'
 
 export async function GET(request: NextRequest) {
   try {
@@ -7,10 +8,10 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status')
     const limit = searchParams.get('limit')
 
-    const where: any = {}
+    const where: { status?: ContactStatus } = {}
 
-    if (status) {
-      where.status = status
+    if (status && Object.values(ContactStatus).includes(status as ContactStatus)) {
+      where.status = status as ContactStatus
     }
 
     const contacts = await prisma.contact.findMany({

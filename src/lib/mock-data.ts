@@ -28,7 +28,9 @@ export const mockProducts: Product[] = [
     },
     featured: true,
     wrappingPrice: 100,
-    createdAt: new Date('2024-01-15')
+    status: 'ACTIVE',
+    createdAt: new Date('2024-01-15'),
+    updatedAt: new Date('2024-01-15')
   },
   {
     id: '2',
@@ -47,7 +49,9 @@ export const mockProducts: Product[] = [
     },
     featured: true,
     wrappingPrice: 150,
-    createdAt: new Date('2024-01-10')
+    status: 'ACTIVE',
+    createdAt: new Date('2024-01-10'),
+    updatedAt: new Date('2024-01-10')
   },
   {
     id: '3',
@@ -77,7 +81,9 @@ export const mockProducts: Product[] = [
     },
     featured: true,
     wrappingPrice: 200,
-    createdAt: new Date('2024-01-05')
+    status: 'ACTIVE',
+    createdAt: new Date('2024-01-05'),
+    updatedAt: new Date('2024-01-05')
   },
   {
     id: '4',
@@ -96,7 +102,9 @@ export const mockProducts: Product[] = [
     },
     featured: false,
     wrappingPrice: 120,
-    createdAt: new Date('2024-01-12')
+    status: 'ACTIVE',
+    createdAt: new Date('2024-01-12'),
+    updatedAt: new Date('2024-01-12')
   },
   {
     id: '5',
@@ -115,47 +123,13 @@ export const mockProducts: Product[] = [
     },
     featured: false,
     wrappingPrice: 80,
-    createdAt: new Date('2024-01-08')
+    status: 'ACTIVE',
+    createdAt: new Date('2024-01-08'),
+    updatedAt: new Date('2024-01-08')
   }
 ]
 
-export const mockOrders: Order[] = [
-  {
-    id: '1',
-    orderNumber: 'ORN-2024-001',
-    customerName: 'سارة أحمد محمد',
-    customerPhone: '+966501234567',
-    customerEmail: 'sara@example.com',
-    address: 'حي النرجس، شارع الملك فهد، الرياض',
-    city: 'الرياض',
-    state: 'الرياض',
-    product: mockProducts[0],
-    quantity: 1,
-    totalAmount: 1950, // product price + shipping + wrapping
-    wrapping: true,
-    wrappingPrice: 100,
-    paymentStatus: 'PAID',
-    status: 'PROCESSING',
-    notes: 'يرجى التغليف بعناية خاصة',
-    createdAt: new Date('2024-01-20')
-  },
-  {
-    id: '2',
-    orderNumber: 'ORN-2024-002',
-    customerName: 'أحمد محمد علي',
-    customerPhone: '+966557654321',
-    customerEmail: 'ahmed@example.com',
-    address: 'حي الملقا، طريق الملك عبدالعزيز، الرياض',
-    city: 'الرياض',
-    product: mockProducts[1],
-    quantity: 1,
-    totalAmount: 3200,
-    wrapping: false,
-    paymentStatus: 'PENDING',
-    status: 'NEW',
-    createdAt: new Date('2024-01-18')
-  }
-]
+export const mockOrders: Order[] = []
 
 export const mockContacts: Contact[] = [
   {
@@ -166,7 +140,8 @@ export const mockContacts: Contact[] = [
     subject: 'استفسار عن المنتجات',
     message: 'أريد معرفة المزيد عن مجموعة الخواتم الذهبية وأسعارها',
     status: 'NEW',
-    createdAt: new Date('2024-01-19')
+    createdAt: new Date('2024-01-19'),
+    updatedAt: new Date('2024-01-19')
   },
   {
     id: '2',
@@ -175,8 +150,9 @@ export const mockContacts: Contact[] = [
     phone: '+966554433221',
     subject: 'طلب عرض سعر خاص',
     message: 'أرغب في الحصول على عرض سعر خاص لطقم كامل من المجوهرات',
-    status: 'READ',
-    createdAt: new Date('2024-01-17')
+    status: 'RESOLVED',
+    createdAt: new Date('2024-01-17'),
+    updatedAt: new Date('2024-01-17')
   }
 ]
 

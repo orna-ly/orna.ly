@@ -71,6 +71,14 @@ export interface SettingKV<T = unknown> {
   value: T;
 }
 
+export interface User {
+  id: string;
+  email: string;
+  name?: string;
+  role: "USER" | "ADMIN" | "SUPER_ADMIN";
+  image?: string;
+}
+
 export interface CartItem {
   product: Product;
   quantity: number;
@@ -78,6 +86,14 @@ export interface CartItem {
 
 // Global State Atoms
 export const currentLangAtom = atomWithStorage<string>("currentLang", "ar");
+
+// User Authentication Atoms
+export const currentUserAtom = atom<User | null>(null);
+export const isLoggedInAtom = atom((get) => !!get(currentUserAtom));
+export const isAdminAtom = atom((get) => {
+  const user = get(currentUserAtom);
+  return user?.role === "ADMIN" || user?.role === "SUPER_ADMIN";
+});
 
 // Data Atoms
 export const productsAtom = atom<Product[]>([]);
@@ -167,6 +183,32 @@ export const loadSettingsAtom = atom(null, async (get, set) => {
     console.error('Error loading settings:', error);
   } finally {
     set(loadingAtom, false);
+  }
+});
+
+// User Authentication Loading Atom
+export const loadCurrentUserAtom = atom(null, async (get, set) => {
+  try {
+    const response = await fetch('/api/auth/me');
+    if (response.ok) {
+      const user = await response.json();
+      set(currentUserAtom, user);
+    } else {
+      set(currentUserAtom, null);
+    }
+  } catch (error) {
+    console.error('Error loading current user:', error);
+    set(currentUserAtom, null);
+  }
+});
+
+// Logout Action
+export const logoutAtom = atom(null, async (get, set) => {
+  try {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    set(currentUserAtom, null);
+  } catch (error) {
+    console.error('Error logging out:', error);
   }
 });
 

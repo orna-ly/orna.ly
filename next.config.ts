@@ -5,11 +5,18 @@ const nextConfig: NextConfig = {
     // Enable the latest features
   },
   images: {
-    domains: ["localhost", "orna.ly"],
     remotePatterns: [
       {
         protocol: "https",
         hostname: "**",
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
+      },
+      {
+        protocol: "https",
+        hostname: "orna.ly",
       },
     ],
   },

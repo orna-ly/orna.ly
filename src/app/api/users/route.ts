@@ -3,7 +3,10 @@ import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
 import { requireAdmin } from '@/lib/admin-auth'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  if (!requireAdmin(request)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
   const users = await prisma.user.findMany({ orderBy: { createdAt: 'desc' } })
   return NextResponse.json(users)
 }

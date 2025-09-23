@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { requireAdmin } from '@/lib/admin-auth'
+import { ProductStatus } from '@prisma/client'
 
 export async function GET(request: NextRequest) {
   try {
@@ -9,8 +10,15 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search')
     const limit = searchParams.get('limit')
 
-    const where: any = {
-      status: 'ACTIVE'
+    const where: { 
+      status: ProductStatus;
+      featured?: boolean;
+      OR?: Array<{
+        name?: { path: string[]; string_contains: string };
+        description?: { path: string[]; string_contains: string };
+      }>;
+    } = {
+      status: ProductStatus.ACTIVE
     }
 
     if (featured === 'true') {

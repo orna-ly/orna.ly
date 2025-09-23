@@ -85,7 +85,7 @@ export async function fetchOrders(params?: {
 }
 
 export async function createOrder(
-  orderData: Order
+  orderData: Omit<Order, 'id' | 'status' | 'createdAt' | 'updatedAt' | 'orderNumber' | 'paymentStatus' | 'paymentUrl' | 'customerId'>
 ): Promise<ApiResponse<Order>> {
   try {
     const response = await fetch("/api/orders", {
@@ -130,7 +130,7 @@ export async function fetchContacts(params?: {
 }
 
 export async function createContact(
-  contactData: Contact
+  contactData: Pick<Contact, 'name' | 'email' | 'phone' | 'subject' | 'message'>
 ): Promise<ApiResponse<Contact>> {
   try {
     const response = await fetch("/api/contacts", {

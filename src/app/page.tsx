@@ -2,7 +2,6 @@
 
 import { useAtom } from "jotai";
 import {
-  featuredProductsAtom,
   currentLangAtom,
   productsAtom,
 } from "@/lib/atoms";
@@ -15,7 +14,6 @@ import { Star, Shield, Truck, Award } from "lucide-react";
 import Link from "next/link";
 
 export default function Home() {
-  const [featuredProducts] = useAtom(featuredProductsAtom);
   const [products] = useAtom(productsAtom);
   const [currentLang] = useAtom(currentLangAtom);
 

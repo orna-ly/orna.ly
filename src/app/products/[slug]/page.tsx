@@ -9,13 +9,11 @@ import {
   productsAtom,
   loadProductsAtom
 } from '@/lib/atoms'
-import { fetchProducts } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { ShoppingCart, Heart, Share2, ArrowLeft, Check } from 'lucide-react'
-import Image from 'next/image'
 import Link from 'next/link'
 import type { Product } from '@/lib/atoms'
 import { formatPrice } from '@/lib/utils'

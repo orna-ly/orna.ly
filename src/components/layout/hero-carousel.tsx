@@ -18,7 +18,7 @@ import Autoplay from "embla-carousel-autoplay";
 export function HeroCarousel() {
   const [currentLang] = useAtom(currentLangAtom);
   const [featuredProducts] = useAtom(featuredProductsAtom);
-  const [imagesLoaded, setImagesLoaded] = useState<boolean[]>([]);
+  const [, setImagesLoaded] = useState<boolean[]>([]);
 
   // Map backend featured products into slides
   const featuredSlides = (featuredProducts?.slice(0, 5) || []).map((p: Product) => ({
@@ -32,7 +32,7 @@ export function HeroCarousel() {
   // Preload images for better performance
   useEffect(() => {
     const preloadImages = async () => {
-      const loadPromises = featuredSlides.map((slide, index) => {
+      const loadPromises = featuredSlides.map((slide) => {
         return new Promise<boolean>((resolve) => {
           const img = new Image();
           img.onload = () => resolve(true);
@@ -46,12 +46,14 @@ export function HeroCarousel() {
     };
 
     preloadImages();
-  }, []);
+  }, [featuredSlides]);
 
   return (
     <div className="relative h-[85vh] md:h-screen w-full overflow-hidden bg-neutral-100">
       <Carousel
-        opts={{ align: "start", loop: true }}
+        key={currentLang}
+        dir={currentLang === "ar" ? "rtl" : "ltr"}
+        opts={{ align: "start", loop: true, direction: currentLang === "ar" ? "rtl" : "ltr" }}
         plugins={[Autoplay({ delay: 5000 })]}
         className="h-full w-full"
       >

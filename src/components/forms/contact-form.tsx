@@ -2,7 +2,7 @@
 
 import { useAtom } from 'jotai'
 import { useState } from 'react'
-import { currentLangAtom, contactsAtom, loadContactsAtom } from '@/lib/atoms'
+import { currentLangAtom, loadContactsAtom } from '@/lib/atoms'
 import { createContact } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -12,7 +12,6 @@ import { Send, Check, AlertCircle } from 'lucide-react'
 
 export function ContactForm() {
   const [currentLang] = useAtom(currentLangAtom)
-  const [contacts, setContacts] = useAtom(contactsAtom)
   const [, loadContacts] = useAtom(loadContactsAtom)
   
   const [formData, setFormData] = useState({
@@ -67,7 +66,7 @@ export function ContactForm() {
       const result = await createContact({
         name: formData.name,
         email: formData.email,
-        phone: formData.phone || undefined,
+        phone: formData.phone || null,
         subject: formData.subject,
         message: formData.message
       })
@@ -92,7 +91,7 @@ export function ContactForm() {
         // Reset submitted state after 3 seconds
         setTimeout(() => setSubmitted(false), 3000)
       }
-    } catch (error) {
+    } catch {
       setSubmitError(
         currentLang === 'ar' 
           ? 'حدث خطأ أثناء إرسال الرسالة. يرجى المحاولة مرة أخرى.'

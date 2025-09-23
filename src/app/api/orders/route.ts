@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { OrderStatus, PaymentStatus } from '@prisma/client'
 
 export async function GET(request: NextRequest) {
   try {
@@ -8,14 +9,14 @@ export async function GET(request: NextRequest) {
     const paymentStatus = searchParams.get('paymentStatus')
     const limit = searchParams.get('limit')
 
-    const where: any = {}
+    const where: { status?: OrderStatus; paymentStatus?: PaymentStatus } = {}
 
-    if (status) {
-      where.status = status
+    if (status && Object.values(OrderStatus).includes(status as OrderStatus)) {
+      where.status = status as OrderStatus
     }
 
-    if (paymentStatus) {
-      where.paymentStatus = paymentStatus
+    if (paymentStatus && Object.values(PaymentStatus).includes(paymentStatus as PaymentStatus)) {
+      where.paymentStatus = paymentStatus as PaymentStatus
     }
 
     const orders = await prisma.order.findMany({
@@ -59,7 +60,7 @@ export async function POST(request: NextRequest) {
         paymentMethod: body.paymentMethod,
         notes: body.notes,
         items: {
-          create: body.items.map((item: any) => ({
+          create: body.items.map((item: { productId: string; quantity: number; unitPrice: number; totalPrice: number }) => ({
             productId: item.productId,
             quantity: item.quantity,
             unitPrice: item.unitPrice,

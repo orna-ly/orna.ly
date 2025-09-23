@@ -4,12 +4,13 @@ import { requireAdmin } from '@/lib/admin-auth'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const order = await prisma.order.findUnique({
       where: {
-        id: params.id
+        id: id
       },
       include: {
         items: {
@@ -39,17 +40,18 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     if (!requireAdmin(request)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+    const { id } = await params
     const body = await request.json()
     
     const order = await prisma.order.update({
       where: {
-        id: params.id
+        id: id
       },
       data: {
         status: body.status,
