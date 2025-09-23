@@ -1,77 +1,90 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { useAtom } from 'jotai'
-import { currentLangAtom } from '@/lib/atoms'
-import { Card, CardContent } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Check } from 'lucide-react'
-import Link from 'next/link'
-import Image from 'next/image'
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAtom } from "jotai";
+import { currentLangAtom } from "@/lib/atoms";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Check } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
 
 export default function RegisterPage() {
-  const router = useRouter()
-  const [currentLang] = useAtom(currentLangAtom)
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const router = useRouter();
+  const [currentLang] = useAtom(currentLangAtom);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const text = {
-    title: { ar: 'إنشاء حساب جديد', en: 'Create Your Account' },
-    subtitle: { ar: 'انضم إلى عائلة مجوهرات أورنا', en: 'Join the Orna Jewelry family' },
-    name: { ar: 'الاسم الكامل', en: 'Full Name' },
-    email: { ar: 'البريد الإلكتروني', en: 'Email Address' },
-    password: { ar: 'كلمة المرور', en: 'Password' },
-    confirmPassword: { ar: 'تأكيد كلمة المرور', en: 'Confirm Password' },
-    createAccount: { ar: 'إنشاء الحساب', en: 'Create Account' },
-    creating: { ar: 'جار إنشاء الحساب...', en: 'Creating account...' },
-    haveAccount: { ar: 'لديك حساب بالفعل؟', en: 'Already have an account?' },
-    signIn: { ar: 'تسجيل الدخول', en: 'Sign In' },
-    backToHome: { ar: 'العودة للرئيسية', en: 'Back to Home' },
-    brandName: { ar: 'مجوهرات أورنا', en: 'Orna Jewelry' },
-    tagline: { ar: 'جمال يدوم للأبد', en: 'Beauty that lasts forever' },
-    passwordMismatch: { ar: 'كلمتا المرور غير متطابقتين', en: 'Passwords do not match' }
-  }
+    title: { ar: "إنشاء حساب جديد", en: "Create Your Account" },
+    subtitle: {
+      ar: "انضم إلى عائلة مجوهرات أورنا",
+      en: "Join the Orna Jewelry family",
+    },
+    name: { ar: "الاسم الكامل", en: "Full Name" },
+    email: { ar: "البريد الإلكتروني", en: "Email Address" },
+    password: { ar: "كلمة المرور", en: "Password" },
+    confirmPassword: { ar: "تأكيد كلمة المرور", en: "Confirm Password" },
+    createAccount: { ar: "إنشاء الحساب", en: "Create Account" },
+    creating: { ar: "جار إنشاء الحساب...", en: "Creating account..." },
+    haveAccount: { ar: "لديك حساب بالفعل؟", en: "Already have an account?" },
+    signIn: { ar: "تسجيل الدخول", en: "Sign In" },
+    backToHome: { ar: "العودة للرئيسية", en: "Back to Home" },
+    brandName: { ar: "مجوهرات أورنا", en: "Orna Jewelry" },
+    tagline: { ar: "جمال يدوم للأبد", en: "Beauty that lasts forever" },
+    passwordMismatch: {
+      ar: "كلمتا المرور غير متطابقتين",
+      en: "Passwords do not match",
+    },
+  };
 
   const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
-    
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
     // Client-side validation
     if (password !== confirmPassword) {
-      setError(text.passwordMismatch[currentLang as keyof typeof text.passwordMismatch])
-      setLoading(false)
-      return
+      setError(
+        text.passwordMismatch[
+          currentLang as keyof typeof text.passwordMismatch
+        ],
+      );
+      setLoading(false);
+      return;
     }
-    
+
     try {
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password })
-      })
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
       if (!res.ok) {
-        const data = await res.json()
-        throw new Error(data.error || 'Registration failed')
+        const data = await res.json();
+        throw new Error(data.error || "Registration failed");
       }
-      router.replace('/login?message=registered')
+      router.replace("/login?message=registered");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Registration failed')
+      setError(err instanceof Error ? err.message : "Registration failed");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <div className="min-h-screen flex bg-gradient-to-br from-rose-50 via-white to-amber-50" dir={currentLang === 'ar' ? 'rtl' : 'ltr'}>
+    <div
+      className="min-h-screen flex bg-gradient-to-br from-rose-50 via-white to-amber-50"
+      dir={currentLang === "ar" ? "rtl" : "ltr"}
+    >
       {/* Left Side - Brand Showcase */}
       <div className="hidden lg:flex lg:flex-1 relative overflow-hidden">
         <div className="absolute inset-0">
@@ -84,7 +97,7 @@ export default function RegisterPage() {
           />
           <div className="absolute inset-0 bg-gradient-to-br from-rose-900/80 via-rose-800/60 to-amber-900/80" />
         </div>
-        
+
         {/* Decorative elements */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-32 right-20 w-48 h-48 border border-white/20 rounded-full opacity-30" />
@@ -108,24 +121,30 @@ export default function RegisterPage() {
                 </p>
               </div>
             </div>
-            
+
             <div className="space-y-6 text-rose-100">
               <div className="flex items-center gap-4">
                 <Check className="w-6 h-6 text-rose-300" />
                 <p className="text-lg">
-                  {currentLang === 'ar' ? 'حساب مجاني بالكامل' : 'Completely free account'}
+                  {currentLang === "ar"
+                    ? "حساب مجاني بالكامل"
+                    : "Completely free account"}
                 </p>
               </div>
               <div className="flex items-center gap-4">
                 <Check className="w-6 h-6 text-rose-300" />
                 <p className="text-lg">
-                  {currentLang === 'ar' ? 'عروض حصرية للأعضاء' : 'Exclusive member offers'}
+                  {currentLang === "ar"
+                    ? "عروض حصرية للأعضاء"
+                    : "Exclusive member offers"}
                 </p>
               </div>
               <div className="flex items-center gap-4">
                 <Check className="w-6 h-6 text-rose-300" />
                 <p className="text-lg">
-                  {currentLang === 'ar' ? 'تتبع الطلبات والمفضلة' : 'Order tracking and wishlist'}
+                  {currentLang === "ar"
+                    ? "تتبع الطلبات والمفضلة"
+                    : "Order tracking and wishlist"}
                 </p>
               </div>
             </div>
@@ -146,7 +165,7 @@ export default function RegisterPage() {
                 {text.brandName[currentLang as keyof typeof text.brandName]}
               </h1>
             </div>
-            
+
             <h2 className="text-3xl font-bold text-neutral-900 mb-2">
               {text.title[currentLang as keyof typeof text.title]}
             </h2>
@@ -177,7 +196,11 @@ export default function RegisterPage() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       className="pl-10 h-12 border-neutral-200 focus:border-amber-400 focus:ring-amber-400"
-                      placeholder={currentLang === 'ar' ? 'أدخل اسمك الكامل' : 'Enter your full name'}
+                      placeholder={
+                        currentLang === "ar"
+                          ? "أدخل اسمك الكامل"
+                          : "Enter your full name"
+                      }
                       required
                     />
                   </div>
@@ -195,7 +218,11 @@ export default function RegisterPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="pl-10 h-12 border-neutral-200 focus:border-amber-400 focus:ring-amber-400"
-                      placeholder={currentLang === 'ar' ? 'أدخل بريدك الإلكتروني' : 'Enter your email'}
+                      placeholder={
+                        currentLang === "ar"
+                          ? "أدخل بريدك الإلكتروني"
+                          : "Enter your email"
+                      }
                       required
                     />
                   </div>
@@ -213,7 +240,11 @@ export default function RegisterPage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="pl-10 pr-10 h-12 border-neutral-200 focus:border-amber-400 focus:ring-amber-400"
-                      placeholder={currentLang === 'ar' ? 'أدخل كلمة المرور' : 'Enter your password'}
+                      placeholder={
+                        currentLang === "ar"
+                          ? "أدخل كلمة المرور"
+                          : "Enter your password"
+                      }
                       required
                       minLength={6}
                     />
@@ -222,7 +253,11 @@ export default function RegisterPage() {
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
                     >
-                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                      {showPassword ? (
+                        <EyeOff className="h-5 w-5" />
+                      ) : (
+                        <Eye className="h-5 w-5" />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -230,7 +265,11 @@ export default function RegisterPage() {
                 {/* Confirm Password Field */}
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-neutral-700">
-                    {text.confirmPassword[currentLang as keyof typeof text.confirmPassword]}
+                    {
+                      text.confirmPassword[
+                        currentLang as keyof typeof text.confirmPassword
+                      ]
+                    }
                   </label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-neutral-400" />
@@ -239,15 +278,25 @@ export default function RegisterPage() {
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       className="pl-10 pr-10 h-12 border-neutral-200 focus:border-amber-400 focus:ring-amber-400"
-                      placeholder={currentLang === 'ar' ? 'أعد إدخال كلمة المرور' : 'Confirm your password'}
+                      placeholder={
+                        currentLang === "ar"
+                          ? "أعد إدخال كلمة المرور"
+                          : "Confirm your password"
+                      }
                       required
                     />
                     <button
                       type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
                     >
-                      {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                      {showConfirmPassword ? (
+                        <EyeOff className="h-5 w-5" />
+                      ) : (
+                        <Eye className="h-5 w-5" />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -265,7 +314,11 @@ export default function RegisterPage() {
                     </div>
                   ) : (
                     <div className="flex items-center justify-center gap-2">
-                      {text.createAccount[currentLang as keyof typeof text.createAccount]}
+                      {
+                        text.createAccount[
+                          currentLang as keyof typeof text.createAccount
+                        ]
+                      }
                       <ArrowRight className="h-5 w-5" />
                     </div>
                   )}
@@ -277,7 +330,7 @@ export default function RegisterPage() {
           {/* Footer Links */}
           <div className="mt-8 text-center space-y-4">
             <p className="text-neutral-600">
-              {text.haveAccount[currentLang as keyof typeof text.haveAccount]}{' '}
+              {text.haveAccount[currentLang as keyof typeof text.haveAccount]}{" "}
               <Link
                 href="/login"
                 className="text-amber-600 hover:text-amber-700 font-medium hover:underline transition-colors"
@@ -285,7 +338,7 @@ export default function RegisterPage() {
                 {text.signIn[currentLang as keyof typeof text.signIn]}
               </Link>
             </p>
-            
+
             <Link
               href="/"
               className="inline-flex items-center gap-2 text-neutral-500 hover:text-neutral-700 transition-colors"
@@ -297,7 +350,5 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
-
-

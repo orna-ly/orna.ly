@@ -1,42 +1,42 @@
-'use client'
+"use client";
 
-import { useAtom } from 'jotai'
-import { currentLangAtom } from '@/lib/atoms'
-import { ContactForm } from '@/components/forms/contact-form'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { MapPin, Phone, Mail, Clock } from 'lucide-react'
+import { useAtom } from "jotai";
+import { currentLangAtom } from "@/lib/atoms";
+import { ContactForm } from "@/components/forms/contact-form";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { MapPin, Phone, Mail, Clock } from "lucide-react";
 
 export default function ContactPage() {
-  const [currentLang] = useAtom(currentLangAtom)
+  const [currentLang] = useAtom(currentLangAtom);
 
   const contactInfo = [
     {
       icon: MapPin,
-      title: { ar: 'العنوان', en: 'Address' },
-      content: { 
-        ar: 'طرابلس، ليبيا', 
-        en: 'Riyadh, Saudi Arabia' 
-      }
+      title: { ar: "العنوان", en: "Address" },
+      content: {
+        ar: "طرابلس، ليبيا",
+        en: "Riyadh, Saudi Arabia",
+      },
     },
     {
       icon: Phone,
-      title: { ar: 'الهاتف', en: 'Phone' },
-      content: '+218 91 123 4567'
+      title: { ar: "الهاتف", en: "Phone" },
+      content: "+218 91 123 4567",
     },
     {
       icon: Mail,
-      title: { ar: 'البريد الإلكتروني', en: 'Email' },
-      content: 'info@orna.ly'
+      title: { ar: "البريد الإلكتروني", en: "Email" },
+      content: "info@orna.ly",
     },
     {
       icon: Clock,
-      title: { ar: 'ساعات العمل', en: 'Working Hours' },
-      content: { 
-        ar: 'الأحد - الخميس: 9ص - 9م', 
-        en: 'Sunday - Thursday: 9 AM - 9 PM' 
-      }
-    }
-  ]
+      title: { ar: "ساعات العمل", en: "Working Hours" },
+      content: {
+        ar: "الأحد - الخميس: 9ص - 9م",
+        en: "Sunday - Thursday: 9 AM - 9 PM",
+      },
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-neutral-50">
@@ -44,13 +44,12 @@ export default function ContactPage() {
         {/* Header */}
         <div className="text-center mb-16">
           <h1 className="text-4xl font-bold text-neutral-900 mb-4">
-            {currentLang === 'ar' ? 'اتصل بنا' : 'Contact Us'}
+            {currentLang === "ar" ? "اتصل بنا" : "Contact Us"}
           </h1>
           <p className="text-xl text-neutral-600">
-            {currentLang === 'ar' 
-              ? 'نحن هنا للإجابة على جميع استفساراتك'
-              : 'We\'re here to answer all your questions'
-            }
+            {currentLang === "ar"
+              ? "نحن هنا للإجابة على جميع استفساراتك"
+              : "We're here to answer all your questions"}
           </p>
         </div>
 
@@ -60,7 +59,9 @@ export default function ContactPage() {
             <Card>
               <CardHeader>
                 <CardTitle>
-                  {currentLang === 'ar' ? 'أرسل لنا رسالة' : 'Send us a Message'}
+                  {currentLang === "ar"
+                    ? "أرسل لنا رسالة"
+                    : "Send us a Message"}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -74,12 +75,14 @@ export default function ContactPage() {
             <Card>
               <CardHeader>
                 <CardTitle>
-                  {currentLang === 'ar' ? 'معلومات التواصل' : 'Contact Information'}
+                  {currentLang === "ar"
+                    ? "معلومات التواصل"
+                    : "Contact Information"}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 {contactInfo.map((info, index) => {
-                  const IconComponent = info.icon
+                  const IconComponent = info.icon;
                   return (
                     <div key={index} className="flex items-start gap-4">
                       <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
@@ -87,20 +90,20 @@ export default function ContactPage() {
                       </div>
                       <div>
                         <h3 className="font-semibold text-neutral-900">
-                          {typeof info.title === 'object' 
+                          {typeof info.title === "object"
                             ? info.title[currentLang as keyof typeof info.title]
-                            : info.title
-                          }
+                            : info.title}
                         </h3>
                         <p className="text-neutral-600">
-                          {typeof info.content === 'object' 
-                            ? info.content[currentLang as keyof typeof info.content]
-                            : info.content
-                          }
+                          {typeof info.content === "object"
+                            ? info.content[
+                                currentLang as keyof typeof info.content
+                              ]
+                            : info.content}
                         </p>
                       </div>
                     </div>
-                  )
+                  );
                 })}
               </CardContent>
             </Card>
@@ -109,19 +112,21 @@ export default function ContactPage() {
             <Card>
               <CardHeader>
                 <CardTitle>
-                  {currentLang === 'ar' ? 'تابعنا على' : 'Follow Us'}
+                  {currentLang === "ar" ? "تابعنا على" : "Follow Us"}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex gap-4">
-                  {['Facebook', 'Instagram', 'Twitter', 'WhatsApp'].map((social) => (
-                    <div 
-                      key={social}
-                      className="w-12 h-12 bg-neutral-100 rounded-full flex items-center justify-center hover:bg-amber-100 transition-colors cursor-pointer"
-                    >
-                      <span className="text-sm font-medium">{social[0]}</span>
-                    </div>
-                  ))}
+                  {["Facebook", "Instagram", "Twitter", "WhatsApp"].map(
+                    (social) => (
+                      <div
+                        key={social}
+                        className="w-12 h-12 bg-neutral-100 rounded-full flex items-center justify-center hover:bg-amber-100 transition-colors cursor-pointer"
+                      >
+                        <span className="text-sm font-medium">{social[0]}</span>
+                      </div>
+                    ),
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -130,32 +135,40 @@ export default function ContactPage() {
             <Card>
               <CardHeader>
                 <CardTitle>
-                  {currentLang === 'ar' ? 'لماذا تختارنا؟' : 'Why Choose Us?'}
+                  {currentLang === "ar" ? "لماذا تختارنا؟" : "Why Choose Us?"}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-amber-600 rounded-full"></div>
                   <span className="text-sm">
-                    {currentLang === 'ar' ? 'ضمان الجودة العالية' : 'High Quality Assurance'}
+                    {currentLang === "ar"
+                      ? "ضمان الجودة العالية"
+                      : "High Quality Assurance"}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-amber-600 rounded-full"></div>
                   <span className="text-sm">
-                    {currentLang === 'ar' ? 'توصيل سريع وآمن' : 'Fast & Secure Delivery'}
+                    {currentLang === "ar"
+                      ? "توصيل سريع وآمن"
+                      : "Fast & Secure Delivery"}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-amber-600 rounded-full"></div>
                   <span className="text-sm">
-                    {currentLang === 'ar' ? 'خدمة عملاء متميزة' : 'Excellent Customer Service'}
+                    {currentLang === "ar"
+                      ? "خدمة عملاء متميزة"
+                      : "Excellent Customer Service"}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-amber-600 rounded-full"></div>
                   <span className="text-sm">
-                    {currentLang === 'ar' ? 'سياسة إرجاع مرنة' : 'Flexible Return Policy'}
+                    {currentLang === "ar"
+                      ? "سياسة إرجاع مرنة"
+                      : "Flexible Return Policy"}
                   </span>
                 </div>
               </CardContent>
@@ -164,5 +177,5 @@ export default function ContactPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

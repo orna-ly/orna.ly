@@ -1,10 +1,7 @@
 "use client";
 
 import { useAtom } from "jotai";
-import {
-  currentLangAtom,
-  productsAtom,
-} from "@/lib/atoms";
+import { currentLangAtom, productsAtom } from "@/lib/atoms";
 import { HeroCarousel } from "@/components/layout/hero-carousel";
 import { ProductCarousel } from "@/components/product";
 import { Button } from "@/components/ui/button";
@@ -20,24 +17,36 @@ export default function Home() {
   const features = [
     {
       icon: Star,
-      title: { ar: 'جودة استثنائية', en: 'Premium Quality' },
-      description: { ar: 'مجوهرات فاخرة بأعلى معايير الجودة', en: 'Luxury jewelry with highest quality standards' }
+      title: { ar: "جودة استثنائية", en: "Premium Quality" },
+      description: {
+        ar: "مجوهرات فاخرة بأعلى معايير الجودة",
+        en: "Luxury jewelry with highest quality standards",
+      },
     },
     {
       icon: Shield,
-      title: { ar: 'ضمان شامل', en: 'Full Warranty' },
-      description: { ar: 'ضمان مدى الحياة على جميع منتجاتنا', en: 'Lifetime warranty on all our products' }
+      title: { ar: "ضمان شامل", en: "Full Warranty" },
+      description: {
+        ar: "ضمان مدى الحياة على جميع منتجاتنا",
+        en: "Lifetime warranty on all our products",
+      },
     },
     {
       icon: Truck,
-      title: { ar: 'توصيل سريع', en: 'Fast Delivery' },
-      description: { ar: 'توصيل سريع داخل ليبيا', en: 'Fast delivery across Libya' }
+      title: { ar: "توصيل سريع", en: "Fast Delivery" },
+      description: {
+        ar: "توصيل سريع داخل ليبيا",
+        en: "Fast delivery across Libya",
+      },
     },
     {
       icon: Award,
-      title: { ar: 'تصاميم حصرية', en: 'Exclusive Designs' },
-      description: { ar: 'تصاميم فريدة لا تجدها في مكان آخر', en: 'Unique designs you won\'t find elsewhere' }
-    }
+      title: { ar: "تصاميم حصرية", en: "Exclusive Designs" },
+      description: {
+        ar: "تصاميم فريدة لا تجدها في مكان آخر",
+        en: "Unique designs you won't find elsewhere",
+      },
+    },
   ];
 
   return (
@@ -50,7 +59,9 @@ export default function Home() {
         <div className="container-width">
           <div className="text-center mb-12">
             <Badge className="mb-4 bg-amber-100 text-amber-800 text-sm px-4 py-2">
-              {currentLang === "ar" ? "مجموعتنا المميزة" : "Featured Collection"}
+              {currentLang === "ar"
+                ? "مجموعتنا المميزة"
+                : "Featured Collection"}
             </Badge>
             <h2 className="heading-2 mb-6 gradient-text-gold">
               {currentLang === "ar" ? "أحدث إبداعاتنا" : "Our Latest Creations"}
@@ -61,7 +72,7 @@ export default function Home() {
                 : "Explore our exclusive collection of luxury jewelry crafted with exceptional artistry for all your special occasions"}
             </p>
           </div>
- 
+
           {products.length > 0 ? (
             <ProductCarousel products={products} />
           ) : (
@@ -69,12 +80,14 @@ export default function Home() {
               <div className="animate-pulse">
                 <div className="text-6xl mb-4">💍</div>
                 <p className="text-neutral-600 text-lg">
-                  {currentLang === "ar" ? "جاري تحميل المنتجات..." : "Loading products..."}
+                  {currentLang === "ar"
+                    ? "جاري تحميل المنتجات..."
+                    : "Loading products..."}
                 </p>
               </div>
             </div>
           )}
- 
+
           <div className="text-center mt-12">
             <Button
               asChild
@@ -99,13 +112,14 @@ export default function Home() {
         <div className="container-width">
           <div className="text-center mb-16">
             <h2 className="heading-2 mb-6">
-              {currentLang === "ar" ? "لماذا تختار مجوهرات أورنا؟" : "Why Choose Orna Jewelry?"}
+              {currentLang === "ar"
+                ? "لماذا تختار مجوهرات أورنا؟"
+                : "Why Choose Orna Jewelry?"}
             </h2>
             <p className="body-text text-lg max-w-2xl mx-auto">
-              {currentLang === "ar" 
+              {currentLang === "ar"
                 ? "نحن نقدم أفضل تجربة تسوق للمجوهرات مع ضمان الجودة والخدمة المتميزة"
-                : "We provide the best jewelry shopping experience with quality guarantee and exceptional service"
-              }
+                : "We provide the best jewelry shopping experience with quality guarantee and exceptional service"}
             </p>
           </div>
 
@@ -113,7 +127,10 @@ export default function Home() {
             {features.map((feature, index) => {
               const IconComponent = feature.icon;
               return (
-                <Card key={index} className="jewelry-card text-center p-6 hover:shadow-xl transition-all duration-300 group">
+                <Card
+                  key={index}
+                  className="jewelry-card text-center p-6 hover:shadow-xl transition-all duration-300 group"
+                >
                   <CardContent className="space-y-4">
                     <div className="w-16 h-16 bg-gradient-to-br from-amber-100 to-amber-200 rounded-full flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300">
                       <IconComponent className="h-8 w-8 text-amber-600" />
@@ -122,7 +139,11 @@ export default function Home() {
                       {feature.title[currentLang as keyof typeof feature.title]}
                     </h3>
                     <p className="body-text">
-                      {feature.description[currentLang as keyof typeof feature.description]}
+                      {
+                        feature.description[
+                          currentLang as keyof typeof feature.description
+                        ]
+                      }
                     </p>
                   </CardContent>
                 </Card>
@@ -137,27 +158,28 @@ export default function Home() {
         <div className="container-width text-center">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              {currentLang === "ar" ? "ابدأ رحلتك مع الجمال" : "Begin Your Journey with Beauty"}
+              {currentLang === "ar"
+                ? "ابدأ رحلتك مع الجمال"
+                : "Begin Your Journey with Beauty"}
             </h2>
             <p className="text-xl mb-8 opacity-90 leading-relaxed">
-              {currentLang === "ar" 
+              {currentLang === "ar"
                 ? "اكتشف مجموعة لا تُضاهى من المجوهرات الفاخرة واجعل كل لحظة خاصة لا تُنسى"
-                : "Discover an unparalleled collection of luxury jewelry and make every moment uniquely memorable"
-              }
+                : "Discover an unparalleled collection of luxury jewelry and make every moment uniquely memorable"}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                asChild 
-                size="lg" 
+              <Button
+                asChild
+                size="lg"
                 className="bg-white text-amber-600 hover:bg-neutral-100 px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
               >
                 <Link href="/products">
                   {currentLang === "ar" ? "تسوق الآن" : "Shop Now"}
                 </Link>
               </Button>
-              <Button 
-                asChild 
-                size="lg" 
+              <Button
+                asChild
+                size="lg"
                 variant="outline"
                 className="border-white text-white hover:bg-white hover:text-amber-600 px-8 py-4 text-lg font-semibold transition-all duration-300"
               >

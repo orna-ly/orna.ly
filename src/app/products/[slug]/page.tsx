@@ -1,65 +1,65 @@
-'use client'
+"use client";
 
-import { useAtom } from 'jotai'
-import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
-import { 
-  currentLangAtom, 
-  addToCartAtom, 
+import { useAtom } from "jotai";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import {
+  currentLangAtom,
+  addToCartAtom,
   productsAtom,
-  loadProductsAtom
-} from '@/lib/atoms'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
-import { ShoppingCart, Heart, Share2, ArrowLeft, Check } from 'lucide-react'
-import Link from 'next/link'
-import type { Product } from '@/lib/atoms'
-import { formatPrice } from '@/lib/utils'
+  loadProductsAtom,
+} from "@/lib/atoms";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { ShoppingCart, Heart, Share2, ArrowLeft, Check } from "lucide-react";
+import Link from "next/link";
+import type { Product } from "@/lib/atoms";
+import { formatPrice } from "@/lib/utils";
 
 export default function ProductDetailPage() {
-  const params = useParams()
-  const slug = params.slug as string
-  
-  const [currentLang] = useAtom(currentLangAtom)
-  const [, addToCart] = useAtom(addToCartAtom)
-  const [products] = useAtom(productsAtom)
-  const [, loadProducts] = useAtom(loadProductsAtom)
-  const [product, setProduct] = useState<Product | null>(null)
-  const [selectedImage, setSelectedImage] = useState(0)
-  const [quantity, setQuantity] = useState(1)
-  const [addedToCart, setAddedToCart] = useState(false)
-  const [loading, setLoading] = useState(true)
+  const params = useParams();
+  const slug = params.slug as string;
+
+  const [currentLang] = useAtom(currentLangAtom);
+  const [, addToCart] = useAtom(addToCartAtom);
+  const [products] = useAtom(productsAtom);
+  const [, loadProducts] = useAtom(loadProductsAtom);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+  const [addedToCart, setAddedToCart] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // Initialize products and find current product
   useEffect(() => {
     const initializeProduct = async () => {
-      setLoading(true)
-      
+      setLoading(true);
+
       // Load products if not already loaded
       if (products.length === 0) {
-        await loadProducts()
+        await loadProducts();
       }
-      
-      // Find the product by slug
-      const foundProduct = products.find(p => p.slug === slug)
-      setProduct(foundProduct || null)
-      setLoading(false)
-    }
 
-    initializeProduct()
-  }, [slug, products, loadProducts])
+      // Find the product by slug
+      const foundProduct = products.find((p) => p.slug === slug);
+      setProduct(foundProduct || null);
+      setLoading(false);
+    };
+
+    initializeProduct();
+  }, [slug, products, loadProducts]);
 
   const handleAddToCart = () => {
     if (product) {
       for (let i = 0; i < quantity; i++) {
-        addToCart(product)
+        addToCart(product);
       }
-      setAddedToCart(true)
-      setTimeout(() => setAddedToCart(false), 2000)
+      setAddedToCart(true);
+      setTimeout(() => setAddedToCart(false), 2000);
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -70,7 +70,10 @@ export default function ProductDetailPage() {
               <div className="aspect-square bg-neutral-200 rounded-xl animate-pulse" />
               <div className="flex gap-2">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="w-20 h-20 bg-neutral-200 rounded-lg animate-pulse" />
+                  <div
+                    key={i}
+                    className="w-20 h-20 bg-neutral-200 rounded-lg animate-pulse"
+                  />
                 ))}
               </div>
             </div>
@@ -87,7 +90,7 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   if (!product) {
@@ -97,24 +100,23 @@ export default function ProductDetailPage() {
           <div className="bg-white rounded-xl p-12 shadow-sm">
             <div className="text-6xl mb-4">❌</div>
             <h1 className="text-2xl font-bold text-neutral-900 mb-4">
-              {currentLang === 'ar' ? 'المنتج غير موجود' : 'Product not found'}
+              {currentLang === "ar" ? "المنتج غير موجود" : "Product not found"}
             </h1>
             <p className="text-neutral-600 mb-6">
-              {currentLang === 'ar' 
-                ? 'عذراً، لم نتمكن من العثور على المنتج المطلوب'
-                : 'Sorry, we couldn\'t find the product you\'re looking for'
-              }
+              {currentLang === "ar"
+                ? "عذراً، لم نتمكن من العثور على المنتج المطلوب"
+                : "Sorry, we couldn't find the product you're looking for"}
             </p>
             <Button asChild>
               <Link href="/products">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                {currentLang === 'ar' ? 'العودة للمنتجات' : 'Back to Products'}
+                {currentLang === "ar" ? "العودة للمنتجات" : "Back to Products"}
               </Link>
             </Button>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -123,9 +125,17 @@ export default function ProductDetailPage() {
         {/* Breadcrumb */}
         <nav className="mb-8">
           <ol className="flex items-center space-x-2 text-sm text-neutral-600">
-            <li><Link href="/" className="hover:text-amber-600">{currentLang === 'ar' ? 'الرئيسية' : 'Home'}</Link></li>
+            <li>
+              <Link href="/" className="hover:text-amber-600">
+                {currentLang === "ar" ? "الرئيسية" : "Home"}
+              </Link>
+            </li>
             <li>/</li>
-            <li><Link href="/products" className="hover:text-amber-600">{currentLang === 'ar' ? 'المنتجات' : 'Products'}</Link></li>
+            <li>
+              <Link href="/products" className="hover:text-amber-600">
+                {currentLang === "ar" ? "المنتجات" : "Products"}
+              </Link>
+            </li>
             <li>/</li>
             <li className="text-neutral-900">{product.name[currentLang]}</li>
           </ol>
@@ -134,26 +144,30 @@ export default function ProductDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Product Images */}
           <div className="space-y-4">
-            <div 
+            <div
               className="relative aspect-square bg-white rounded-xl overflow-hidden bg-cover bg-center bg-no-repeat"
               style={{
-                backgroundImage: `url(${product.images[selectedImage] || '/placeholder.jpg'})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat'
+                backgroundImage: `url(${product.images[selectedImage] || "/placeholder.jpg"})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
               }}
             >
               {/* Fallback gradient background */}
               <div className="absolute inset-0 bg-gradient-to-br from-amber-50 via-rose-50 to-amber-100" />
               {product.featured && (
                 <Badge className="absolute top-4 left-4 bg-amber-600 hover:bg-amber-700">
-                  {currentLang === 'ar' ? 'مميز' : 'Featured'}
+                  {currentLang === "ar" ? "مميز" : "Featured"}
                 </Badge>
               )}
               {product.priceBeforeDiscount && (
                 <Badge variant="destructive" className="absolute top-4 right-4">
-                  {Math.round(((product.priceBeforeDiscount - product.price) / product.priceBeforeDiscount) * 100)}%
-                  {currentLang === 'ar' ? ' خصم' : ' OFF'}
+                  {Math.round(
+                    ((product.priceBeforeDiscount - product.price) /
+                      product.priceBeforeDiscount) *
+                      100,
+                  )}
+                  %{currentLang === "ar" ? " خصم" : " OFF"}
                 </Badge>
               )}
             </div>
@@ -166,13 +180,15 @@ export default function ProductDetailPage() {
                     key={index}
                     onClick={() => setSelectedImage(index)}
                     className={`relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 bg-cover bg-center bg-no-repeat ${
-                      selectedImage === index ? 'border-amber-600' : 'border-neutral-200'
+                      selectedImage === index
+                        ? "border-amber-600"
+                        : "border-neutral-200"
                     }`}
                     style={{
                       backgroundImage: `url(${image})`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      backgroundRepeat: 'no-repeat'
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      backgroundRepeat: "no-repeat",
                     }}
                   >
                     {/* Fallback gradient background */}
@@ -199,11 +215,11 @@ export default function ProductDetailPage() {
             {/* Price */}
             <div className="flex items-center gap-4">
               <span className="text-3xl font-bold text-amber-600">
-                {formatPrice(product.price, 'LYD', currentLang)}
+                {formatPrice(product.price, "LYD", currentLang)}
               </span>
               {product.priceBeforeDiscount && (
                 <span className="text-xl text-neutral-400 line-through">
-                  {formatPrice(product.priceBeforeDiscount, 'LYD', currentLang)}
+                  {formatPrice(product.priceBeforeDiscount, "LYD", currentLang)}
                 </span>
               )}
             </div>
@@ -211,7 +227,7 @@ export default function ProductDetailPage() {
             {/* Description */}
             <div>
               <h3 className="text-lg font-semibold mb-2">
-                {currentLang === 'ar' ? 'الوصف' : 'Description'}
+                {currentLang === "ar" ? "الوصف" : "Description"}
               </h3>
               <p className="text-neutral-700 leading-relaxed">
                 {product.description[currentLang]}
@@ -229,7 +245,7 @@ export default function ProductDetailPage() {
             <div className="space-y-4">
               <div>
                 <label className="text-sm font-medium text-neutral-700 mb-2 block">
-                  {currentLang === 'ar' ? 'الكمية' : 'Quantity'}
+                  {currentLang === "ar" ? "الكمية" : "Quantity"}
                 </label>
                 <div className="flex items-center gap-3">
                   <Button
@@ -239,7 +255,9 @@ export default function ProductDetailPage() {
                   >
                     -
                   </Button>
-                  <span className="w-12 text-center font-medium">{quantity}</span>
+                  <span className="w-12 text-center font-medium">
+                    {quantity}
+                  </span>
                   <Button
                     variant="outline"
                     size="icon"
@@ -251,20 +269,20 @@ export default function ProductDetailPage() {
               </div>
 
               <div className="flex gap-3">
-                <Button 
-                  size="lg" 
+                <Button
+                  size="lg"
                   className="flex-1 bg-amber-600 hover:bg-amber-700"
                   onClick={handleAddToCart}
                 >
                   {addedToCart ? (
                     <>
                       <Check className="h-4 w-4 mr-2" />
-                      {currentLang === 'ar' ? 'تم الإضافة!' : 'Added!'}
+                      {currentLang === "ar" ? "تم الإضافة!" : "Added!"}
                     </>
                   ) : (
                     <>
                       <ShoppingCart className="h-4 w-4 mr-2" />
-                      {currentLang === 'ar' ? 'إضافة للسلة' : 'Add to Cart'}
+                      {currentLang === "ar" ? "إضافة للسلة" : "Add to Cart"}
                     </>
                   )}
                 </Button>
@@ -281,26 +299,34 @@ export default function ProductDetailPage() {
             <Card>
               <CardContent className="p-4">
                 <h4 className="font-semibold mb-3">
-                  {currentLang === 'ar' ? 'تفاصيل المنتج' : 'Product Details'}
+                  {currentLang === "ar" ? "تفاصيل المنتج" : "Product Details"}
                 </h4>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span>{currentLang === 'ar' ? 'رمز المنتج:' : 'Product ID:'}</span>
+                    <span>
+                      {currentLang === "ar" ? "رمز المنتج:" : "Product ID:"}
+                    </span>
                     <span className="font-medium">{product.id}</span>
                   </div>
                   {product.wrappingPrice && (
                     <div className="flex justify-between">
-                      <span>{currentLang === 'ar' ? 'تغليف هدايا:' : 'Gift Wrapping:'}</span>
+                      <span>
+                        {currentLang === "ar"
+                          ? "تغليف هدايا:"
+                          : "Gift Wrapping:"}
+                      </span>
                       <span className="font-medium">
-                        {formatPrice(product.wrappingPrice, 'LYD', currentLang)}
+                        {formatPrice(product.wrappingPrice, "LYD", currentLang)}
                       </span>
                     </div>
                   )}
                   <div className="flex justify-between">
-                    <span>{currentLang === 'ar' ? 'تاريخ الإضافة:' : 'Date Added:'}</span>
+                    <span>
+                      {currentLang === "ar" ? "تاريخ الإضافة:" : "Date Added:"}
+                    </span>
                     <span className="font-medium">
                       {new Date(product.createdAt).toLocaleDateString(
-                        currentLang === 'ar' ? 'ar-SA' : 'en-US'
+                        currentLang === "ar" ? "ar-SA" : "en-US",
                       )}
                     </span>
                   </div>
@@ -311,5 +337,5 @@ export default function ProductDetailPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

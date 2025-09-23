@@ -101,11 +101,12 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
       priceBeforeDiscount:
         p.priceBeforeDiscount != null ? String(p.priceBeforeDiscount) : "",
       wrappingPrice: p.wrappingPrice != null ? String(p.wrappingPrice) : "",
-       stockQuantity:
-         typeof (p as Product & { stockQuantity?: number }).stockQuantity !== "undefined" && 
-         (p as Product & { stockQuantity?: number }).stockQuantity !== null
-           ? String((p as Product & { stockQuantity?: number }).stockQuantity)
-           : "0",
+      stockQuantity:
+        typeof (p as Product & { stockQuantity?: number }).stockQuantity !==
+          "undefined" &&
+        (p as Product & { stockQuantity?: number }).stockQuantity !== null
+          ? String((p as Product & { stockQuantity?: number }).stockQuantity)
+          : "0",
       featured: p.featured,
       status: p.status,
       images: (p.images || []).join(", "),
@@ -115,16 +116,16 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
   const saveEdit = async () => {
     if (!editing) return;
     setSaving(true);
-     try {
-       const body: {
-         price: number;
-         priceBeforeDiscount?: number;
-         wrappingPrice?: number;
-         stockQuantity: number;
-         featured: boolean;
-         status: string;
-         images: string[];
-       } = {
+    try {
+      const body: {
+        price: number;
+        priceBeforeDiscount?: number;
+        wrappingPrice?: number;
+        stockQuantity: number;
+        featured: boolean;
+        status: string;
+        images: string[];
+      } = {
         price: parseFloat(form.price || "0"),
         priceBeforeDiscount: form.priceBeforeDiscount
           ? parseFloat(form.priceBeforeDiscount)
@@ -164,7 +165,7 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
   const handleDelete = async (productId: string) => {
     if (
       !confirm(
-        currentLang === "ar" ? "تأكيد حذف المنتج؟" : "Delete this product?"
+        currentLang === "ar" ? "تأكيد حذف المنتج؟" : "Delete this product?",
       )
     )
       return;
@@ -251,14 +252,14 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
                 <div>
                   <div className="font-medium">
                     {new Intl.NumberFormat(
-                      currentLang === "ar" ? "ar-LY" : "en-LY"
+                      currentLang === "ar" ? "ar-LY" : "en-LY",
                     ).format(product.price)}{" "}
                     {currentLang === "ar" ? "د.ل" : "LYD"}
                   </div>
                   {product.priceBeforeDiscount && (
                     <div className="text-sm text-neutral-500 line-through">
                       {new Intl.NumberFormat(
-                        currentLang === "ar" ? "ar-LY" : "en-LY"
+                        currentLang === "ar" ? "ar-LY" : "en-LY",
                       ).format(product.priceBeforeDiscount)}{" "}
                       {currentLang === "ar" ? "د.ل" : "LYD"}
                     </div>
@@ -268,7 +269,7 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
                       {Math.round(
                         ((product.priceBeforeDiscount - product.price) /
                           product.priceBeforeDiscount) *
-                          100
+                          100,
                       )}
                       % OFF
                     </div>
@@ -284,8 +285,8 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
                         ? "مميز"
                         : "Featured"
                       : currentLang === "ar"
-                      ? "عادي"
-                      : "Regular"}
+                        ? "عادي"
+                        : "Regular"}
                   </Badge>
                   {product.priceBeforeDiscount && (
                     <Badge variant="outline" className="text-xs">
@@ -298,13 +299,13 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
               <TableCell>
                 <div className="text-sm">
                   {new Date(product.createdAt).toLocaleDateString(
-                    currentLang === "ar" ? "ar-SA" : "en-US"
+                    currentLang === "ar" ? "ar-SA" : "en-US",
                   )}
                 </div>
                 <div className="text-xs text-neutral-500">
                   {new Date(product.createdAt).toLocaleTimeString(
                     currentLang === "ar" ? "ar-SA" : "en-US",
-                    { hour: "2-digit", minute: "2-digit" }
+                    { hour: "2-digit", minute: "2-digit" },
                   )}
                 </div>
               </TableCell>
@@ -383,7 +384,10 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
                       step="0.01"
                       value={form.price}
                       onChange={(e) =>
-                         setForm((f: EditForm) => ({ ...f, price: e.target.value }))
+                        setForm((f: EditForm) => ({
+                          ...f,
+                          price: e.target.value,
+                        }))
                       }
                       className="h-11"
                     />
@@ -403,12 +407,12 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
                       type="number"
                       step="0.01"
                       value={form.priceBeforeDiscount}
-                       onChange={(e) =>
-                         setForm((f: EditForm) => ({
-                           ...f,
-                           priceBeforeDiscount: e.target.value,
-                         }))
-                       }
+                      onChange={(e) =>
+                        setForm((f: EditForm) => ({
+                          ...f,
+                          priceBeforeDiscount: e.target.value,
+                        }))
+                      }
                       className="h-11"
                     />
                   </div>
@@ -427,12 +431,12 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
                       type="number"
                       step="0.01"
                       value={form.wrappingPrice}
-                       onChange={(e) =>
-                         setForm((f: EditForm) => ({
-                           ...f,
-                           wrappingPrice: e.target.value,
-                         }))
-                       }
+                      onChange={(e) =>
+                        setForm((f: EditForm) => ({
+                          ...f,
+                          wrappingPrice: e.target.value,
+                        }))
+                      }
                       className="h-11"
                     />
                   </div>
@@ -447,12 +451,12 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
                       id="edit-stock"
                       type="number"
                       value={form.stockQuantity}
-                       onChange={(e) =>
-                         setForm((f: EditForm) => ({
-                           ...f,
-                           stockQuantity: e.target.value,
-                         }))
-                       }
+                      onChange={(e) =>
+                        setForm((f: EditForm) => ({
+                          ...f,
+                          stockQuantity: e.target.value,
+                        }))
+                      }
                       className="h-11"
                     />
                   </div>
@@ -473,7 +477,7 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
                             ((parseFloat(form.priceBeforeDiscount) -
                               parseFloat(form.price)) /
                               parseFloat(form.priceBeforeDiscount)) *
-                              100
+                              100,
                           )}
                           %
                         </span>
@@ -505,12 +509,12 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
                     <Label className="text-sm font-medium">
                       {currentLang === "ar" ? "حالة المنتج" : "Product Status"}
                     </Label>
-                     <Select
-                       value={form.status}
-                       onValueChange={(v: string) =>
-                         setForm((f: EditForm) => ({ ...f, status: v }))
-                       }
-                     >
+                    <Select
+                      value={form.status}
+                      onValueChange={(v: string) =>
+                        setForm((f: EditForm) => ({ ...f, status: v }))
+                      }
+                    >
                       <SelectTrigger className="h-11">
                         <SelectValue />
                       </SelectTrigger>
@@ -537,13 +541,16 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
                         : "Display Options"}
                     </Label>
                     <div className="flex items-center space-x-3 h-11 px-3 border rounded-md bg-neutral-50">
-                       <Checkbox
-                         id="edit-featured"
-                         checked={form.featured}
-                         onCheckedChange={(checked: boolean) =>
-                           setForm((f: EditForm) => ({ ...f, featured: !!checked }))
-                         }
-                       />
+                      <Checkbox
+                        id="edit-featured"
+                        checked={form.featured}
+                        onCheckedChange={(checked: boolean) =>
+                          setForm((f: EditForm) => ({
+                            ...f,
+                            featured: !!checked,
+                          }))
+                        }
+                      />
                       <Label
                         htmlFor="edit-featured"
                         className="text-sm cursor-pointer"
@@ -571,9 +578,12 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
                   <Textarea
                     id="edit-images"
                     value={form.images}
-                     onChange={(e) =>
-                       setForm((f: EditForm) => ({ ...f, images: e.target.value }))
-                     }
+                    onChange={(e) =>
+                      setForm((f: EditForm) => ({
+                        ...f,
+                        images: e.target.value,
+                      }))
+                    }
                     placeholder={
                       currentLang === "ar"
                         ? "افصل بين الروابط بفواصل"
@@ -619,11 +629,11 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
             {currentLang === "ar"
               ? `عرض ${(currentPage - 1) * itemsPerPage + 1} إلى ${Math.min(
                   currentPage * itemsPerPage,
-                  products.length
+                  products.length,
                 )} من ${products.length} منتج`
               : `Showing ${(currentPage - 1) * itemsPerPage + 1} to ${Math.min(
                   currentPage * itemsPerPage,
-                  products.length
+                  products.length,
                 )} of ${products.length} products`}
           </div>
 

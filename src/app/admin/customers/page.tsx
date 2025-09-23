@@ -1,33 +1,40 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface UserRow {
-  id: string
-  email: string
-  name?: string
-  role: string
-  createdAt: string
+  id: string;
+  email: string;
+  name?: string;
+  role: string;
+  createdAt: string;
 }
 
 export default function AdminCustomersPage() {
-  const [users, setUsers] = useState<UserRow[]>([])
-  const [loading, setLoading] = useState(true)
+  const [users, setUsers] = useState<UserRow[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await fetch('/api/users')
-        const data = await res.json()
-        setUsers(data)
+        const res = await fetch("/api/users");
+        const data = await res.json();
+        setUsers(data);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
-    void load()
-  }, [])
+    };
+    void load();
+  }, []);
 
   return (
     <div className="space-y-8">
@@ -48,16 +55,22 @@ export default function AdminCustomersPage() {
               </TableHeader>
               <TableBody>
                 {loading ? (
-                  <TableRow><TableCell colSpan={4}>Loading...</TableCell></TableRow>
+                  <TableRow>
+                    <TableCell colSpan={4}>Loading...</TableCell>
+                  </TableRow>
                 ) : users.length === 0 ? (
-                  <TableRow><TableCell colSpan={4}>No customers</TableCell></TableRow>
+                  <TableRow>
+                    <TableCell colSpan={4}>No customers</TableCell>
+                  </TableRow>
                 ) : (
-                  users.map(u => (
+                  users.map((u) => (
                     <TableRow key={u.id}>
                       <TableCell>{u.email}</TableCell>
-                      <TableCell>{u.name || '-'}</TableCell>
+                      <TableCell>{u.name || "-"}</TableCell>
                       <TableCell>{u.role}</TableCell>
-                      <TableCell>{new Date(u.createdAt).toLocaleDateString('en-LY')}</TableCell>
+                      <TableCell>
+                        {new Date(u.createdAt).toLocaleDateString("en-LY")}
+                      </TableCell>
                     </TableRow>
                   ))
                 )}
@@ -67,7 +80,5 @@ export default function AdminCustomersPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
-
-

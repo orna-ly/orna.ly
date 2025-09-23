@@ -98,15 +98,15 @@ export const isAdminAtom = atom((get) => {
 // Data Atoms
 export const productsAtom = atom<Product[]>([]);
 export const featuredProductsAtom = atom<Product[]>((get) =>
-  get(productsAtom).filter((p) => p.featured)
+  get(productsAtom).filter((p) => p.featured),
 );
 
 export const cartItemsAtom = atomWithStorage<CartItem[]>("cartItems", []);
 export const cartTotalAtom = atom((get) =>
   get(cartItemsAtom).reduce(
     (total, item) => total + item.product.price * item.quantity,
-    0
-  )
+    0,
+  ),
 );
 
 export const ordersAtom = atom<Order[]>([]);
@@ -173,14 +173,16 @@ export const loadContactsAtom = atom(null, async (get, set) => {
 export const loadSettingsAtom = atom(null, async (get, set) => {
   set(loadingAtom, true);
   try {
-    const response = await fetch('/api/settings');
-    if (!response.ok) throw new Error('Failed to fetch settings');
+    const response = await fetch("/api/settings");
+    if (!response.ok) throw new Error("Failed to fetch settings");
     const data = (await response.json()) as SettingKV<unknown>[];
     const map: Record<string, unknown> = {};
-    data.forEach((s) => { map[s.key] = s.value; });
+    data.forEach((s) => {
+      map[s.key] = s.value;
+    });
     set(settingsAtom, map);
   } catch (error) {
-    console.error('Error loading settings:', error);
+    console.error("Error loading settings:", error);
   } finally {
     set(loadingAtom, false);
   }
@@ -189,7 +191,7 @@ export const loadSettingsAtom = atom(null, async (get, set) => {
 // User Authentication Loading Atom
 export const loadCurrentUserAtom = atom(null, async (get, set) => {
   try {
-    const response = await fetch('/api/auth/me');
+    const response = await fetch("/api/auth/me");
     if (response.ok) {
       const user = await response.json();
       set(currentUserAtom, user);
@@ -197,7 +199,7 @@ export const loadCurrentUserAtom = atom(null, async (get, set) => {
       set(currentUserAtom, null);
     }
   } catch (error) {
-    console.error('Error loading current user:', error);
+    console.error("Error loading current user:", error);
     set(currentUserAtom, null);
   }
 });
@@ -205,10 +207,10 @@ export const loadCurrentUserAtom = atom(null, async (get, set) => {
 // Logout Action
 export const logoutAtom = atom(null, async (get, set) => {
   try {
-    await fetch('/api/auth/logout', { method: 'POST' });
+    await fetch("/api/auth/logout", { method: "POST" });
     set(currentUserAtom, null);
   } catch (error) {
-    console.error('Error logging out:', error);
+    console.error("Error logging out:", error);
   }
 });
 
@@ -216,14 +218,14 @@ export const logoutAtom = atom(null, async (get, set) => {
 export const addToCartAtom = atom(null, (get, set, product: Product) => {
   const currentItems = get(cartItemsAtom);
   const existingItem = currentItems.find(
-    (item) => item.product.id === product.id
+    (item) => item.product.id === product.id,
   );
 
   if (existingItem) {
     const updatedItems = currentItems.map((item) =>
       item.product.id === product.id
         ? { ...item, quantity: item.quantity + 1 }
-        : item
+        : item,
     );
     set(cartItemsAtom, updatedItems);
   } else {
@@ -234,7 +236,7 @@ export const addToCartAtom = atom(null, (get, set, product: Product) => {
 export const removeFromCartAtom = atom(null, (get, set, productId: string) => {
   const currentItems = get(cartItemsAtom);
   const updatedItems = currentItems.filter(
-    (item) => item.product.id !== productId
+    (item) => item.product.id !== productId,
   );
   set(cartItemsAtom, updatedItems);
 });
@@ -244,12 +246,12 @@ export const updateCartQuantityAtom = atom(
   (
     get,
     set,
-    { productId, quantity }: { productId: string; quantity: number }
+    { productId, quantity }: { productId: string; quantity: number },
   ) => {
     const currentItems = get(cartItemsAtom);
     const updatedItems = currentItems.map((item) =>
-      item.product.id === productId ? { ...item, quantity } : item
+      item.product.id === productId ? { ...item, quantity } : item,
     );
     set(cartItemsAtom, updatedItems);
-  }
+  },
 );

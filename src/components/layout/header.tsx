@@ -22,10 +22,23 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { ShoppingCart, Menu, Globe, User, LogOut, Settings } from "lucide-react";
+import {
+  ShoppingCart,
+  Menu,
+  Globe,
+  User,
+  LogOut,
+  Settings,
+} from "lucide-react";
 import Link from "next/link";
 import { useEffect } from "react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export function Header() {
   const [currentLang, setCurrentLang] = useAtom(currentLangAtom);
@@ -53,7 +66,7 @@ export function Header() {
 
   const cartItemsCount = cartItems.reduce(
     (sum, item) => sum + item.quantity,
-    0
+    0,
   );
 
   const navigation = [
@@ -182,25 +195,38 @@ export function Header() {
             {isLoggedIn ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="focus-ring hover:bg-amber-50">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="focus-ring hover:bg-amber-50"
+                  >
                     <User className="h-5 w-5 text-neutral-600" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                   <div className="px-3 py-2 text-sm">
-                    <p className="font-medium">{currentUser?.name || currentUser?.email}</p>
-                    <p className="text-xs text-neutral-500">{currentUser?.email}</p>
+                    <p className="font-medium">
+                      {currentUser?.name || currentUser?.email}
+                    </p>
+                    <p className="text-xs text-neutral-500">
+                      {currentUser?.email}
+                    </p>
                   </div>
                   <DropdownMenuSeparator />
                   {isAdmin && (
                     <DropdownMenuItem asChild>
                       <Link href="/admin" className="flex items-center">
                         <Settings className="mr-2 h-4 w-4" />
-                        {currentLang === "ar" ? "لوحة الإدارة" : "Admin Dashboard"}
+                        {currentLang === "ar"
+                          ? "لوحة الإدارة"
+                          : "Admin Dashboard"}
                       </Link>
                     </DropdownMenuItem>
                   )}
-                  <DropdownMenuItem onClick={handleLogout} className="text-red-600">
+                  <DropdownMenuItem
+                    onClick={handleLogout}
+                    className="text-red-600"
+                  >
                     <LogOut className="mr-2 h-4 w-4" />
                     {currentLang === "ar" ? "تسجيل الخروج" : "Logout"}
                   </DropdownMenuItem>
@@ -208,7 +234,11 @@ export function Header() {
               </DropdownMenu>
             ) : (
               <div className="hidden md:flex items-center space-x-2">
-                <Button variant="ghost" asChild className="text-neutral-700 hover:text-amber-600">
+                <Button
+                  variant="ghost"
+                  asChild
+                  className="text-neutral-700 hover:text-amber-600"
+                >
                   <Link href="/login">
                     {currentLang === "ar" ? "تسجيل الدخول" : "Login"}
                   </Link>
@@ -233,11 +263,15 @@ export function Header() {
                   {/* User info for mobile */}
                   {isLoggedIn && (
                     <div className="pb-4 border-b border-neutral-200">
-                      <p className="font-medium text-neutral-900">{currentUser?.name || currentUser?.email}</p>
-                      <p className="text-sm text-neutral-500">{currentUser?.email}</p>
+                      <p className="font-medium text-neutral-900">
+                        {currentUser?.name || currentUser?.email}
+                      </p>
+                      <p className="text-sm text-neutral-500">
+                        {currentUser?.email}
+                      </p>
                     </div>
                   )}
-                  
+
                   {/* Navigation items */}
                   {navigation.map((item) => (
                     <div key={item.href}>
@@ -268,7 +302,7 @@ export function Header() {
                       )}
                     </div>
                   ))}
-                  
+
                   {/* Auth actions for mobile */}
                   <div className="pt-4 border-t border-neutral-200 space-y-2">
                     {isLoggedIn ? (
@@ -280,7 +314,9 @@ export function Header() {
                             onClick={() => setMobileMenuOpen(false)}
                           >
                             <Settings className="mr-2 h-5 w-5" />
-                            {currentLang === "ar" ? "لوحة الإدارة" : "Admin Dashboard"}
+                            {currentLang === "ar"
+                              ? "لوحة الإدارة"
+                              : "Admin Dashboard"}
                           </Link>
                         )}
                         <button

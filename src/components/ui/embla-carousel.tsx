@@ -1,33 +1,33 @@
-import React from 'react'
-import { EmblaOptionsType } from 'embla-carousel'
-import useEmblaCarousel from 'embla-carousel-react'
-import ClassNames from 'embla-carousel-class-names'
-import Image from 'next/image'
+import React from "react";
+import { EmblaOptionsType } from "embla-carousel";
+import useEmblaCarousel from "embla-carousel-react";
+import ClassNames from "embla-carousel-class-names";
+import Image from "next/image";
 import {
   NextButton,
   PrevButton,
-  usePrevNextButtons
-} from './embla-carousel-arrow-buttons'
-import { DotButton, useDotButton } from './embla-carousel-dot-button'
+  usePrevNextButtons,
+} from "./embla-carousel-arrow-buttons";
+import { DotButton, useDotButton } from "./embla-carousel-dot-button";
 
 type PropType = {
-  slides: number[]
-  options?: EmblaOptionsType
-}
+  slides: number[];
+  options?: EmblaOptionsType;
+};
 
 const EmblaCarousel: React.FC<PropType> = (props) => {
-  const { slides, options } = props
-  const [emblaRef, emblaApi] = useEmblaCarousel(options, [ClassNames()])
+  const { slides, options } = props;
+  const [emblaRef, emblaApi] = useEmblaCarousel(options, [ClassNames()]);
 
   const { selectedIndex, scrollSnaps, onDotButtonClick } =
-    useDotButton(emblaApi)
+    useDotButton(emblaApi);
 
   const {
     prevBtnDisabled,
     nextBtnDisabled,
     onPrevButtonClick,
-    onNextButtonClick
-  } = usePrevNextButtons(emblaApi)
+    onNextButtonClick,
+  } = usePrevNextButtons(emblaApi);
 
   return (
     <div className="embla">
@@ -58,15 +58,15 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
             <DotButton
               key={index}
               onClick={() => onDotButtonClick(index)}
-              className={'embla__dot'.concat(
-                index === selectedIndex ? ' embla__dot--selected' : ''
+              className={"embla__dot".concat(
+                index === selectedIndex ? " embla__dot--selected" : "",
               )}
             />
           ))}
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default EmblaCarousel
+export default EmblaCarousel;

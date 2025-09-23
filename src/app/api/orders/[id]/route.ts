@@ -4,7 +4,7 @@ import { requireAdmin } from "@/lib/admin-auth";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -30,14 +30,14 @@ export async function GET(
     console.error("Error fetching order:", error);
     return NextResponse.json(
       { error: "Failed to fetch order" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     if (!requireAdmin(request)) {
@@ -70,14 +70,14 @@ export async function PUT(
     console.error("Error updating order:", error);
     return NextResponse.json(
       { error: "Failed to update order" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const user = requireAdmin(request);
@@ -102,7 +102,7 @@ export async function DELETE(
     console.error("Error deleting order:", error);
     return NextResponse.json(
       { error: "Failed to delete order" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

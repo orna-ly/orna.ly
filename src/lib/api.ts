@@ -44,7 +44,7 @@ export async function fetchProduct(id: string): Promise<ApiResponse<Product>> {
 }
 
 export async function fetchProductBySlug(
-  slug: string
+  slug: string,
 ): Promise<ApiResponse<Product>> {
   try {
     const response = await fetch(`/api/products/slug/${slug}`);
@@ -85,7 +85,17 @@ export async function fetchOrders(params?: {
 }
 
 export async function createOrder(
-  orderData: Omit<Order, 'id' | 'status' | 'createdAt' | 'updatedAt' | 'orderNumber' | 'paymentStatus' | 'paymentUrl' | 'customerId'>
+  orderData: Omit<
+    Order,
+    | "id"
+    | "status"
+    | "createdAt"
+    | "updatedAt"
+    | "orderNumber"
+    | "paymentStatus"
+    | "paymentUrl"
+    | "customerId"
+  >,
 ): Promise<ApiResponse<Order>> {
   try {
     const response = await fetch("/api/orders", {
@@ -130,7 +140,10 @@ export async function fetchContacts(params?: {
 }
 
 export async function createContact(
-  contactData: Pick<Contact, 'name' | 'email' | 'phone' | 'subject' | 'message'>
+  contactData: Pick<
+    Contact,
+    "name" | "email" | "phone" | "subject" | "message"
+  >,
 ): Promise<ApiResponse<Contact>> {
   try {
     const response = await fetch("/api/contacts", {

@@ -103,7 +103,7 @@ export default function CartPage() {
                             {formatPrice(
                               item.product.price,
                               "LYD",
-                              currentLang
+                              currentLang,
                             )}
                           </p>
                         </div>
@@ -170,7 +170,7 @@ export default function CartPage() {
                           {formatPrice(
                             item.product.price * item.quantity,
                             "LYD",
-                            currentLang
+                            currentLang,
                           )}
                         </span>
                       </div>

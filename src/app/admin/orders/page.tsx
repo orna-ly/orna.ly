@@ -157,7 +157,7 @@ export default function AdminOrdersPage() {
 
   const updateOrder = async (
     orderId: string,
-    data: { status?: string; paymentStatus?: string }
+    data: { status?: string; paymentStatus?: string },
   ) => {
     try {
       const res = await fetch(`/api/orders/${orderId}`, {
@@ -178,7 +178,7 @@ export default function AdminOrdersPage() {
       !confirm(
         currentLang === "ar"
           ? "هل أنت متأكد من حذف هذا الطلب؟"
-          : "Are you sure you want to delete this order?"
+          : "Are you sure you want to delete this order?",
       )
     ) {
       return;
@@ -296,7 +296,7 @@ export default function AdminOrdersPage() {
 
     const csvContent = [headers, ...csvData]
       .map((row) =>
-        row.map((field) => `"${String(field).replace(/"/g, '""')}"`).join(",")
+        row.map((field) => `"${String(field).replace(/"/g, '""')}"`).join(","),
       )
       .join("\n");
 
@@ -379,12 +379,12 @@ export default function AdminOrdersPage() {
 
   const pendingOrders = orders.filter((o) => o.status === "PENDING").length;
   const processingOrders = orders.filter(
-    (o) => o.status === "PROCESSING"
+    (o) => o.status === "PROCESSING",
   ).length;
   const completedOrders = orders.filter((o) => o.status === "DELIVERED").length;
   const totalRevenue = orders.reduce(
     (sum, order) => sum + order.totalAmount,
-    0
+    0,
   );
 
   const getStatusColor = (status: string) => {
@@ -537,8 +537,8 @@ export default function AdminOrdersPage() {
                       ? "جاري الاستيراد..."
                       : "Importing..."
                     : currentLang === "ar"
-                    ? "استيراد CSV"
-                    : "Import CSV"}
+                      ? "استيراد CSV"
+                      : "Import CSV"}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -761,7 +761,7 @@ export default function AdminOrdersPage() {
                       >
                         <SelectTrigger
                           className={`w-28 ${getPaymentStatusColor(
-                            order.paymentStatus
+                            order.paymentStatus,
                           )}`}
                         >
                           <SelectValue />
@@ -785,7 +785,7 @@ export default function AdminOrdersPage() {
                     <TableCell>
                       <div className="text-sm">
                         {new Date(order.createdAt).toLocaleDateString(
-                          currentLang === "ar" ? "ar-LY" : "en-LY"
+                          currentLang === "ar" ? "ar-LY" : "en-LY",
                         )}
                       </div>
                     </TableCell>
@@ -834,11 +834,11 @@ export default function AdminOrdersPage() {
                 {currentLang === "ar"
                   ? `عرض ${(currentPage - 1) * itemsPerPage + 1}-${Math.min(
                       currentPage * itemsPerPage,
-                      filteredOrders.length
+                      filteredOrders.length,
                     )} من ${filteredOrders.length}`
                   : `Showing ${(currentPage - 1) * itemsPerPage + 1}-${Math.min(
                       currentPage * itemsPerPage,
-                      filteredOrders.length
+                      filteredOrders.length,
                     )} of ${filteredOrders.length}`}
               </div>
               <div className="flex items-center gap-2">
@@ -1155,8 +1155,8 @@ export default function AdminOrdersPage() {
                     ? "جاري الحفظ..."
                     : "Saving..."
                   : currentLang === "ar"
-                  ? "حفظ التغييرات"
-                  : "Save Changes"}
+                    ? "حفظ التغييرات"
+                    : "Save Changes"}
               </Button>
             </div>
           </div>

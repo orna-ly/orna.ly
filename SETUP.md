@@ -3,11 +3,13 @@
 ## 🚀 Quick Start
 
 ### 1. Install Dependencies
+
 ```bash
 npm install
 ```
 
 ### 2. Environment Setup
+
 Create a `.env.local` file in the root directory with the following variables:
 
 ```bash
@@ -20,6 +22,7 @@ NEXT_PUBLIC_APP_NAME="Orna Jewelry"
 ```
 
 ### 3. Database Setup
+
 ```bash
 # Generate Prisma client
 npm run db:generate
@@ -32,6 +35,7 @@ npm run db:seed
 ```
 
 ### 4. Start Development Server
+
 ```bash
 npm run dev
 ```
@@ -65,29 +69,34 @@ src/
 ## 🛠️ Features Implemented
 
 ### ✅ State Management (Jotai)
+
 - Global state for products, orders, contacts
 - Cart management with localStorage persistence
 - Language switching (Arabic/English)
 - Loading states and error handling
 
 ### ✅ Database (Prisma + PostgreSQL)
+
 - Product management with multilingual support
 - Order processing with items and customer info
 - Contact form submissions
 - User management (ready for authentication)
 
 ### ✅ API Routes
+
 - RESTful API for all entities
 - Proper error handling and validation
 - Type-safe with TypeScript
 
 ### ✅ Forms & Validation
+
 - Contact form with real-time validation
 - Order form with cart integration
 - Error handling and success states
 - Multilingual form labels
 
 ### ✅ UI Components
+
 - Modern design with Shadcn/UI
 - Responsive layout
 - Arabic RTL support
@@ -96,21 +105,25 @@ src/
 ## 🎯 Next Steps
 
 ### Phase 1: Database Connection
+
 1. Set up PostgreSQL database
 2. Configure DATABASE_URL in .env.local
 3. Run database migrations and seed
 
 ### Phase 2: Authentication
+
 1. Implement NextAuth.js
 2. Add user registration/login
 3. Protect admin routes
 
 ### Phase 3: Payment Integration
+
 1. Add payment gateway (Stripe/PayPal)
 2. Implement order payment flow
 3. Add payment status tracking
 
 ### Phase 4: Advanced Features
+
 1. Email notifications
 2. Image upload for products
 3. Order tracking system
@@ -136,6 +149,7 @@ npm run lint            # Run ESLint
 ## 📱 Pages Overview
 
 ### Public Pages
+
 - **Homepage** (`/`) - Featured products carousel
 - **Products** (`/products`) - Product catalog with filtering
 - **Product Detail** (`/products/[slug]`) - Individual product page
@@ -144,6 +158,7 @@ npm run lint            # Run ESLint
 - **Checkout** (`/checkout`) - Order creation process
 
 ### Admin Pages
+
 - **Dashboard** (`/admin`) - Admin overview
 - **Products** (`/admin/products`) - Product management
 - **Orders** (`/admin/orders`) - Order management
@@ -152,6 +167,7 @@ npm run lint            # Run ESLint
 ## 🌐 Internationalization
 
 The app supports Arabic and English with:
+
 - RTL layout for Arabic
 - Language-specific content
 - URL routing (`/ar/` and `/en/`)
@@ -174,6 +190,7 @@ The app supports Arabic and English with:
 ## 📊 Database Schema
 
 ### Products
+
 - Multilingual name/description (JSON)
 - Price with discount support
 - Image gallery
@@ -181,6 +198,7 @@ The app supports Arabic and English with:
 - Wrapping options
 
 ### Orders
+
 - Customer information
 - Shipping address (JSON)
 - Order items with quantities
@@ -188,6 +206,7 @@ The app supports Arabic and English with:
 - Notes and special instructions
 
 ### Contacts
+
 - Form submissions
 - Status tracking (NEW/REPLIED/RESOLVED)
 - Timestamps for follow-up
@@ -195,12 +214,14 @@ The app supports Arabic and English with:
 ## 🚀 Deployment
 
 The app is ready for deployment on:
+
 - **Vercel** (recommended for Next.js)
 - **Netlify**
 - **Railway**
 - **DigitalOcean App Platform**
 
 Make sure to:
+
 1. Set up production database
 2. Configure environment variables
 3. Run database migrations
@@ -209,6 +230,7 @@ Make sure to:
 ## 📞 Support
 
 For questions or issues:
+
 1. Check the documentation
 2. Review the code comments
 3. Test with the provided sample data

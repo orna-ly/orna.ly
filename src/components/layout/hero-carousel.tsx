@@ -1,7 +1,11 @@
 "use client";
 
 import { useAtom } from "jotai";
-import { currentLangAtom, featuredProductsAtom, type Product } from "@/lib/atoms";
+import {
+  currentLangAtom,
+  featuredProductsAtom,
+  type Product,
+} from "@/lib/atoms";
 import {
   Carousel,
   CarouselContent,
@@ -21,13 +25,15 @@ export function HeroCarousel() {
   const [, setImagesLoaded] = useState<boolean[]>([]);
 
   // Map backend featured products into slides
-  const featuredSlides = (featuredProducts?.slice(0, 5) || []).map((p: Product) => ({
-    title: p.name,
-    description: p.description,
-    link: `/products/${p.slug}`,
-    image: p.images?.[0] || "/orna/1.jpeg",
-    gradient: "from-amber-600 to-rose-600",
-  }));
+  const featuredSlides = (featuredProducts?.slice(0, 5) || []).map(
+    (p: Product) => ({
+      title: p.name,
+      description: p.description,
+      link: `/products/${p.slug}`,
+      image: p.images?.[0] || "/orna/1.jpeg",
+      gradient: "from-amber-600 to-rose-600",
+    }),
+  );
 
   // Preload images for better performance
   useEffect(() => {
@@ -40,7 +46,7 @@ export function HeroCarousel() {
           img.src = slide.image;
         });
       });
-      
+
       const results = await Promise.all(loadPromises);
       setImagesLoaded(results);
     };
@@ -53,35 +59,51 @@ export function HeroCarousel() {
       <Carousel
         key={currentLang}
         dir={currentLang === "ar" ? "rtl" : "ltr"}
-        opts={{ align: "start", loop: true, direction: currentLang === "ar" ? "rtl" : "ltr" }}
+        opts={{
+          align: "start",
+          loop: true,
+          direction: currentLang === "ar" ? "rtl" : "ltr",
+        }}
         plugins={[Autoplay({ delay: 5000 })]}
         className="h-full w-full"
       >
         <CarouselContent className="h-full">
-          {(featuredSlides.length > 0 ? featuredSlides : [
-            {
-              title: { ar: "مرحبا بكم في أورنا", en: "Welcome to Orna" },
-              description: { ar: "نص تجريبي للعرض", en: "Sample hero slide" },
-              link: "/products",
-              image: "/orna/3.jpeg",
-              gradient: "from-amber-600 to-rose-600"
-            }
-          ]).map((slide, index) => (
+          {(featuredSlides.length > 0
+            ? featuredSlides
+            : [
+                {
+                  title: { ar: "مرحبا بكم في أورنا", en: "Welcome to Orna" },
+                  description: {
+                    ar: "نص تجريبي للعرض",
+                    en: "Sample hero slide",
+                  },
+                  link: "/products",
+                  image: "/orna/3.jpeg",
+                  gradient: "from-amber-600 to-rose-600",
+                },
+              ]
+          ).map((slide, index) => (
             <CarouselItem key={index} className="relative h-full w-full">
               {/* Background Image */}
               <div className="absolute inset-0">
                 <NextImage
                   src={slide.image}
-                  alt={typeof slide.title === 'string' ? slide.title : slide.title[currentLang]}
+                  alt={
+                    typeof slide.title === "string"
+                      ? slide.title
+                      : slide.title[currentLang]
+                  }
                   fill
                   priority={index === 0}
                   sizes="100vw"
                   placeholder="blur"
-                  blurDataURL={createPlaceholderImage(1200, 800, 'Orna')}
+                  blurDataURL={createPlaceholderImage(1200, 800, "Orna")}
                   className="object-cover"
                 />
                 {/* Pearl gradient tint */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${slide.gradient} opacity-40 mix-blend-multiply`} />
+                <div
+                  className={`absolute inset-0 bg-gradient-to-br ${slide.gradient} opacity-40 mix-blend-multiply`}
+                />
                 {/* Dark overlay for text readability */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
               </div>
@@ -109,11 +131,7 @@ export function HeroCarousel() {
                           href={slide.link}
                           className="hover:opacity-80 transition-opacity focus-ring rounded-lg"
                         >
-                          {
-                            slide.title[
-                              currentLang as keyof typeof slide.title
-                            ]
-                          }
+                          {slide.title[currentLang as keyof typeof slide.title]}
                         </Link>
                       </h3>
                       <p className="body-text text-xl mb-6 leading-relaxed">
@@ -131,9 +149,7 @@ export function HeroCarousel() {
                           href={slide.link}
                           className="focus-ring rounded-lg"
                         >
-                          {currentLang === "ar"
-                            ? "عرض المنتج"
-                            : "View Product"}
+                          {currentLang === "ar" ? "عرض المنتج" : "View Product"}
                         </Link>
                       </Button>
                     </div>

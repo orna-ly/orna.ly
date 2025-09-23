@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     if (!Array.isArray(ordersData) || ordersData.length === 0) {
       return NextResponse.json(
         { error: "Invalid data format" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -60,14 +60,14 @@ export async function POST(request: NextRequest) {
             status:
               orderData.status &&
               Object.values(OrderStatus).includes(
-                orderData.status as OrderStatus
+                orderData.status as OrderStatus,
               )
                 ? (orderData.status as OrderStatus)
                 : OrderStatus.PENDING,
             paymentStatus:
               orderData.paymentStatus &&
               Object.values(PaymentStatus).includes(
-                orderData.paymentStatus as PaymentStatus
+                orderData.paymentStatus as PaymentStatus,
               )
                 ? (orderData.paymentStatus as PaymentStatus)
                 : PaymentStatus.PENDING,
@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
     console.error("Batch order creation error:", error);
     return NextResponse.json(
       { error: "Failed to create orders" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

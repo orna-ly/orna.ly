@@ -9,7 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 export function formatPrice(
   price: number,
   currency: string = "LYD",
-  locale: string = "ar"
+  locale: string = "ar",
 ) {
   if (locale === "ar") {
     // Libya Arabic formatting
@@ -32,7 +32,7 @@ export function generateId(): string {
 // Debounce function for search inputs
 export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
-  wait: number
+  wait: number,
 ): (...args: Parameters<T>) => void {
   let timeout: NodeJS.Timeout;
 

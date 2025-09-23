@@ -54,42 +54,42 @@
   body {
     @apply bg-white text-neutral-900 font-sans antialiased;
   }
-  
+
   /* RTL/LTR Support */
   [dir="rtl"] {
     direction: rtl;
   }
-  
+
   [dir="ltr"] {
     direction: ltr;
   }
-  
+
   /* RTL-specific styling */
   [dir="rtl"] .rtl\:text-right {
     text-align: right;
   }
-  
+
   [dir="rtl"] .rtl\:text-left {
     text-align: left;
   }
-  
+
   [dir="rtl"] .rtl\:ml-0 {
     margin-left: 0;
   }
-  
+
   [dir="rtl"] .rtl\:mr-2 {
     margin-right: 0.5rem;
   }
-  
+
   [dir="rtl"] .rtl\:flex-row-reverse {
     flex-direction: row-reverse;
   }
-  
+
   /* Language-specific transitions */
   [dir="rtl"] .rtl\:group-hover\:-translate-x-1:hover {
     transform: translateX(-0.25rem);
   }
-  
+
   /* Smooth direction transitions */
   * {
     transition-property: margin, padding, transform, opacity;
@@ -103,76 +103,76 @@
   .bg-brand-primary {
     @apply bg-amber-600;
   }
-  
+
   .bg-brand-secondary {
     @apply bg-rose-600;
   }
-  
+
   .text-brand-primary {
     @apply text-amber-600;
   }
-  
+
   .text-brand-secondary {
     @apply text-rose-600;
   }
-  
+
   .border-brand-primary {
     @apply border-amber-600;
   }
-  
+
   /* Consistent spacing */
   .section-padding {
     @apply py-16 px-4;
   }
-  
+
   .container-width {
     @apply max-w-7xl mx-auto;
   }
-  
+
   /* Card styles */
   .jewelry-card {
     @apply bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 border border-neutral-100;
   }
-  
+
   .jewelry-card-hover {
     @apply hover:scale-[1.02] hover:-translate-y-1;
   }
-  
+
   /* Button styles */
   .btn-primary {
     @apply bg-amber-600 hover:bg-amber-700 text-white font-medium px-6 py-3 rounded-lg transition-colors duration-200;
   }
-  
+
   .btn-secondary {
     @apply bg-neutral-100 hover:bg-neutral-200 text-neutral-900 font-medium px-6 py-3 rounded-lg transition-colors duration-200;
   }
-  
+
   /* Typography */
   .heading-1 {
     @apply text-4xl md:text-5xl font-bold text-neutral-900 leading-tight;
   }
-  
+
   .heading-2 {
     @apply text-3xl md:text-4xl font-bold text-neutral-900;
   }
-  
+
   .heading-3 {
     @apply text-2xl md:text-3xl font-semibold text-neutral-900;
   }
-  
+
   .body-text {
     @apply text-neutral-600 leading-relaxed;
   }
-  
+
   .price-text {
     @apply text-amber-600 font-bold;
   }
-  
+
   /* Loading states */
   .loading-shimmer {
     @apply animate-pulse bg-neutral-200 rounded;
   }
-  
+
   /* Focus states for accessibility */
   .focus-ring {
     @apply focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:outline-none;
@@ -183,21 +183,21 @@
   .text-balance {
     text-wrap: balance;
   }
-  
+
   .gradient-gold {
     @apply bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600;
   }
-  
+
   .gradient-rose-gold {
     @apply bg-gradient-to-r from-rose-400 via-amber-400 to-amber-500;
   }
-  
+
   .gradient-text-gold {
     @apply bg-gradient-to-r from-amber-600 to-amber-800 bg-clip-text text-transparent;
   }
-  
+
   /* Arabic font support */
   .font-arabic {
-    font-family: 'Noto Sans Arabic', 'Cairo', 'Tajawal', sans-serif;
+    font-family: "Noto Sans Arabic", "Cairo", "Tajawal", sans-serif;
   }
 }

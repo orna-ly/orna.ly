@@ -1,34 +1,39 @@
-'use client'
+"use client";
 
-import { useAtom } from 'jotai'
-import { currentLangAtom } from '@/lib/atoms'
-import { Header } from '@/components/layout/header'
-import { useEffect, useState } from 'react'
+import { useAtom } from "jotai";
+import { currentLangAtom } from "@/lib/atoms";
+import { Header } from "@/components/layout/header";
+import { useEffect, useState } from "react";
 
 export function LayoutContent({ children }: { children: React.ReactNode }) {
-  const [currentLang] = useAtom(currentLangAtom)
-  const [mounted, setMounted] = useState(false)
+  const [currentLang] = useAtom(currentLangAtom);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (mounted) {
-      document.documentElement.lang = currentLang
-      document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr'
+      document.documentElement.lang = currentLang;
+      document.documentElement.dir = currentLang === "ar" ? "rtl" : "ltr";
       // Update body classes for better RTL/LTR styling
-      document.body.className = document.body.className.replace(/\b(rtl|ltr)\b/g, '')
-      document.body.classList.add(currentLang === 'ar' ? 'rtl' : 'ltr')
+      document.body.className = document.body.className.replace(
+        /\b(rtl|ltr)\b/g,
+        "",
+      );
+      document.body.classList.add(currentLang === "ar" ? "rtl" : "ltr");
     }
-  }, [currentLang, mounted])
+  }, [currentLang, mounted]);
 
   return (
     <>
       <Header />
-      <main className={`transition-all duration-300 ${currentLang === 'ar' ? 'text-right' : 'text-left'}`}>
+      <main
+        className={`transition-all duration-300 ${currentLang === "ar" ? "text-right" : "text-left"}`}
+      >
         {children}
       </main>
     </>
-  )
+  );
 }

@@ -7,10 +7,12 @@
     "build": "bunx next build --turbopack",
     "start": "bunx next start",
     "lint": "eslint",
+    "lint:fix": "eslint --fix",
     "db:seed": "bunx tsx prisma/seed.ts",
     "db:push": "bunx prisma db push",
     "db:generate": "bunx prisma generate",
-    "db:studio": "bunx prisma studio"
+    "db:studio": "bunx prisma studio",
+    "prettier": "bunx prettier --write ."
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -51,6 +53,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.5.3",
+    "prettier": "3.6.2",
     "tailwindcss": "^4",
     "tailwindcss-animate": "^1.0.7",
     "tsx": "^4.19.2",
