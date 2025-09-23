@@ -1,80 +1,79 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAtom } from "jotai";
-import { currentLangAtom } from "@/lib/atoms";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Check } from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAtom } from 'jotai';
+import { currentLangAtom } from '@/lib/atoms';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Check } from 'lucide-react';
+import Link from 'next/link';
+import Image from 'next/image';
 
 export default function RegisterPage() {
   const router = useRouter();
   const [currentLang] = useAtom(currentLangAtom);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const text = {
-    title: { ar: "إنشاء حساب جديد", en: "Create Your Account" },
+    title: { ar: 'إنشاء حساب جديد', en: 'Create Your Account' },
     subtitle: {
-      ar: "انضم إلى عائلة مجوهرات أورنا",
-      en: "Join the Orna Jewelry family",
+      ar: 'انضم إلى عائلة مجوهرات أورنا',
+      en: 'Join the Orna Jewelry family',
     },
-    name: { ar: "الاسم الكامل", en: "Full Name" },
-    email: { ar: "البريد الإلكتروني", en: "Email Address" },
-    password: { ar: "كلمة المرور", en: "Password" },
-    confirmPassword: { ar: "تأكيد كلمة المرور", en: "Confirm Password" },
-    createAccount: { ar: "إنشاء الحساب", en: "Create Account" },
-    creating: { ar: "جار إنشاء الحساب...", en: "Creating account..." },
-    haveAccount: { ar: "لديك حساب بالفعل؟", en: "Already have an account?" },
-    signIn: { ar: "تسجيل الدخول", en: "Sign In" },
-    backToHome: { ar: "العودة للرئيسية", en: "Back to Home" },
-    brandName: { ar: "مجوهرات أورنا", en: "Orna Jewelry" },
-    tagline: { ar: "جمال يدوم للأبد", en: "Beauty that lasts forever" },
+    name: { ar: 'الاسم الكامل', en: 'Full Name' },
+    email: { ar: 'البريد الإلكتروني', en: 'Email Address' },
+    password: { ar: 'كلمة المرور', en: 'Password' },
+    confirmPassword: { ar: 'تأكيد كلمة المرور', en: 'Confirm Password' },
+    createAccount: { ar: 'إنشاء الحساب', en: 'Create Account' },
+    creating: { ar: 'جار إنشاء الحساب...', en: 'Creating account...' },
+    haveAccount: { ar: 'لديك حساب بالفعل؟', en: 'Already have an account?' },
+    signIn: { ar: 'تسجيل الدخول', en: 'Sign In' },
+    backToHome: { ar: 'العودة للرئيسية', en: 'Back to Home' },
+    brandName: { ar: 'مجوهرات أورنا', en: 'Orna Jewelry' },
+    tagline: { ar: 'جمال يدوم للأبد', en: 'Beauty that lasts forever' },
     passwordMismatch: {
-      ar: "كلمتا المرور غير متطابقتين",
-      en: "Passwords do not match",
+      ar: 'كلمتا المرور غير متطابقتين',
+      en: 'Passwords do not match',
     },
   };
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
+    setError('');
 
     // Client-side validation
     if (password !== confirmPassword) {
       setError(
-        text.passwordMismatch[
-          currentLang as keyof typeof text.passwordMismatch
-        ],
+        text.passwordMismatch[currentLang as keyof typeof text.passwordMismatch]
       );
       setLoading(false);
       return;
     }
 
     try {
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password }),
       });
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Registration failed");
+        throw new Error(data.error || 'Registration failed');
       }
-      router.replace("/login?message=registered");
+      // Redirect to email verification page
+      router.replace(`/verify-email?email=${encodeURIComponent(email)}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Registration failed");
+      setError(err instanceof Error ? err.message : 'Registration failed');
     } finally {
       setLoading(false);
     }
@@ -83,7 +82,7 @@ export default function RegisterPage() {
   return (
     <div
       className="min-h-screen flex bg-gradient-to-br from-rose-50 via-white to-amber-50"
-      dir={currentLang === "ar" ? "rtl" : "ltr"}
+      dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
     >
       {/* Left Side - Brand Showcase */}
       <div className="hidden lg:flex lg:flex-1 relative overflow-hidden">
@@ -126,25 +125,25 @@ export default function RegisterPage() {
               <div className="flex items-center gap-4">
                 <Check className="w-6 h-6 text-rose-300" />
                 <p className="text-lg">
-                  {currentLang === "ar"
-                    ? "حساب مجاني بالكامل"
-                    : "Completely free account"}
+                  {currentLang === 'ar'
+                    ? 'حساب مجاني بالكامل'
+                    : 'Completely free account'}
                 </p>
               </div>
               <div className="flex items-center gap-4">
                 <Check className="w-6 h-6 text-rose-300" />
                 <p className="text-lg">
-                  {currentLang === "ar"
-                    ? "عروض حصرية للأعضاء"
-                    : "Exclusive member offers"}
+                  {currentLang === 'ar'
+                    ? 'عروض حصرية للأعضاء'
+                    : 'Exclusive member offers'}
                 </p>
               </div>
               <div className="flex items-center gap-4">
                 <Check className="w-6 h-6 text-rose-300" />
                 <p className="text-lg">
-                  {currentLang === "ar"
-                    ? "تتبع الطلبات والمفضلة"
-                    : "Order tracking and wishlist"}
+                  {currentLang === 'ar'
+                    ? 'تتبع الطلبات والمفضلة'
+                    : 'Order tracking and wishlist'}
                 </p>
               </div>
             </div>
@@ -197,9 +196,9 @@ export default function RegisterPage() {
                       onChange={(e) => setName(e.target.value)}
                       className="pl-10 h-12 border-neutral-200 focus:border-amber-400 focus:ring-amber-400"
                       placeholder={
-                        currentLang === "ar"
-                          ? "أدخل اسمك الكامل"
-                          : "Enter your full name"
+                        currentLang === 'ar'
+                          ? 'أدخل اسمك الكامل'
+                          : 'Enter your full name'
                       }
                       required
                     />
@@ -219,9 +218,9 @@ export default function RegisterPage() {
                       onChange={(e) => setEmail(e.target.value)}
                       className="pl-10 h-12 border-neutral-200 focus:border-amber-400 focus:ring-amber-400"
                       placeholder={
-                        currentLang === "ar"
-                          ? "أدخل بريدك الإلكتروني"
-                          : "Enter your email"
+                        currentLang === 'ar'
+                          ? 'أدخل بريدك الإلكتروني'
+                          : 'Enter your email'
                       }
                       required
                     />
@@ -236,14 +235,14 @@ export default function RegisterPage() {
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-neutral-400" />
                     <Input
-                      type={showPassword ? "text" : "password"}
+                      type={showPassword ? 'text' : 'password'}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="pl-10 pr-10 h-12 border-neutral-200 focus:border-amber-400 focus:ring-amber-400"
                       placeholder={
-                        currentLang === "ar"
-                          ? "أدخل كلمة المرور"
-                          : "Enter your password"
+                        currentLang === 'ar'
+                          ? 'أدخل كلمة المرور'
+                          : 'Enter your password'
                       }
                       required
                       minLength={6}
@@ -274,14 +273,14 @@ export default function RegisterPage() {
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-neutral-400" />
                     <Input
-                      type={showConfirmPassword ? "text" : "password"}
+                      type={showConfirmPassword ? 'text' : 'password'}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       className="pl-10 pr-10 h-12 border-neutral-200 focus:border-amber-400 focus:ring-amber-400"
                       placeholder={
-                        currentLang === "ar"
-                          ? "أعد إدخال كلمة المرور"
-                          : "Confirm your password"
+                        currentLang === 'ar'
+                          ? 'أعد إدخال كلمة المرور'
+                          : 'Confirm your password'
                       }
                       required
                     />
@@ -330,7 +329,7 @@ export default function RegisterPage() {
           {/* Footer Links */}
           <div className="mt-8 text-center space-y-4">
             <p className="text-neutral-600">
-              {text.haveAccount[currentLang as keyof typeof text.haveAccount]}{" "}
+              {text.haveAccount[currentLang as keyof typeof text.haveAccount]}{' '}
               <Link
                 href="/login"
                 className="text-amber-600 hover:text-amber-700 font-medium hover:underline transition-colors"
