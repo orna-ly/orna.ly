@@ -62,7 +62,7 @@ enum ProductStatus {
 
 model Order {
   id              String        @id @default(cuid())
-  orderNumber     String        @unique @default(cuid())
+  orderNumber     String        @unique
   customerName    String
   customerPhone   String
   customerEmail   String?
@@ -86,8 +86,8 @@ model Order {
 }
 
 model OrderItem {
-  id         String  @id @default(cuid())
-  quantity   Int     @default(1)
+  id         String @id @default(cuid())
+  quantity   Int    @default(1)
   unitPrice  Float
   totalPrice Float
 

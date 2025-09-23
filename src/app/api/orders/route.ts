@@ -1,22 +1,26 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { OrderStatus, PaymentStatus } from '@prisma/client'
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { OrderStatus, PaymentStatus } from "@prisma/client";
+import { generateOrderNumber } from "@/lib/order-utils";
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url)
-    const status = searchParams.get('status')
-    const paymentStatus = searchParams.get('paymentStatus')
-    const limit = searchParams.get('limit')
+    const { searchParams } = new URL(request.url);
+    const status = searchParams.get("status");
+    const paymentStatus = searchParams.get("paymentStatus");
+    const limit = searchParams.get("limit");
 
-    const where: { status?: OrderStatus; paymentStatus?: PaymentStatus } = {}
+    const where: { status?: OrderStatus; paymentStatus?: PaymentStatus } = {};
 
     if (status && Object.values(OrderStatus).includes(status as OrderStatus)) {
-      where.status = status as OrderStatus
+      where.status = status as OrderStatus;
     }
 
-    if (paymentStatus && Object.values(PaymentStatus).includes(paymentStatus as PaymentStatus)) {
-      where.paymentStatus = paymentStatus as PaymentStatus
+    if (
+      paymentStatus &&
+      Object.values(PaymentStatus).includes(paymentStatus as PaymentStatus)
+    ) {
+      where.paymentStatus = paymentStatus as PaymentStatus;
     }
 
     const orders = await prisma.order.findMany({
@@ -24,32 +28,33 @@ export async function GET(request: NextRequest) {
       include: {
         items: {
           include: {
-            product: true
-          }
-        }
+            product: true,
+          },
+        },
       },
       orderBy: {
-        createdAt: 'desc'
+        createdAt: "desc",
       },
-      take: limit ? parseInt(limit) : undefined
-    })
+      take: limit ? parseInt(limit) : undefined,
+    });
 
-    return NextResponse.json(orders)
+    return NextResponse.json(orders);
   } catch (error) {
-    console.error('Error fetching orders:', error)
+    console.error("Error fetching orders:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch orders' },
+      { error: "Failed to fetch orders" },
       { status: 500 }
-    )
+    );
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    
+    const body = await request.json();
+
     const order = await prisma.order.create({
       data: {
+        orderNumber: generateOrderNumber(),
         customerName: body.customerName,
         customerPhone: body.customerPhone,
         customerEmail: body.customerEmail,
@@ -60,29 +65,36 @@ export async function POST(request: NextRequest) {
         paymentMethod: body.paymentMethod,
         notes: body.notes,
         items: {
-          create: body.items.map((item: { productId: string; quantity: number; unitPrice: number; totalPrice: number }) => ({
-            productId: item.productId,
-            quantity: item.quantity,
-            unitPrice: item.unitPrice,
-            totalPrice: item.totalPrice
-          }))
-        }
+          create: body.items.map(
+            (item: {
+              productId: string;
+              quantity: number;
+              unitPrice: number;
+              totalPrice: number;
+            }) => ({
+              productId: item.productId,
+              quantity: item.quantity,
+              unitPrice: item.unitPrice,
+              totalPrice: item.totalPrice,
+            })
+          ),
+        },
       },
       include: {
         items: {
           include: {
-            product: true
-          }
-        }
-      }
-    })
+            product: true,
+          },
+        },
+      },
+    });
 
-    return NextResponse.json(order, { status: 201 })
+    return NextResponse.json(order, { status: 201 });
   } catch (error) {
-    console.error('Error creating order:', error)
+    console.error("Error creating order:", error);
     return NextResponse.json(
-      { error: 'Failed to create order' },
+      { error: "Failed to create order" },
       { status: 500 }
-    )
+    );
   }
 }
