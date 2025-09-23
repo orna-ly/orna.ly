@@ -2,6 +2,9 @@
   "name": "orna-2.0",
   "version": "0.1.0",
   "private": true,
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
+  },
   "scripts": {
     "dev": "bunx next dev --turbopack",
     "build": "bunx next build --turbopack",
@@ -12,7 +15,8 @@
     "db:push": "bunx prisma db push",
     "db:generate": "bunx prisma generate",
     "db:studio": "bunx prisma studio",
-    "prettier": "bunx prettier --write ."
+    "prettier": "bunx prettier --write .",
+    "prepare": "husky"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -53,6 +57,8 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.5.3",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.0",
     "prettier": "3.6.2",
     "tailwindcss": "^4",
     "tailwindcss-animate": "^1.0.7",
