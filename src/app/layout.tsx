@@ -1,24 +1,25 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { Provider } from "jotai";
-import { LayoutContent } from "@/components/layout/layout-content";
-import { DataProvider } from "@/components/providers/data-provider";
-import "./globals.css";
+import type { Metadata } from 'next';
+import { Geist, Geist_Mono } from 'next/font/google';
+import { Provider } from 'jotai';
+import { LayoutContent } from '@/components/layout/layout-content';
+import { DataProvider } from '@/components/providers/data-provider';
+import { ToastProvider } from '@/components/providers/toast-provider';
+import './globals.css';
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
-  title: "Orna Jewelry - مجوهرات أورنا",
+  title: 'Orna Jewelry - مجوهرات أورنا',
   description:
-    "Discover our exclusive collection of luxury jewelry - اكتشف مجموعتنا الحصرية من المجوهرات الفاخرة",
+    'Discover our exclusive collection of luxury jewelry - اكتشف مجموعتنا الحصرية من المجوهرات الفاخرة',
 };
 
 export default function RootLayout({
@@ -34,6 +35,7 @@ export default function RootLayout({
         <Provider>
           <DataProvider>
             <LayoutContent>{children}</LayoutContent>
+            <ToastProvider />
           </DataProvider>
         </Provider>
       </body>

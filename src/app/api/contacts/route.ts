@@ -1,60 +1,120 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { ContactStatus } from "@prisma/client";
+import { NextRequest } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { ContactStatus } from '@prisma/client';
+import {
+  withValidation,
+  withAdminAuth,
+  withErrorHandling,
+  withMethods,
+  compose,
+  type ApiContext,
+} from '@/lib/api-middleware';
+import {
+  contactFiltersSchema,
+  createContactSchema,
+  type ContactFiltersInput,
+  type CreateContactInput,
+} from '@/lib/validations';
+import {
+  apiSuccess,
+  handleDatabaseError,
+  calculatePagination,
+} from '@/lib/api-response';
 
-export async function GET(request: NextRequest) {
+// GET /api/contacts - Fetch contacts with filters (admin only)
+const getContacts = compose(
+  withErrorHandling,
+  withMethods(['GET']),
+  withAdminAuth,
+  withValidation(contactFiltersSchema)
+)(async (request: NextRequest, context: ApiContext) => {
+  const filters = context.validatedData as ContactFiltersInput;
+
+  const where: { status?: ContactStatus } = {};
+
+  // Apply status filter
+  if (filters.status) {
+    where.status = filters.status;
+  }
+
   try {
-    const { searchParams } = new URL(request.url);
-    const status = searchParams.get("status");
-    const limit = searchParams.get("limit");
+    // Get total count for pagination
+    const total = await prisma.contact.count({ where });
 
-    const where: { status?: ContactStatus } = {};
+    // Calculate pagination
+    const skip = (filters.page - 1) * filters.limit;
 
-    if (
-      status &&
-      Object.values(ContactStatus).includes(status as ContactStatus)
-    ) {
-      where.status = status as ContactStatus;
-    }
-
+    // Fetch contacts
     const contacts = await prisma.contact.findMany({
       where,
       orderBy: {
-        createdAt: "desc",
+        createdAt: 'desc',
       },
-      take: limit ? parseInt(limit) : undefined,
+      skip,
+      take: filters.limit,
     });
 
-    return NextResponse.json(contacts);
-  } catch (error) {
-    console.error("Error fetching contacts:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch contacts" },
-      { status: 500 },
-    );
-  }
-}
+    const pagination = calculatePagination(filters.page, filters.limit, total);
 
-export async function POST(request: NextRequest) {
+    return apiSuccess(
+      contacts,
+      'Contacts fetched successfully',
+      200,
+      pagination
+    );
+  } catch (error) {
+    return handleDatabaseError(error);
+  }
+});
+
+// POST /api/contacts - Create a new contact message
+const createContact = compose(
+  withErrorHandling,
+  withMethods(['POST']),
+  withValidation(createContactSchema)
+)(async (request: NextRequest, context: ApiContext) => {
+  const contactData = context.validatedData as CreateContactInput;
+
   try {
-    const body = await request.json();
+    // Check for potential spam (same email sending multiple messages in short time)
+    const recentContacts = await prisma.contact.findMany({
+      where: {
+        email: contactData.email,
+        createdAt: {
+          gte: new Date(Date.now() - 5 * 60 * 1000), // Last 5 minutes
+        },
+      },
+    });
+
+    if (recentContacts.length >= 3) {
+      return apiSuccess(
+        null,
+        'Too many messages sent recently. Please wait before sending another message.',
+        429
+      );
+    }
 
     const contact = await prisma.contact.create({
       data: {
-        name: body.name,
-        email: body.email,
-        phone: body.phone,
-        subject: body.subject,
-        message: body.message,
+        name: contactData.name,
+        email: contactData.email,
+        phone: contactData.phone || null,
+        subject: contactData.subject,
+        message: contactData.message,
+        status: ContactStatus.NEW,
       },
     });
 
-    return NextResponse.json(contact, { status: 201 });
+    return apiSuccess(contact, 'Contact message sent successfully', 201);
   } catch (error) {
-    console.error("Error creating contact:", error);
-    return NextResponse.json(
-      { error: "Failed to create contact" },
-      { status: 500 },
-    );
+    return handleDatabaseError(error);
   }
+});
+
+export async function GET(request: NextRequest) {
+  return getContacts(request, {});
+}
+
+export async function POST(request: NextRequest) {
+  return createContact(request, {});
 }

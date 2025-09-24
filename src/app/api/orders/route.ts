@@ -1,28 +1,68 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { OrderStatus, PaymentStatus } from "@prisma/client";
-import { generateOrderNumber } from "@/lib/order-utils";
+import { NextRequest } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { OrderStatus, PaymentStatus } from '@prisma/client';
+import { generateOrderNumber } from '@/lib/order-utils';
+import {
+  withValidation,
+  withAdminAuth,
+  withErrorHandling,
+  withMethods,
+  compose,
+  type ApiContext,
+} from '@/lib/api-middleware';
+import {
+  orderFiltersSchema,
+  createOrderSchema,
+  type OrderFiltersInput,
+  type CreateOrderInput,
+} from '@/lib/validations';
+import {
+  apiSuccess,
+  handleDatabaseError,
+  calculatePagination,
+} from '@/lib/api-response';
 
-export async function GET(request: NextRequest) {
+// GET /api/orders - Fetch orders with filters
+const getOrders = compose(
+  withErrorHandling,
+  withMethods(['GET']),
+  withAdminAuth,
+  withValidation(orderFiltersSchema)
+)(async (request: NextRequest, context: ApiContext) => {
+  const filters = context.validatedData as OrderFiltersInput;
+
+  const where: {
+    status?: OrderStatus;
+    paymentStatus?: PaymentStatus;
+    customerName?: { contains: string; mode: 'insensitive' };
+  } = {};
+
+  // Apply status filter
+  if (filters.status) {
+    where.status = filters.status;
+  }
+
+  // Apply payment status filter
+  if (filters.paymentStatus) {
+    where.paymentStatus = filters.paymentStatus;
+  }
+
+  // Apply customer name search
+  if (filters.customerName) {
+    where.customerName = {
+      contains: filters.customerName,
+      mode: 'insensitive',
+    };
+  }
+
   try {
-    const { searchParams } = new URL(request.url);
-    const status = searchParams.get("status");
-    const paymentStatus = searchParams.get("paymentStatus");
-    const limit = searchParams.get("limit");
+    // Get total count for pagination
+    const total = await prisma.order.count({ where });
 
-    const where: { status?: OrderStatus; paymentStatus?: PaymentStatus } = {};
+    // Calculate pagination
+    const skip = (filters.page - 1) * filters.limit;
 
-    if (status && Object.values(OrderStatus).includes(status as OrderStatus)) {
-      where.status = status as OrderStatus;
-    }
-
-    if (
-      paymentStatus &&
-      Object.values(PaymentStatus).includes(paymentStatus as PaymentStatus)
-    ) {
-      where.paymentStatus = paymentStatus as PaymentStatus;
-    }
-
+    // Fetch orders with related data
     const orders = await prisma.order.findMany({
       where,
       include: {
@@ -33,51 +73,82 @@ export async function GET(request: NextRequest) {
         },
       },
       orderBy: {
-        createdAt: "desc",
+        createdAt: 'desc',
       },
-      take: limit ? parseInt(limit) : undefined,
+      skip,
+      take: filters.limit,
     });
 
-    return NextResponse.json(orders);
+    const pagination = calculatePagination(filters.page, filters.limit, total);
+
+    return apiSuccess(orders, 'Orders fetched successfully', 200, pagination);
   } catch (error) {
-    console.error("Error fetching orders:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch orders" },
-      { status: 500 },
-    );
+    return handleDatabaseError(error);
   }
-}
+});
 
-export async function POST(request: NextRequest) {
+// POST /api/orders - Create a new order
+const createOrder = compose(
+  withErrorHandling,
+  withMethods(['POST']),
+  withValidation(createOrderSchema)
+)(async (request: NextRequest, context: ApiContext) => {
+  const orderData = context.validatedData as CreateOrderInput;
+
   try {
-    const body = await request.json();
+    // Verify that all products exist and are available
+    const productIds = orderData.items.map((item) => item.productId);
+    const products = await prisma.product.findMany({
+      where: {
+        id: { in: productIds },
+        status: 'ACTIVE',
+      },
+    });
 
+    if (products.length !== productIds.length) {
+      return apiSuccess(null, 'One or more products are not available', 400);
+    }
+
+    // Validate item prices against current product prices
+    const priceValidationErrors: string[] = [];
+    for (const item of orderData.items) {
+      const product = products.find((p) => p.id === item.productId);
+      if (product && product.price !== item.unitPrice) {
+        const productName =
+          typeof product.name === 'object' && product.name
+            ? (product.name as Record<string, string>).en ||
+              (product.name as Record<string, string>).ar ||
+              'Unknown Product'
+            : 'Unknown Product';
+        priceValidationErrors.push(
+          `Price mismatch for product ${productName}: expected ${product.price}, got ${item.unitPrice}`
+        );
+      }
+    }
+
+    if (priceValidationErrors.length > 0) {
+      return apiSuccess(
+        null,
+        'Product prices have changed. Please refresh and try again.',
+        400
+      );
+    }
+
+    // Create the order with items
     const order = await prisma.order.create({
       data: {
         orderNumber: generateOrderNumber(),
-        customerName: body.customerName,
-        customerPhone: body.customerPhone,
-        customerEmail: body.customerEmail,
-        shippingAddress: body.shippingAddress,
-        totalAmount: body.totalAmount,
-        wrappingCost: body.wrappingCost,
-        needsWrapping: body.needsWrapping,
-        paymentMethod: body.paymentMethod,
-        notes: body.notes,
+        customerName: orderData.customerName,
+        customerPhone: orderData.customerPhone,
+        customerEmail: orderData.customerEmail,
+        shippingAddress: orderData.shippingAddress,
+        totalAmount: orderData.totalAmount,
+        wrappingCost: orderData.wrappingCost,
+        needsWrapping: orderData.needsWrapping,
+        paymentMethod: orderData.paymentMethod,
+        notes: orderData.notes,
         items: {
-          create: body.items.map(
-            (item: {
-              productId: string;
-              quantity: number;
-              unitPrice: number;
-              totalPrice: number;
-            }) => ({
-              productId: item.productId,
-              quantity: item.quantity,
-              unitPrice: item.unitPrice,
-              totalPrice: item.totalPrice,
-            }),
-          ),
+          create: orderData.items,
         },
       },
       include: {
@@ -89,12 +160,16 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json(order, { status: 201 });
+    return apiSuccess(order, 'Order created successfully', 201);
   } catch (error) {
-    console.error("Error creating order:", error);
-    return NextResponse.json(
-      { error: "Failed to create order" },
-      { status: 500 },
-    );
+    return handleDatabaseError(error);
   }
+});
+
+export async function GET(request: NextRequest) {
+  return getOrders(request, {});
+}
+
+export async function POST(request: NextRequest) {
+  return createOrder(request, {});
 }

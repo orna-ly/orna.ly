@@ -1,5 +1,5 @@
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -8,20 +8,20 @@ export function cn(...inputs: ClassValue[]) {
 // Format price with proper localization
 export function formatPrice(
   price: number,
-  currency: string = "LYD",
-  locale: string = "ar",
+  currency: string = 'LYD',
+  locale: string = 'ar'
 ) {
-  if (locale === "ar") {
+  if (locale === 'ar') {
     // Libya Arabic formatting
-    return `${price.toLocaleString("ar-LY")} د.ل`;
+    return `${price.toLocaleString('ar-LY')} د.ل`;
   }
-  return `${price.toLocaleString("en-LY")} ${currency}`;
+  return `${price.toLocaleString('en-LY')} ${currency}`;
 }
 
 // Truncate text with ellipsis
 export function truncateText(text: string, maxLength: number = 100): string {
   if (text.length <= maxLength) return text;
-  return text.substring(0, maxLength).trim() + "...";
+  return text.substring(0, maxLength).trim() + '...';
 }
 
 // Generate a random ID
@@ -30,9 +30,10 @@ export function generateId(): string {
 }
 
 // Debounce function for search inputs
+// TODO: Improve typing - args could be more specifically typed based on the function signature
 export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
-  wait: number,
+  wait: number
 ): (...args: Parameters<T>) => void {
   let timeout: NodeJS.Timeout;
 
@@ -49,17 +50,17 @@ export function isArabic(text: string): boolean {
 }
 
 // Format date for different locales
-export function formatDate(date: Date, locale: string = "ar"): string {
-  if (locale === "ar") {
-    return date.toLocaleDateString("ar-SA", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
+export function formatDate(date: Date, locale: string = 'ar'): string {
+  if (locale === 'ar') {
+    return date.toLocaleDateString('ar-SA', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
     });
   }
-  return date.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
   });
 }
