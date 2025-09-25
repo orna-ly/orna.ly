@@ -1,27 +1,38 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { useAtom } from "jotai";
+import { useEffect } from 'react';
+import { useAtom } from 'jotai';
 import {
   loadProductsAtom,
   loadOrdersAtom,
   loadContactsAtom,
   loadSettingsAtom,
-} from "@/lib/atoms";
+  loadCurrentUserAtom,
+  isAdminAtom,
+} from '@/lib/atoms';
 
 export function DataProvider({ children }: { children: React.ReactNode }) {
   const [, loadProducts] = useAtom(loadProductsAtom);
   const [, loadOrders] = useAtom(loadOrdersAtom);
   const [, loadContacts] = useAtom(loadContactsAtom);
   const [, loadSettings] = useAtom(loadSettingsAtom);
+  const [, loadCurrentUser] = useAtom(loadCurrentUserAtom);
+  const [isAdmin] = useAtom(isAdminAtom);
 
   useEffect(() => {
     // Load initial data when the app starts
     loadProducts();
-    loadOrders();
-    loadContacts();
     loadSettings();
-  }, [loadProducts, loadOrders, loadContacts, loadSettings]);
+    loadCurrentUser(); // Load user first
+  }, [loadProducts, loadSettings, loadCurrentUser]);
+
+  // Load admin-only data after user authentication is determined
+  useEffect(() => {
+    if (isAdmin) {
+      loadOrders();
+      loadContacts();
+    }
+  }, [isAdmin, loadOrders, loadContacts]);
 
   return <>{children}</>;
 }

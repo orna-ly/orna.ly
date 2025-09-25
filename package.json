@@ -6,7 +6,7 @@
     "**/*": "prettier --write --ignore-unknown"
   },
   "scripts": {
-    "dev": "bunx next dev --turbopack",
+    "dev": "bunx next dev --turbopack --port 3001",
     "build": "bunx next build --turbopack",
     "start": "bunx next start",
     "lint": "eslint",

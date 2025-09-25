@@ -1,6 +1,6 @@
-import { atom } from "jotai";
-import { atomWithStorage } from "jotai/utils";
-import { fetchProducts, fetchOrders, fetchContacts } from "./api";
+import { atom } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
+import { fetchProducts, fetchOrders, fetchContacts } from './api';
 
 // Types
 export interface Product {
@@ -15,7 +15,7 @@ export interface Product {
   subdescription?: Record<string, string>;
   featured: boolean;
   wrappingPrice?: number;
-  status: "ACTIVE" | "INACTIVE" | "OUT_OF_STOCK";
+  status: 'ACTIVE' | 'INACTIVE' | 'OUT_OF_STOCK';
   createdAt: Date;
   updatedAt: Date;
 }
@@ -30,16 +30,16 @@ export interface Order {
   totalAmount: number;
   wrappingCost?: number;
   needsWrapping: boolean;
-  paymentStatus: "PENDING" | "PAID" | "FAILED" | "REFUNDED";
+  paymentStatus: 'PENDING' | 'PAID' | 'FAILED' | 'REFUNDED';
   paymentUrl?: string;
   paymentMethod?: string;
   status:
-    | "PENDING"
-    | "CONFIRMED"
-    | "PROCESSING"
-    | "SHIPPED"
-    | "DELIVERED"
-    | "CANCELLED";
+    | 'PENDING'
+    | 'CONFIRMED'
+    | 'PROCESSING'
+    | 'SHIPPED'
+    | 'DELIVERED'
+    | 'CANCELLED';
   notes?: string;
   createdAt: Date;
   updatedAt: Date;
@@ -61,7 +61,7 @@ export interface Contact {
   phone?: string;
   subject: string;
   message: string;
-  status: "NEW" | "REPLIED" | "RESOLVED";
+  status: 'NEW' | 'REPLIED' | 'RESOLVED';
   createdAt: Date;
   updatedAt: Date;
 }
@@ -75,7 +75,7 @@ export interface User {
   id: string;
   email: string;
   name?: string;
-  role: "USER" | "ADMIN" | "SUPER_ADMIN";
+  role: 'USER' | 'ADMIN' | 'SUPER_ADMIN';
   image?: string;
 }
 
@@ -85,28 +85,29 @@ export interface CartItem {
 }
 
 // Global State Atoms
-export const currentLangAtom = atomWithStorage<string>("currentLang", "ar");
+export const currentLangAtom = atomWithStorage<string>('currentLang', 'ar');
 
 // User Authentication Atoms
 export const currentUserAtom = atom<User | null>(null);
 export const isLoggedInAtom = atom((get) => !!get(currentUserAtom));
 export const isAdminAtom = atom((get) => {
   const user = get(currentUserAtom);
-  return user?.role === "ADMIN" || user?.role === "SUPER_ADMIN";
+  return user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN';
 });
 
 // Data Atoms
 export const productsAtom = atom<Product[]>([]);
-export const featuredProductsAtom = atom<Product[]>((get) =>
-  get(productsAtom).filter((p) => p.featured),
-);
+export const featuredProductsAtom = atom<Product[]>((get) => {
+  const products = get(productsAtom);
+  return Array.isArray(products) ? products.filter((p) => p.featured) : [];
+});
 
-export const cartItemsAtom = atomWithStorage<CartItem[]>("cartItems", []);
+export const cartItemsAtom = atomWithStorage<CartItem[]>('cartItems', []);
 export const cartTotalAtom = atom((get) =>
   get(cartItemsAtom).reduce(
     (total, item) => total + item.product.price * item.quantity,
-    0,
-  ),
+    0
+  )
 );
 
 export const ordersAtom = atom<Order[]>([]);
@@ -116,56 +117,73 @@ export const settingsAtom = atom<Record<string, unknown>>({});
 // UI State Atoms
 export const mobileMenuOpenAtom = atom(false);
 export const loadingAtom = atom(false);
-export const searchQueryAtom = atom("");
-export const filterCategoryAtom = atom<string>("all");
+export const searchQueryAtom = atom('');
+export const filterCategoryAtom = atom<string>('all');
+
+// Resource-scoped loading and error states for better UI control
+export const productsLoadingAtom = atom(false);
+export const productsErrorAtom = atom<string | null>(null);
+export const ordersLoadingAtom = atom(false);
+export const ordersErrorAtom = atom<string | null>(null);
+export const contactsLoadingAtom = atom(false);
+export const contactsErrorAtom = atom<string | null>(null);
 
 // Data Loading Atoms
 export const loadProductsAtom = atom(null, async (get, set) => {
-  set(loadingAtom, true);
+  set(productsLoadingAtom, true);
+  set(productsErrorAtom, null);
   try {
     const result = await fetchProducts();
     if (result.data) {
       set(productsAtom, result.data as Product[]);
     } else {
-      console.error("Failed to load products:", result.error);
+      console.error('Failed to load products:', result.error);
+      set(productsErrorAtom, result.error || 'Failed to load products');
     }
   } catch (error) {
-    console.error("Error loading products:", error);
+    console.error('Error loading products:', error);
+    set(productsErrorAtom, 'Error loading products');
   } finally {
-    set(loadingAtom, false);
+    set(productsLoadingAtom, false);
   }
 });
 
 export const loadOrdersAtom = atom(null, async (get, set) => {
-  set(loadingAtom, true);
+  set(ordersLoadingAtom, true);
+  set(ordersErrorAtom, null);
   try {
     const result = await fetchOrders();
     if (result.data) {
       // TODO: fix this typing
       set(ordersAtom, result.data as unknown as Order[]);
     } else {
-      console.error("Failed to load orders:", result.error);
+      console.error('Failed to load orders:', result.error);
+      set(ordersErrorAtom, result.error || 'Failed to load orders');
     }
   } catch (error) {
-    console.error("Error loading orders:", error);
+    console.error('Error loading orders:', error);
+    set(ordersErrorAtom, 'Error loading orders');
   } finally {
-    set(loadingAtom, false);
+    set(ordersLoadingAtom, false);
   }
 });
 
 export const loadContactsAtom = atom(null, async (get, set) => {
-  set(loadingAtom, true);
+  set(contactsLoadingAtom, true);
+  set(contactsErrorAtom, null);
   try {
     const result = await fetchContacts();
     if (result.data) {
       set(contactsAtom, result.data as Contact[]);
     } else {
-      console.error("Failed to load contacts:", result.error);
+      console.error('Failed to load contacts:', result.error);
+      set(contactsErrorAtom, result.error || 'Failed to load contacts');
     }
   } catch (error) {
-    console.error("Error loading contacts:", error);
+    console.error('Error loading contacts:', error);
+    set(contactsErrorAtom, 'Error loading contacts');
   } finally {
-    set(loadingAtom, false);
+    set(contactsLoadingAtom, false);
   }
 });
 
@@ -173,8 +191,8 @@ export const loadContactsAtom = atom(null, async (get, set) => {
 export const loadSettingsAtom = atom(null, async (get, set) => {
   set(loadingAtom, true);
   try {
-    const response = await fetch("/api/settings");
-    if (!response.ok) throw new Error("Failed to fetch settings");
+    const response = await fetch('/api/settings');
+    if (!response.ok) throw new Error('Failed to fetch settings');
     const data = (await response.json()) as SettingKV<unknown>[];
     const map: Record<string, unknown> = {};
     data.forEach((s) => {
@@ -182,7 +200,7 @@ export const loadSettingsAtom = atom(null, async (get, set) => {
     });
     set(settingsAtom, map);
   } catch (error) {
-    console.error("Error loading settings:", error);
+    console.error('Error loading settings:', error);
   } finally {
     set(loadingAtom, false);
   }
@@ -191,7 +209,9 @@ export const loadSettingsAtom = atom(null, async (get, set) => {
 // User Authentication Loading Atom
 export const loadCurrentUserAtom = atom(null, async (get, set) => {
   try {
-    const response = await fetch("/api/auth/me");
+    const response = await fetch('/api/auth/me', {
+      credentials: 'include', // Include cookies for authentication
+    });
     if (response.ok) {
       const user = await response.json();
       set(currentUserAtom, user);
@@ -199,7 +219,7 @@ export const loadCurrentUserAtom = atom(null, async (get, set) => {
       set(currentUserAtom, null);
     }
   } catch (error) {
-    console.error("Error loading current user:", error);
+    console.error('Error loading current user:', error);
     set(currentUserAtom, null);
   }
 });
@@ -207,10 +227,13 @@ export const loadCurrentUserAtom = atom(null, async (get, set) => {
 // Logout Action
 export const logoutAtom = atom(null, async (get, set) => {
   try {
-    await fetch("/api/auth/logout", { method: "POST" });
+    await fetch('/api/auth/logout', {
+      method: 'POST',
+      credentials: 'include', // Include cookies for authentication
+    });
     set(currentUserAtom, null);
   } catch (error) {
-    console.error("Error logging out:", error);
+    console.error('Error logging out:', error);
   }
 });
 
@@ -218,14 +241,14 @@ export const logoutAtom = atom(null, async (get, set) => {
 export const addToCartAtom = atom(null, (get, set, product: Product) => {
   const currentItems = get(cartItemsAtom);
   const existingItem = currentItems.find(
-    (item) => item.product.id === product.id,
+    (item) => item.product.id === product.id
   );
 
   if (existingItem) {
     const updatedItems = currentItems.map((item) =>
       item.product.id === product.id
         ? { ...item, quantity: item.quantity + 1 }
-        : item,
+        : item
     );
     set(cartItemsAtom, updatedItems);
   } else {
@@ -236,7 +259,7 @@ export const addToCartAtom = atom(null, (get, set, product: Product) => {
 export const removeFromCartAtom = atom(null, (get, set, productId: string) => {
   const currentItems = get(cartItemsAtom);
   const updatedItems = currentItems.filter(
-    (item) => item.product.id !== productId,
+    (item) => item.product.id !== productId
   );
   set(cartItemsAtom, updatedItems);
 });
@@ -246,12 +269,12 @@ export const updateCartQuantityAtom = atom(
   (
     get,
     set,
-    { productId, quantity }: { productId: string; quantity: number },
+    { productId, quantity }: { productId: string; quantity: number }
   ) => {
     const currentItems = get(cartItemsAtom);
     const updatedItems = currentItems.map((item) =>
-      item.product.id === productId ? { ...item, quantity } : item,
+      item.product.id === productId ? { ...item, quantity } : item
     );
     set(cartItemsAtom, updatedItems);
-  },
+  }
 );
