@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { useAtom } from "jotai";
-import { useState } from "react";
-import { currentLangAtom, cartItemsAtom } from "@/lib/atoms";
-import { createOrder } from "@/lib/api";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { ShoppingCart, Check, AlertCircle } from "lucide-react";
-import Image from "next/image";
-import { formatPrice } from "@/lib/utils";
+import { useAtom } from 'jotai';
+import { useState } from 'react';
+import { currentLangAtom, cartItemsAtom } from '@/lib/atoms';
+import { createOrder } from '@/lib/api';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ShoppingCart, Check, AlertCircle } from 'lucide-react';
+import Image from 'next/image';
+import { formatPrice } from '@/lib/utils';
 
 interface OrderFormProps {
   onOrderCreated?: (orderId: string) => void;
@@ -19,25 +19,25 @@ interface OrderFormProps {
 
 export function OrderForm({ onOrderCreated }: OrderFormProps) {
   const [currentLang] = useAtom(currentLangAtom);
-  const [cartItems] = useAtom(cartItemsAtom);
+  const [cartItems, setCartItems] = useAtom(cartItemsAtom);
 
   const [formData, setFormData] = useState({
-    customerName: "",
-    customerPhone: "",
-    customerEmail: "",
-    address: "",
-    city: "",
-    state: "",
-    notes: "",
+    customerName: '',
+    customerPhone: '',
+    customerEmail: '',
+    address: '',
+    city: '',
+    state: '',
+    notes: '',
   });
 
   const [needsWrapping, setNeedsWrapping] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<
-    "card" | "apple_pay" | "stc_pay" | "cod"
-  >("card");
+    'card' | 'apple_pay' | 'stc_pay' | 'cod'
+  >('card');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [submitError, setSubmitError] = useState("");
+  const [submitError, setSubmitError] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const validateForm = () => {
@@ -45,32 +45,32 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
 
     if (!formData.customerName.trim()) {
       newErrors.customerName =
-        currentLang === "ar" ? "الاسم مطلوب" : "Name is required";
+        currentLang === 'ar' ? 'الاسم مطلوب' : 'Name is required';
     }
 
     if (!formData.customerPhone.trim()) {
       newErrors.customerPhone =
-        currentLang === "ar" ? "رقم الهاتف مطلوب" : "Phone number is required";
+        currentLang === 'ar' ? 'رقم الهاتف مطلوب' : 'Phone number is required';
     }
 
     if (!formData.customerEmail.trim()) {
       newErrors.customerEmail =
-        currentLang === "ar" ? "البريد الإلكتروني مطلوب" : "Email is required";
+        currentLang === 'ar' ? 'البريد الإلكتروني مطلوب' : 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.customerEmail)) {
       newErrors.customerEmail =
-        currentLang === "ar"
-          ? "بريد إلكتروني غير صحيح"
-          : "Invalid email format";
+        currentLang === 'ar'
+          ? 'بريد إلكتروني غير صحيح'
+          : 'Invalid email format';
     }
 
     if (!formData.address.trim()) {
       newErrors.address =
-        currentLang === "ar" ? "العنوان مطلوب" : "Address is required";
+        currentLang === 'ar' ? 'العنوان مطلوب' : 'Address is required';
     }
 
     if (!formData.city.trim()) {
       newErrors.city =
-        currentLang === "ar" ? "المدينة مطلوبة" : "City is required";
+        currentLang === 'ar' ? 'المدينة مطلوبة' : 'City is required';
     }
 
     setErrors(newErrors);
@@ -80,13 +80,13 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
   const calculateTotal = () => {
     const subtotal = cartItems.reduce(
       (total, item) => total + item.product.price * item.quantity,
-      0,
+      0
     );
     const wrappingCost = needsWrapping
       ? cartItems.reduce(
           (total, item) =>
             total + (item.product.wrappingPrice || 0) * item.quantity,
-          0,
+          0
         )
       : 0;
     const shippingCost = 50; // Fixed shipping cost
@@ -108,13 +108,13 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
 
     if (cartItems.length === 0) {
       setSubmitError(
-        currentLang === "ar" ? "سلة التسوق فارغة" : "Shopping cart is empty",
+        currentLang === 'ar' ? 'سلة التسوق فارغة' : 'Shopping cart is empty'
       );
       return;
     }
 
     setIsSubmitting(true);
-    setSubmitError("");
+    setSubmitError('');
 
     try {
       const totals = calculateTotal();
@@ -151,25 +151,28 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
 
         // Reset form
         setFormData({
-          customerName: "",
-          customerPhone: "",
-          customerEmail: "",
-          address: "",
-          city: "",
-          state: "",
-          notes: "",
+          customerName: '',
+          customerPhone: '',
+          customerEmail: '',
+          address: '',
+          city: '',
+          state: '',
+          notes: '',
         });
         setNeedsWrapping(false);
-        setPaymentMethod("card");
+        setPaymentMethod('card');
+
+        // Clear cart items after successful order submission to keep checkout state in sync
+        setCartItems([]);
 
         // Reset submitted state after 5 seconds
         setTimeout(() => setSubmitted(false), 5000);
       }
     } catch {
       setSubmitError(
-        currentLang === "ar"
-          ? "حدث خطأ أثناء إنشاء الطلب. يرجى المحاولة مرة أخرى."
-          : "An error occurred while creating the order. Please try again.",
+        currentLang === 'ar'
+          ? 'حدث خطأ أثناء إنشاء الطلب. يرجى المحاولة مرة أخرى.'
+          : 'An error occurred while creating the order. Please try again.'
       );
     } finally {
       setIsSubmitting(false);
@@ -179,7 +182,7 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: "" }));
+      setErrors((prev) => ({ ...prev, [field]: '' }));
     }
   };
 
@@ -193,13 +196,13 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
             <Check className="h-8 w-8 text-green-600" />
           </div>
           <h3 className="text-lg font-semibold text-green-900 mb-2">
-            {currentLang === "ar"
-              ? "تم إنشاء الطلب بنجاح!"
-              : "Order Created Successfully!"}
+            {currentLang === 'ar'
+              ? 'تم إنشاء الطلب بنجاح!'
+              : 'Order Created Successfully!'}
           </h3>
           <p className="text-green-700">
-            {currentLang === "ar"
-              ? "شكراً لطلبك. سنتواصل معك قريباً لتأكيد التفاصيل."
+            {currentLang === 'ar'
+              ? 'شكراً لطلبك. سنتواصل معك قريباً لتأكيد التفاصيل.'
               : "Thank you for your order. We'll contact you soon to confirm the details."}
           </p>
         </CardContent>
@@ -213,14 +216,14 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
         <CardContent className="p-6 text-center">
           <ShoppingCart className="h-16 w-16 text-amber-600 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-amber-900 mb-2">
-            {currentLang === "ar"
-              ? "سلة التسوق فارغة"
-              : "Shopping Cart is Empty"}
+            {currentLang === 'ar'
+              ? 'سلة التسوق فارغة'
+              : 'Shopping Cart is Empty'}
           </h3>
           <p className="text-amber-700">
-            {currentLang === "ar"
-              ? "يرجى إضافة منتجات إلى السلة قبل المتابعة."
-              : "Please add products to your cart before proceeding."}
+            {currentLang === 'ar'
+              ? 'يرجى إضافة منتجات إلى السلة قبل المتابعة.'
+              : 'Please add products to your cart before proceeding.'}
           </p>
         </CardContent>
       </Card>
@@ -233,7 +236,7 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
       <Card>
         <CardHeader>
           <CardTitle>
-            {currentLang === "ar" ? "معلومات الطلب" : "Order Information"}
+            {currentLang === 'ar' ? 'معلومات الطلب' : 'Order Information'}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -251,18 +254,18 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
             {/* Customer Name */}
             <div>
               <label className="block text-sm font-medium text-neutral-700 mb-2">
-                {currentLang === "ar" ? "الاسم الكامل" : "Full Name"} *
+                {currentLang === 'ar' ? 'الاسم الكامل' : 'Full Name'} *
               </label>
               <Input
                 type="text"
                 value={formData.customerName}
-                onChange={(e) => handleChange("customerName", e.target.value)}
+                onChange={(e) => handleChange('customerName', e.target.value)}
                 placeholder={
-                  currentLang === "ar"
-                    ? "أدخل اسمك الكامل"
-                    : "Enter your full name"
+                  currentLang === 'ar'
+                    ? 'أدخل اسمك الكامل'
+                    : 'Enter your full name'
                 }
-                className={errors.customerName ? "border-red-300" : ""}
+                className={errors.customerName ? 'border-red-300' : ''}
               />
               {errors.customerName && (
                 <p className="text-red-600 text-sm mt-1">
@@ -274,16 +277,16 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
             {/* Phone */}
             <div>
               <label className="block text-sm font-medium text-neutral-700 mb-2">
-                {currentLang === "ar" ? "رقم الهاتف" : "Phone Number"} *
+                {currentLang === 'ar' ? 'رقم الهاتف' : 'Phone Number'} *
               </label>
               <Input
                 type="tel"
                 value={formData.customerPhone}
-                onChange={(e) => handleChange("customerPhone", e.target.value)}
+                onChange={(e) => handleChange('customerPhone', e.target.value)}
                 placeholder={
-                  currentLang === "ar" ? "+218 91 123 4567" : "+218 91 123 4567"
+                  currentLang === 'ar' ? '+218 91 123 4567' : '+218 91 123 4567'
                 }
-                className={errors.customerPhone ? "border-red-300" : ""}
+                className={errors.customerPhone ? 'border-red-300' : ''}
               />
               {errors.customerPhone && (
                 <p className="text-red-600 text-sm mt-1">
@@ -295,14 +298,14 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
             {/* Email */}
             <div>
               <label className="block text-sm font-medium text-neutral-700 mb-2">
-                {currentLang === "ar" ? "البريد الإلكتروني" : "Email"} *
+                {currentLang === 'ar' ? 'البريد الإلكتروني' : 'Email'} *
               </label>
               <Input
                 type="email"
                 value={formData.customerEmail}
-                onChange={(e) => handleChange("customerEmail", e.target.value)}
+                onChange={(e) => handleChange('customerEmail', e.target.value)}
                 placeholder="example@domain.com"
-                className={errors.customerEmail ? "border-red-300" : ""}
+                className={errors.customerEmail ? 'border-red-300' : ''}
               />
               {errors.customerEmail && (
                 <p className="text-red-600 text-sm mt-1">
@@ -314,17 +317,17 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
             {/* Address */}
             <div>
               <label className="block text-sm font-medium text-neutral-700 mb-2">
-                {currentLang === "ar" ? "العنوان" : "Address"} *
+                {currentLang === 'ar' ? 'العنوان' : 'Address'} *
               </label>
               <Textarea
                 value={formData.address}
-                onChange={(e) => handleChange("address", e.target.value)}
+                onChange={(e) => handleChange('address', e.target.value)}
                 placeholder={
-                  currentLang === "ar"
-                    ? "أدخل عنوانك الكامل"
-                    : "Enter your full address"
+                  currentLang === 'ar'
+                    ? 'أدخل عنوانك الكامل'
+                    : 'Enter your full address'
                 }
-                className={`min-h-[80px] ${errors.address ? "border-red-300" : ""}`}
+                className={`min-h-[80px] ${errors.address ? 'border-red-300' : ''}`}
               />
               {errors.address && (
                 <p className="text-red-600 text-sm mt-1">{errors.address}</p>
@@ -334,14 +337,14 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
             {/* City */}
             <div>
               <label className="block text-sm font-medium text-neutral-700 mb-2">
-                {currentLang === "ar" ? "المدينة" : "City"} *
+                {currentLang === 'ar' ? 'المدينة' : 'City'} *
               </label>
               <Input
                 type="text"
                 value={formData.city}
-                onChange={(e) => handleChange("city", e.target.value)}
-                placeholder={currentLang === "ar" ? "الرياض" : "Riyadh"}
-                className={errors.city ? "border-red-300" : ""}
+                onChange={(e) => handleChange('city', e.target.value)}
+                placeholder={currentLang === 'ar' ? 'الرياض' : 'Riyadh'}
+                className={errors.city ? 'border-red-300' : ''}
               />
               {errors.city && (
                 <p className="text-red-600 text-sm mt-1">{errors.city}</p>
@@ -351,14 +354,14 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
             {/* State */}
             <div>
               <label className="block text-sm font-medium text-neutral-700 mb-2">
-                {currentLang === "ar" ? "المنطقة" : "State/Region"}
+                {currentLang === 'ar' ? 'المنطقة' : 'State/Region'}
               </label>
               <Input
                 type="text"
                 value={formData.state}
-                onChange={(e) => handleChange("state", e.target.value)}
+                onChange={(e) => handleChange('state', e.target.value)}
                 placeholder={
-                  currentLang === "ar" ? "منطقة الرياض" : "Riyadh Region"
+                  currentLang === 'ar' ? 'منطقة الرياض' : 'Riyadh Region'
                 }
               />
             </div>
@@ -376,22 +379,22 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
                 htmlFor="wrapping"
                 className="text-sm font-medium text-neutral-700"
               >
-                {currentLang === "ar" ? "تغليف هدايا" : "Gift Wrapping"}
+                {currentLang === 'ar' ? 'تغليف هدايا' : 'Gift Wrapping'}
               </label>
             </div>
 
             {/* Notes */}
             <div>
               <label className="block text-sm font-medium text-neutral-700 mb-2">
-                {currentLang === "ar" ? "ملاحظات إضافية" : "Additional Notes"}
+                {currentLang === 'ar' ? 'ملاحظات إضافية' : 'Additional Notes'}
               </label>
               <Textarea
                 value={formData.notes}
-                onChange={(e) => handleChange("notes", e.target.value)}
+                onChange={(e) => handleChange('notes', e.target.value)}
                 placeholder={
-                  currentLang === "ar"
-                    ? "أي ملاحظات أو تعليمات خاصة..."
-                    : "Any special notes or instructions..."
+                  currentLang === 'ar'
+                    ? 'أي ملاحظات أو تعليمات خاصة...'
+                    : 'Any special notes or instructions...'
                 }
                 className="min-h-[80px]"
               />
@@ -405,14 +408,14 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
               {isSubmitting ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                  {currentLang === "ar"
-                    ? "جاري إنشاء الطلب..."
-                    : "Creating Order..."}
+                  {currentLang === 'ar'
+                    ? 'جاري إنشاء الطلب...'
+                    : 'Creating Order...'}
                 </>
               ) : (
                 <>
                   <ShoppingCart className="h-4 w-4 mr-2" />
-                  {currentLang === "ar" ? "إنشاء الطلب" : "Create Order"}
+                  {currentLang === 'ar' ? 'إنشاء الطلب' : 'Create Order'}
                 </>
               )}
             </Button>
@@ -424,40 +427,40 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
       <Card>
         <CardHeader>
           <CardTitle>
-            {currentLang === "ar" ? "ملخص الطلب" : "Order Summary"}
+            {currentLang === 'ar' ? 'ملخص الطلب' : 'Order Summary'}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Payment Methods */}
           <div>
             <p className="text-sm font-medium text-neutral-700 mb-2">
-              {currentLang === "ar" ? "طريقة الدفع" : "Payment Method"}
+              {currentLang === 'ar' ? 'طريقة الدفع' : 'Payment Method'}
             </p>
             <div className="grid grid-cols-2 gap-3">
               {[
                 {
-                  key: "card",
-                  labelAr: "بطاقة بنكية",
-                  labelEn: "Card",
-                  icon: "/orna/visa.svg",
+                  key: 'card',
+                  labelAr: 'بطاقة بنكية',
+                  labelEn: 'Card',
+                  icon: '/orna/visa.svg',
                 },
                 {
-                  key: "apple_pay",
-                  labelAr: "ابل باي",
-                  labelEn: "Apple Pay",
-                  icon: "/orna/apple-pay.svg",
+                  key: 'apple_pay',
+                  labelAr: 'ابل باي',
+                  labelEn: 'Apple Pay',
+                  icon: '/orna/apple-pay.svg',
                 },
                 {
-                  key: "stc_pay",
-                  labelAr: "STC Pay",
-                  labelEn: "STC Pay",
-                  icon: "/orna/unionpay.svg",
+                  key: 'stc_pay',
+                  labelAr: 'STC Pay',
+                  labelEn: 'STC Pay',
+                  icon: '/orna/unionpay.svg',
                 },
                 {
-                  key: "cod",
-                  labelAr: "الدفع عند الاستلام",
-                  labelEn: "Cash on Delivery",
-                  icon: "/orna/mast  ercard.svg",
+                  key: 'cod',
+                  labelAr: 'الدفع عند الاستلام',
+                  labelEn: 'Cash on Delivery',
+                  icon: '/orna/mast  ercard.svg',
                 },
               ].map((m) => (
                 <button
@@ -465,13 +468,13 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
                   type="button"
                   onClick={() =>
                     setPaymentMethod(
-                      m.key as "card" | "apple_pay" | "stc_pay" | "cod",
+                      m.key as 'card' | 'apple_pay' | 'stc_pay' | 'cod'
                     )
                   }
                   className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${
                     paymentMethod === m.key
-                      ? "border-amber-600 bg-amber-50"
-                      : "border-neutral-200 hover:bg-neutral-50"
+                      ? 'border-amber-600 bg-amber-50'
+                      : 'border-neutral-200 hover:bg-neutral-50'
                   }`}
                 >
                   <div className="relative w-8 h-6">
@@ -483,7 +486,7 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
                     />
                   </div>
                   <span className="text-sm">
-                    {currentLang === "ar" ? m.labelAr : m.labelEn}
+                    {currentLang === 'ar' ? m.labelAr : m.labelEn}
                   </span>
                 </button>
               ))}
@@ -501,14 +504,14 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
                     {item.product.name[currentLang]}
                   </p>
                   <p className="text-xs text-neutral-500">
-                    {currentLang === "ar" ? "الكمية:" : "Qty:"} {item.quantity}
+                    {currentLang === 'ar' ? 'الكمية:' : 'Qty:'} {item.quantity}
                   </p>
                 </div>
                 <p className="font-medium">
                   {formatPrice(
                     item.product.price * item.quantity,
-                    "LYD",
-                    currentLang,
+                    'LYD',
+                    currentLang
                   )}
                 </p>
               </div>
@@ -519,31 +522,31 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
           <div className="space-y-2 pt-4 border-t">
             <div className="flex justify-between text-sm">
               <span>
-                {currentLang === "ar" ? "المجموع الفرعي:" : "Subtotal:"}
+                {currentLang === 'ar' ? 'المجموع الفرعي:' : 'Subtotal:'}
               </span>
-              <span>{formatPrice(totals.subtotal, "LYD", currentLang)}</span>
+              <span>{formatPrice(totals.subtotal, 'LYD', currentLang)}</span>
             </div>
 
             {needsWrapping && totals.wrappingCost > 0 && (
               <div className="flex justify-between text-sm">
-                <span>{currentLang === "ar" ? "التغليف:" : "Wrapping:"}</span>
+                <span>{currentLang === 'ar' ? 'التغليف:' : 'Wrapping:'}</span>
                 <span>
-                  {formatPrice(totals.wrappingCost, "LYD", currentLang)}
+                  {formatPrice(totals.wrappingCost, 'LYD', currentLang)}
                 </span>
               </div>
             )}
 
             <div className="flex justify-between text-sm">
-              <span>{currentLang === "ar" ? "الشحن:" : "Shipping:"}</span>
+              <span>{currentLang === 'ar' ? 'الشحن:' : 'Shipping:'}</span>
               <span>
-                {formatPrice(totals.shippingCost, "LYD", currentLang)}
+                {formatPrice(totals.shippingCost, 'LYD', currentLang)}
               </span>
             </div>
 
             <div className="flex justify-between font-semibold text-lg border-t pt-2">
-              <span>{currentLang === "ar" ? "المجموع الكلي:" : "Total:"}</span>
+              <span>{currentLang === 'ar' ? 'المجموع الكلي:' : 'Total:'}</span>
               <span className="text-amber-600">
-                {formatPrice(totals.total, "LYD", currentLang)}
+                {formatPrice(totals.total, 'LYD', currentLang)}
               </span>
             </div>
           </div>
