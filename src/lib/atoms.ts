@@ -1,88 +1,24 @@
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 import { fetchProducts, fetchOrders, fetchContacts } from './api';
+import type {
+  Product,
+  Order,
+  Contact,
+  SettingKV,
+  CartItem,
+  User,
+} from './types';
 
-// Types
-export interface Product {
-  id: string;
-  name: Record<string, string>;
-  slug: string;
-  price: number;
-  priceBeforeDiscount?: number;
-  images: string[];
-  description: Record<string, string>;
-  subtitle?: Record<string, string>;
-  subdescription?: Record<string, string>;
-  featured: boolean;
-  wrappingPrice?: number;
-  status: 'ACTIVE' | 'INACTIVE' | 'OUT_OF_STOCK';
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface Order {
-  id: string;
-  orderNumber: string;
-  customerName: string;
-  customerPhone: string;
-  customerEmail?: string;
-  shippingAddress: Record<string, string>;
-  totalAmount: number;
-  wrappingCost?: number;
-  needsWrapping: boolean;
-  paymentStatus: 'PENDING' | 'PAID' | 'FAILED' | 'REFUNDED';
-  paymentUrl?: string;
-  paymentMethod?: string;
-  status:
-    | 'PENDING'
-    | 'CONFIRMED'
-    | 'PROCESSING'
-    | 'SHIPPED'
-    | 'DELIVERED'
-    | 'CANCELLED';
-  notes?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  items: OrderItem[];
-}
-
-export interface OrderItem {
-  id: string;
-  quantity: number;
-  unitPrice: number;
-  totalPrice: number;
-  product: Product;
-}
-
-export interface Contact {
-  id: string;
-  name: string;
-  email: string;
-  phone?: string;
-  subject: string;
-  message: string;
-  status: 'NEW' | 'REPLIED' | 'RESOLVED';
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface SettingKV<T = unknown> {
-  key: string;
-  value: T;
-}
-
-export interface User {
-  id: string;
-  email: string;
-  name?: string;
-  role: 'USER' | 'ADMIN' | 'SUPER_ADMIN';
-  image?: string;
-}
-
-export interface CartItem {
-  product: Product;
-  quantity: number;
-}
+export type {
+  Product,
+  Order,
+  Contact,
+  SettingKV,
+  CartItem,
+  User,
+} from './types';
+export type { OrderItem } from './types';
 
 // Global State Atoms
 export const currentLangAtom = atomWithStorage<string>('currentLang', 'ar');
@@ -135,7 +71,7 @@ export const loadProductsAtom = atom(null, async (get, set) => {
   try {
     const result = await fetchProducts();
     if (result.data) {
-      set(productsAtom, result.data as Product[]);
+      set(productsAtom, result.data);
     } else {
       console.error('Failed to load products:', result.error);
       set(productsErrorAtom, result.error || 'Failed to load products');
@@ -154,8 +90,7 @@ export const loadOrdersAtom = atom(null, async (get, set) => {
   try {
     const result = await fetchOrders();
     if (result.data) {
-      // TODO: fix this typing
-      set(ordersAtom, result.data as unknown as Order[]);
+      set(ordersAtom, result.data);
     } else {
       console.error('Failed to load orders:', result.error);
       set(ordersErrorAtom, result.error || 'Failed to load orders');
@@ -174,7 +109,7 @@ export const loadContactsAtom = atom(null, async (get, set) => {
   try {
     const result = await fetchContacts();
     if (result.data) {
-      set(contactsAtom, result.data as Contact[]);
+      set(contactsAtom, result.data);
     } else {
       console.error('Failed to load contacts:', result.error);
       set(contactsErrorAtom, result.error || 'Failed to load contacts');

@@ -20,6 +20,7 @@ export interface Product {
   subdescription?: Record<string, string>;
   featured: boolean;
   wrappingPrice?: number;
+  stockQuantity?: number;
   status: 'ACTIVE' | 'INACTIVE' | 'OUT_OF_STOCK';
   createdAt: Date;
   updatedAt: Date;

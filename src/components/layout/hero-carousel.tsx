@@ -1,23 +1,23 @@
-"use client";
+'use client';
 
-import { useAtom } from "jotai";
+import { useAtom } from 'jotai';
 import {
   currentLangAtom,
   featuredProductsAtom,
   type Product,
-} from "@/lib/atoms";
+} from '@/lib/atoms';
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
-} from "@/components/ui/carousel";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { useState, useEffect } from "react";
-import NextImage from "next/image";
-import { createPlaceholderImage } from "@/lib/image-utils";
+} from '@/components/ui/carousel';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import NextImage from 'next/image';
+import { createPlaceholderImage } from '@/lib/image-utils';
 
-import Autoplay from "embla-carousel-autoplay";
+import Autoplay from 'embla-carousel-autoplay';
 
 export function HeroCarousel() {
   const [currentLang] = useAtom(currentLangAtom);
@@ -30,9 +30,9 @@ export function HeroCarousel() {
       title: p.name,
       description: p.description,
       link: `/products/${p.slug}`,
-      image: p.images?.[0] || "/orna/1.jpeg",
-      gradient: "from-amber-600 to-rose-600",
-    }),
+      image: p.images?.[0] || '/orna/1.jpeg',
+      gradient: 'from-amber-600 to-rose-600',
+    })
   );
 
   // Preload images for better performance
@@ -58,11 +58,11 @@ export function HeroCarousel() {
     <div className="relative h-[85vh] md:h-screen w-full overflow-hidden bg-neutral-100">
       <Carousel
         key={currentLang}
-        dir={currentLang === "ar" ? "rtl" : "ltr"}
+        dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
         opts={{
-          align: "start",
+          align: 'start',
           loop: true,
-          direction: currentLang === "ar" ? "rtl" : "ltr",
+          direction: currentLang === 'ar' ? 'rtl' : 'ltr',
         }}
         plugins={[Autoplay({ delay: 5000 })]}
         className="h-full w-full"
@@ -72,14 +72,17 @@ export function HeroCarousel() {
             ? featuredSlides
             : [
                 {
-                  title: { ar: "مرحبا بكم في أورنا", en: "Welcome to Orna" },
-                  description: {
-                    ar: "نص تجريبي للعرض",
-                    en: "Sample hero slide",
+                  title: {
+                    ar: 'اكتشف أناقة مجوهرات أورنا',
+                    en: 'Discover the Elegance of Orna',
                   },
-                  link: "/products",
-                  image: "/orna/3.jpeg",
-                  gradient: "from-amber-600 to-rose-600",
+                  description: {
+                    ar: 'قطع مصممة بعناية من الذهب والأحجار الكريمة للاحتفال بكل لحظة ثمينة في حياتك',
+                    en: 'Thoughtfully crafted gold and gemstone pieces to celebrate every precious moment.',
+                  },
+                  link: '/products',
+                  image: '/orna/3.jpeg',
+                  gradient: 'from-amber-600 to-rose-600',
                 },
               ]
           ).map((slide, index) => (
@@ -89,7 +92,7 @@ export function HeroCarousel() {
                 <NextImage
                   src={slide.image}
                   alt={
-                    typeof slide.title === "string"
+                    typeof slide.title === 'string'
                       ? slide.title
                       : slide.title[currentLang]
                   }
@@ -97,7 +100,7 @@ export function HeroCarousel() {
                   priority={index === 0}
                   sizes="100vw"
                   placeholder="blur"
-                  blurDataURL={createPlaceholderImage(1200, 800, "Orna")}
+                  blurDataURL={createPlaceholderImage(1200, 800, 'Orna')}
                   className="object-cover"
                 />
                 {/* Pearl gradient tint */}
@@ -149,7 +152,7 @@ export function HeroCarousel() {
                           href={slide.link}
                           className="focus-ring rounded-lg"
                         >
-                          {currentLang === "ar" ? "عرض المنتج" : "View Product"}
+                          {currentLang === 'ar' ? 'عرض المنتج' : 'View Product'}
                         </Link>
                       </Button>
                     </div>

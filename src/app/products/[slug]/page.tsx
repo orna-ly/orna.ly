@@ -1,22 +1,25 @@
-"use client";
+'use client';
 
-import { useAtom } from "jotai";
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useAtom } from 'jotai';
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import Image from 'next/image';
 import {
   currentLangAtom,
   addToCartAtom,
   productsAtom,
   loadProductsAtom,
-} from "@/lib/atoms";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { ShoppingCart, Heart, Share2, ArrowLeft, Check } from "lucide-react";
-import Link from "next/link";
-import type { Product } from "@/lib/atoms";
-import { formatPrice } from "@/lib/utils";
+} from '@/lib/atoms';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { ShoppingCart, Heart, Share2, ArrowLeft, Check } from 'lucide-react';
+import Link from 'next/link';
+import type { Product } from '@/lib/atoms';
+import { formatPrice } from '@/lib/utils';
+import { createPlaceholderImage } from '@/lib/image-utils';
+import { showToast, toastError, toastSuccess } from '@/lib/toast';
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -31,6 +34,12 @@ export default function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const [addedToCart, setAddedToCart] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [shareStatus, setShareStatus] = useState<'idle' | 'copied' | 'error'>(
+    'idle'
+  );
+
+  const locale = currentLang === 'ar' ? 'ar' : 'en';
 
   // Initialize products and find current product
   useEffect(() => {
@@ -57,7 +66,60 @@ export default function ProductDetailPage() {
         addToCart(product);
       }
       setAddedToCart(true);
+      showToast.success(
+        currentLang === 'ar' ? 'تمت إضافة المنتج إلى السلة' : 'Added to cart'
+      );
       setTimeout(() => setAddedToCart(false), 2000);
+    }
+  };
+
+  const handleToggleFavorite = () => {
+    setIsFavorite((prev) => !prev);
+    toastSuccess(isFavorite ? 'deleted' : 'saved', locale);
+  };
+
+  const handleShare = async () => {
+    if (!product) return;
+
+    const origin =
+      typeof window !== 'undefined' && window.location.origin
+        ? window.location.origin
+        : '';
+    const productUrl = origin
+      ? `${origin}/products/${product.slug}`
+      : `/products/${product.slug}`;
+
+    try {
+      if (typeof navigator !== 'undefined' && navigator.share) {
+        await navigator.share({
+          title: product.name[currentLang],
+          url: productUrl,
+        });
+      } else if (
+        typeof navigator !== 'undefined' &&
+        navigator.clipboard?.writeText
+      ) {
+        await navigator.clipboard.writeText(productUrl);
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = productUrl;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      }
+
+      setShareStatus('copied');
+      toastSuccess('copied', locale);
+      setTimeout(() => setShareStatus('idle'), 2000);
+    } catch (error) {
+      console.error('Failed to copy product link', error);
+      setShareStatus('error');
+      toastError('generic', locale);
+      setTimeout(() => setShareStatus('idle'), 2000);
     }
   };
 
@@ -100,17 +162,17 @@ export default function ProductDetailPage() {
           <div className="bg-white rounded-xl p-12 shadow-sm">
             <div className="text-6xl mb-4">❌</div>
             <h1 className="text-2xl font-bold text-neutral-900 mb-4">
-              {currentLang === "ar" ? "المنتج غير موجود" : "Product not found"}
+              {currentLang === 'ar' ? 'المنتج غير موجود' : 'Product not found'}
             </h1>
             <p className="text-neutral-600 mb-6">
-              {currentLang === "ar"
-                ? "عذراً، لم نتمكن من العثور على المنتج المطلوب"
+              {currentLang === 'ar'
+                ? 'عذراً، لم نتمكن من العثور على المنتج المطلوب'
                 : "Sorry, we couldn't find the product you're looking for"}
             </p>
             <Button asChild>
               <Link href="/products">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                {currentLang === "ar" ? "العودة للمنتجات" : "Back to Products"}
+                {currentLang === 'ar' ? 'العودة للمنتجات' : 'Back to Products'}
               </Link>
             </Button>
           </div>
@@ -127,13 +189,13 @@ export default function ProductDetailPage() {
           <ol className="flex items-center space-x-2 text-sm text-neutral-600">
             <li>
               <Link href="/" className="hover:text-amber-600">
-                {currentLang === "ar" ? "الرئيسية" : "Home"}
+                {currentLang === 'ar' ? 'الرئيسية' : 'Home'}
               </Link>
             </li>
             <li>/</li>
             <li>
               <Link href="/products" className="hover:text-amber-600">
-                {currentLang === "ar" ? "المنتجات" : "Products"}
+                {currentLang === 'ar' ? 'المنتجات' : 'Products'}
               </Link>
             </li>
             <li>/</li>
@@ -144,20 +206,25 @@ export default function ProductDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Product Images */}
           <div className="space-y-4">
-            <div
-              className="relative aspect-square bg-white rounded-xl overflow-hidden bg-cover bg-center bg-no-repeat"
-              style={{
-                backgroundImage: `url(${product.images[selectedImage] || "/placeholder.jpg"})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                backgroundRepeat: "no-repeat",
-              }}
-            >
-              {/* Fallback gradient background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-amber-50 via-rose-50 to-amber-100" />
+            <div className="relative aspect-square bg-white rounded-xl overflow-hidden">
+              <Image
+                src={
+                  product.images[selectedImage] ||
+                  product.images[0] ||
+                  '/orna/1.jpeg'
+                }
+                alt={product.name[currentLang]}
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                priority
+                className="object-cover"
+                placeholder="blur"
+                blurDataURL={createPlaceholderImage(600, 600, 'Orna')}
+              />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-amber-50/20 via-rose-50/30 to-amber-100/20" />
               {product.featured && (
                 <Badge className="absolute top-4 left-4 bg-amber-600 hover:bg-amber-700">
-                  {currentLang === "ar" ? "مميز" : "Featured"}
+                  {currentLang === 'ar' ? 'مميز' : 'Featured'}
                 </Badge>
               )}
               {product.priceBeforeDiscount && (
@@ -165,9 +232,9 @@ export default function ProductDetailPage() {
                   {Math.round(
                     ((product.priceBeforeDiscount - product.price) /
                       product.priceBeforeDiscount) *
-                      100,
+                      100
                   )}
-                  %{currentLang === "ar" ? " خصم" : " OFF"}
+                  %{currentLang === 'ar' ? ' خصم' : ' OFF'}
                 </Badge>
               )}
             </div>
@@ -177,22 +244,30 @@ export default function ProductDetailPage() {
               <div className="flex gap-2 overflow-x-auto">
                 {product.images.map((image, index) => (
                   <button
-                    key={index}
+                    key={image || index}
+                    type="button"
                     onClick={() => setSelectedImage(index)}
-                    className={`relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 bg-cover bg-center bg-no-repeat ${
+                    className={`relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-colors ${
                       selectedImage === index
-                        ? "border-amber-600"
-                        : "border-neutral-200"
+                        ? 'border-amber-600'
+                        : 'border-transparent'
                     }`}
-                    style={{
-                      backgroundImage: `url(${image})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                      backgroundRepeat: "no-repeat",
-                    }}
+                    aria-label={
+                      currentLang === 'ar'
+                        ? 'عرض صورة المنتج'
+                        : 'Show product image'
+                    }
                   >
-                    {/* Fallback gradient background */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-amber-50 via-rose-50 to-amber-100" />
+                    <Image
+                      src={image || '/orna/1.jpeg'}
+                      alt={product.name[currentLang]}
+                      fill
+                      sizes="80px"
+                      className="object-cover"
+                      placeholder="blur"
+                      blurDataURL={createPlaceholderImage(160, 160, 'Orna')}
+                    />
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-amber-50/20 via-rose-50/30 to-amber-100/20" />
                   </button>
                 ))}
               </div>
@@ -215,11 +290,11 @@ export default function ProductDetailPage() {
             {/* Price */}
             <div className="flex items-center gap-4">
               <span className="text-3xl font-bold text-amber-600">
-                {formatPrice(product.price, "LYD", currentLang)}
+                {formatPrice(product.price, 'LYD', currentLang)}
               </span>
               {product.priceBeforeDiscount && (
                 <span className="text-xl text-neutral-400 line-through">
-                  {formatPrice(product.priceBeforeDiscount, "LYD", currentLang)}
+                  {formatPrice(product.priceBeforeDiscount, 'LYD', currentLang)}
                 </span>
               )}
             </div>
@@ -227,7 +302,7 @@ export default function ProductDetailPage() {
             {/* Description */}
             <div>
               <h3 className="text-lg font-semibold mb-2">
-                {currentLang === "ar" ? "الوصف" : "Description"}
+                {currentLang === 'ar' ? 'الوصف' : 'Description'}
               </h3>
               <p className="text-neutral-700 leading-relaxed">
                 {product.description[currentLang]}
@@ -245,12 +320,13 @@ export default function ProductDetailPage() {
             <div className="space-y-4">
               <div>
                 <label className="text-sm font-medium text-neutral-700 mb-2 block">
-                  {currentLang === "ar" ? "الكمية" : "Quantity"}
+                  {currentLang === 'ar' ? 'الكمية' : 'Quantity'}
                 </label>
                 <div className="flex items-center gap-3">
                   <Button
                     variant="outline"
                     size="icon"
+                    type="button"
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   >
                     -
@@ -261,6 +337,7 @@ export default function ProductDetailPage() {
                   <Button
                     variant="outline"
                     size="icon"
+                    type="button"
                     onClick={() => setQuantity(quantity + 1)}
                   >
                     +
@@ -272,25 +349,67 @@ export default function ProductDetailPage() {
                 <Button
                   size="lg"
                   className="flex-1 bg-amber-600 hover:bg-amber-700"
+                  type="button"
                   onClick={handleAddToCart}
                 >
                   {addedToCart ? (
                     <>
                       <Check className="h-4 w-4 mr-2" />
-                      {currentLang === "ar" ? "تم الإضافة!" : "Added!"}
+                      {currentLang === 'ar' ? 'تم الإضافة!' : 'Added!'}
                     </>
                   ) : (
                     <>
                       <ShoppingCart className="h-4 w-4 mr-2" />
-                      {currentLang === "ar" ? "إضافة للسلة" : "Add to Cart"}
+                      {currentLang === 'ar' ? 'إضافة للسلة' : 'Add to Cart'}
                     </>
                   )}
                 </Button>
-                <Button size="lg" variant="outline">
-                  <Heart className="h-4 w-4" />
+                <Button
+                  size="lg"
+                  variant={isFavorite ? 'default' : 'outline'}
+                  onClick={handleToggleFavorite}
+                  type="button"
+                  aria-pressed={isFavorite}
+                  aria-label={
+                    currentLang === 'ar'
+                      ? 'إضافة إلى المفضلة'
+                      : 'Add to favourites'
+                  }
+                  className={
+                    isFavorite
+                      ? 'bg-rose-100 text-rose-600 hover:bg-rose-200'
+                      : undefined
+                  }
+                >
+                  <Heart
+                    className={`h-4 w-4 ${isFavorite ? 'fill-current' : ''}`}
+                  />
                 </Button>
-                <Button size="lg" variant="outline">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={handleShare}
+                  type="button"
+                  aria-label={
+                    currentLang === 'ar'
+                      ? 'نسخ رابط المنتج'
+                      : 'Copy product link'
+                  }
+                >
                   <Share2 className="h-4 w-4" />
+                  <span className="sr-only">
+                    {shareStatus === 'copied'
+                      ? currentLang === 'ar'
+                        ? 'تم نسخ الرابط'
+                        : 'Link copied'
+                      : shareStatus === 'error'
+                        ? currentLang === 'ar'
+                          ? 'فشل نسخ الرابط'
+                          : 'Failed to copy'
+                        : currentLang === 'ar'
+                          ? 'مشاركة'
+                          : 'Share'}
+                  </span>
                 </Button>
               </div>
             </div>
@@ -299,34 +418,34 @@ export default function ProductDetailPage() {
             <Card>
               <CardContent className="p-4">
                 <h4 className="font-semibold mb-3">
-                  {currentLang === "ar" ? "تفاصيل المنتج" : "Product Details"}
+                  {currentLang === 'ar' ? 'تفاصيل المنتج' : 'Product Details'}
                 </h4>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span>
-                      {currentLang === "ar" ? "رمز المنتج:" : "Product ID:"}
+                      {currentLang === 'ar' ? 'رمز المنتج:' : 'Product ID:'}
                     </span>
                     <span className="font-medium">{product.id}</span>
                   </div>
                   {product.wrappingPrice && (
                     <div className="flex justify-between">
                       <span>
-                        {currentLang === "ar"
-                          ? "تغليف هدايا:"
-                          : "Gift Wrapping:"}
+                        {currentLang === 'ar'
+                          ? 'تغليف هدايا:'
+                          : 'Gift Wrapping:'}
                       </span>
                       <span className="font-medium">
-                        {formatPrice(product.wrappingPrice, "LYD", currentLang)}
+                        {formatPrice(product.wrappingPrice, 'LYD', currentLang)}
                       </span>
                     </div>
                   )}
                   <div className="flex justify-between">
                     <span>
-                      {currentLang === "ar" ? "تاريخ الإضافة:" : "Date Added:"}
+                      {currentLang === 'ar' ? 'تاريخ الإضافة:' : 'Date Added:'}
                     </span>
                     <span className="font-medium">
                       {new Date(product.createdAt).toLocaleDateString(
-                        currentLang === "ar" ? "ar-SA" : "en-US",
+                        currentLang === 'ar' ? 'ar-SA' : 'en-US'
                       )}
                     </span>
                   </div>
