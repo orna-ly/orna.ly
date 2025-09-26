@@ -38,8 +38,8 @@ const navigationItems: NavigationItem[] = [
         href: '/about',
       },
       {
-        name: { ar: 'سياسة الإرجاع', en: 'Refund Policy' },
-        href: '/refund-policy',
+        name: { ar: 'سياسة الإرجاع', en: 'Return Policy' },
+        href: '/return-policy',
       },
       {
         name: { ar: 'بوابات الدفع', en: 'Payment Gateways' },
