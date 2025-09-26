@@ -16,7 +16,9 @@
     "db:generate": "bunx prisma generate",
     "db:studio": "bunx prisma studio",
     "prettier": "bunx prettier --write .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "postinstall": "bunx prisma generate",
+    "vercel-build": "bunx prisma generate && bunx next build --turbopack"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
