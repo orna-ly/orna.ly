@@ -46,8 +46,9 @@ export const createOrderSchema = z.object({
   customerPhone: z.string().min(1, 'Customer phone is required'),
   customerEmail: z.string().email('Invalid email').optional(),
   shippingAddress: z.object({
-    ar: z.string().min(1, 'Arabic address is required'),
-    en: z.string().optional(),
+    address: z.string().min(1, 'Shipping address is required'),
+    city: z.string().min(1, 'City is required'),
+    state: z.string().optional(),
   }),
   totalAmount: z.number().min(0, 'Total amount must be positive'),
   wrappingCost: z.number().min(0).optional(),

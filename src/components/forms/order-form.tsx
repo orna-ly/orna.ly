@@ -122,17 +122,17 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
       const orderData = {
         customerName: formData.customerName,
         customerPhone: formData.customerPhone,
-        customerEmail: formData.customerEmail,
+        customerEmail: formData.customerEmail.trim(),
         shippingAddress: {
-          address: formData.address,
-          city: formData.city,
-          state: formData.state,
+          address: formData.address.trim(),
+          city: formData.city.trim(),
+          state: formData.state.trim() || undefined,
         },
         totalAmount: totals.total,
         wrappingCost: needsWrapping ? totals.wrappingCost : 0,
         needsWrapping,
         paymentMethod,
-        notes: formData.notes,
+        notes: formData.notes.trim() || undefined,
         items: cartItems.map((item) => ({
           productId: item.product.id,
           quantity: item.quantity,

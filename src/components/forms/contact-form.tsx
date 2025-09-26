@@ -35,10 +35,14 @@ export function ContactForm() {
 
   const onSubmit = async (data: CreateContactInput) => {
     try {
-      // Convert undefined phone to null for API compatibility
+      // Trim payload before submitting and normalise optional fields
       const contactData = {
         ...data,
-        phone: data.phone || null,
+        name: data.name.trim(),
+        email: data.email.trim(),
+        subject: data.subject.trim(),
+        message: data.message.trim(),
+        phone: data.phone?.trim() || undefined,
       };
       const submitPromise = createContact(contactData);
 
