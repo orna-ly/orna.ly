@@ -15,7 +15,8 @@ Create the variables in the Vercel dashboard (`Project Settings → Environment 
 
 | Name                                                 | Description                                                                                                                                       |
 | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `DATABASE_URL`                                       | Connection string for your production PostgreSQL database.                                                                                        |
+| `DATABASE_PROVIDER`                                  | Either `postgresql` (default) or `sqlite`, matching the engine powering your production database.                                                 |
+| `DATABASE_URL`                                       | Connection string for your production database.                                                                                                   |
 | `NEXTAUTH_URL`                                       | Fully-qualified URL that Vercel should serve (e.g. `https://orna.yourdomain.com`).                                                                |
 | `NEXTAUTH_SECRET`                                    | A cryptographically secure string used by NextAuth.js. Generate with `openssl rand -base64 32`.                                                   |
 | `NEXT_PUBLIC_APP_URL`                                | Public URL of the site. Used in links and client-side fetches.                                                                                    |
@@ -31,17 +32,19 @@ If you are migrating data from the legacy Laravel app you also need the `OLD_DB_
 
 ## 3. Database preparation
 
-1. Provision the production PostgreSQL database and note the connection string.
+1. Provision the production database and note the connection string.
+   - For PostgreSQL, use a managed service such as Vercel Postgres, Neon, Supabase, Railway, or your cloud provider of choice and keep `DATABASE_PROVIDER=postgresql`.
+   - For SQLite, point `DATABASE_URL` to a remote LibSQL/Turso instance or another SQLite-compatible service. File-based SQLite databases are **not** persisted between Vercel deployments, so always use a hosted option in production.
 
-2. Apply the Prisma migrations against the new database from your local machine:
+2. Apply the Prisma schema against the new database from your local machine:
 
    ```bash
    bun install
-   bun run db:migrate
+   bun run db:deploy
    bun run db:seed
    ```
 
-   `db:migrate` wraps `prisma migrate deploy` so every committed migration is applied in order. When the schema evolves, create a new migration locally (`bunx prisma migrate dev`) and commit it before promoting the build.
+   `db:deploy` automatically chooses between `prisma migrate deploy` (PostgreSQL) and `prisma db push` (SQLite) based on `DATABASE_PROVIDER`. When the schema evolves, create a new migration locally (`bunx prisma migrate dev`) while targeting PostgreSQL, or re-run `db:deploy` for SQLite-backed environments.
 
 3. Update any external integrations (payment gateways, storage buckets, email providers) so that the credentials you enter in Vercel point to production services.
 
