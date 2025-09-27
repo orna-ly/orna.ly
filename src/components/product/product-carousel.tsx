@@ -1,27 +1,27 @@
-"use client";
+'use client';
 
-import { useAtom } from "jotai";
-import { currentLangAtom, addToCartAtom, type Product } from "@/lib/atoms";
+import { useAtom } from 'jotai';
+import { currentLangAtom, addToCartAtom, type Product } from '@/lib/atoms';
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
-} from "@/components/ui/carousel";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+} from '@/components/ui/carousel';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import {
   ShoppingCart,
   Eye,
   Heart,
   ChevronLeft,
   ChevronRight,
-} from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
-import { createPlaceholderImage } from "@/lib/image-utils";
-import { formatPrice } from "@/lib/utils";
-import { useState } from "react";
+} from 'lucide-react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { createPlaceholderImage } from '@/lib/image-utils';
+import { formatPrice } from '@/lib/utils';
+import { useState } from 'react';
 
 interface ProductCarouselProps {
   products: Product[];
@@ -64,14 +64,17 @@ export function ProductCarousel({ products }: ProductCarouselProps) {
   if (products.length === 0) {
     return (
       <div className="text-center py-16">
-        <div className="animate-pulse">
-          <div className="text-6xl mb-4">💍</div>
-          <p className="text-neutral-600 text-lg">
-            {currentLang === "ar"
-              ? "جاري تحميل المنتجات..."
-              : "Loading products..."}
-          </p>
-        </div>
+        <div className="text-6xl mb-4">💍</div>
+        <p className="text-neutral-600 text-lg mb-4">
+          {currentLang === 'ar'
+            ? 'لا توجد منتجات متاحة حاليًا'
+            : 'No products available at the moment'}
+        </p>
+        <p className="text-neutral-500 text-sm">
+          {currentLang === 'ar'
+            ? 'يرجى المحاولة مرة أخرى لاحقًا'
+            : 'Please try again later'}
+        </p>
       </div>
     );
   }
@@ -80,7 +83,7 @@ export function ProductCarousel({ products }: ProductCarouselProps) {
     <div className="relative">
       <Carousel
         opts={{
-          align: "start",
+          align: 'start',
           loop: true,
         }}
         className="w-full"
@@ -103,7 +106,7 @@ export function ProductCarousel({ products }: ProductCarouselProps) {
                           fill
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                           placeholder="blur"
-                          blurDataURL={createPlaceholderImage(300, 300, "Orna")}
+                          blurDataURL={createPlaceholderImage(300, 300, 'Orna')}
                           className="object-cover transition-transform duration-500 group-hover:scale-105"
                         />
                         {/* Hover overlay */}
@@ -143,8 +146,8 @@ export function ProductCarousel({ products }: ProductCarouselProps) {
                                 key={index}
                                 className={`w-2 h-2 rounded-full transition-all ${
                                   index === getCurrentImageIndex(product.id)
-                                    ? "bg-white scale-125"
-                                    : "bg-white/50 hover:bg-white/75"
+                                    ? 'bg-white scale-125'
+                                    : 'bg-white/50 hover:bg-white/75'
                                 }`}
                                 onClick={() =>
                                   setCurrentImage(product.id, index)
@@ -169,7 +172,7 @@ export function ProductCarousel({ products }: ProductCarouselProps) {
                     <div className="absolute top-3 left-3 space-y-2 z-10">
                       {product.featured && (
                         <Badge className="bg-amber-600 hover:bg-amber-700 text-white">
-                          {currentLang === "ar" ? "مميز" : "Featured"}
+                          {currentLang === 'ar' ? 'مميز' : 'Featured'}
                         </Badge>
                       )}
                       {product.priceBeforeDiscount && (
@@ -177,9 +180,9 @@ export function ProductCarousel({ products }: ProductCarouselProps) {
                           {Math.round(
                             ((product.priceBeforeDiscount - product.price) /
                               product.priceBeforeDiscount) *
-                              100,
+                              100
                           )}
-                          %{currentLang === "ar" ? " خصم" : " OFF"}
+                          %{currentLang === 'ar' ? ' خصم' : ' OFF'}
                         </Badge>
                       )}
                     </div>
@@ -228,14 +231,14 @@ export function ProductCarousel({ products }: ProductCarouselProps) {
                   {/* Price */}
                   <div className="flex items-center gap-2 py-2">
                     <span className="price-text text-xl font-bold">
-                      {formatPrice(product.price, "LYD", currentLang)}
+                      {formatPrice(product.price, 'LYD', currentLang)}
                     </span>
                     {product.priceBeforeDiscount && (
                       <span className="text-sm text-neutral-400 line-through">
                         {formatPrice(
                           product.priceBeforeDiscount,
-                          "LYD",
-                          currentLang,
+                          'LYD',
+                          currentLang
                         )}
                       </span>
                     )}
@@ -249,7 +252,7 @@ export function ProductCarousel({ products }: ProductCarouselProps) {
                       onClick={() => handleAddToCart(product)}
                     >
                       <ShoppingCart className="h-4 w-4 mr-2" />
-                      {currentLang === "ar" ? "إضافة" : "Add"}
+                      {currentLang === 'ar' ? 'إضافة' : 'Add'}
                     </Button>
                     <Button
                       size="sm"
@@ -258,7 +261,7 @@ export function ProductCarousel({ products }: ProductCarouselProps) {
                       className="focus-ring"
                     >
                       <Link href={`/products/${product.slug}`}>
-                        {currentLang === "ar" ? "عرض" : "View"}
+                        {currentLang === 'ar' ? 'عرض' : 'View'}
                       </Link>
                     </Button>
                   </div>
@@ -278,7 +281,7 @@ export function ProductCarousel({ products }: ProductCarouselProps) {
                 key={index}
                 className="w-2 h-2 bg-amber-300 rounded-full opacity-50"
               />
-            ),
+            )
           )}
         </div>
       </div>

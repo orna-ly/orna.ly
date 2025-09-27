@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import { useAtom } from "jotai";
+import { useAtom } from 'jotai';
 import {
   currentLangAtom,
   isAdminAtom,
   loadCurrentUserAtom,
   logoutAtom,
-} from "@/lib/atoms";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+} from '@/lib/atoms';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
   Package,
@@ -19,9 +19,9 @@ import {
   Users,
   Settings,
   LogOut,
-} from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+} from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export default function AdminLayout({
   children,
@@ -38,7 +38,7 @@ export default function AdminLayout({
 
   const handleLogout = async () => {
     await logout();
-    router.push("/login");
+    router.push('/login');
   };
 
   useEffect(() => {
@@ -51,7 +51,7 @@ export default function AdminLayout({
 
   useEffect(() => {
     if (!isLoading && !isAdmin) {
-      router.push("/login?redirect=" + encodeURIComponent(pathname));
+      router.push('/login?redirect=' + encodeURIComponent(pathname));
     }
   }, [isLoading, isAdmin, router, pathname]);
 
@@ -64,9 +64,9 @@ export default function AdminLayout({
             <span className="text-white font-bold text-xl">O</span>
           </div>
           <p className="text-neutral-600">
-            {currentLang === "ar"
-              ? "جار التحقق من الصلاحيات..."
-              : "Checking permissions..."}
+            {currentLang === 'ar'
+              ? 'جار التحقق من الصلاحيات...'
+              : 'Checking permissions...'}
           </p>
         </div>
       </div>
@@ -80,36 +80,36 @@ export default function AdminLayout({
 
   const navigation = [
     {
-      name: { ar: "لوحة التحكم", en: "Dashboard" },
-      href: "/admin",
+      name: { ar: 'لوحة التحكم', en: 'Dashboard' },
+      href: '/admin',
       icon: LayoutDashboard,
       exact: true,
     },
     {
-      name: { ar: "المنتجات", en: "Products" },
-      href: "/admin/products",
+      name: { ar: 'المنتجات', en: 'Products' },
+      href: '/admin/products',
       icon: Package,
     },
     {
-      name: { ar: "الطلبات", en: "Orders" },
-      href: "/admin/orders",
+      name: { ar: 'الطلبات', en: 'Orders' },
+      href: '/admin/orders',
       icon: ShoppingBag,
       badge: 3, // New orders count
     },
     {
-      name: { ar: "الرسائل", en: "Messages" },
-      href: "/admin/contacts",
+      name: { ar: 'الرسائل', en: 'Messages' },
+      href: '/admin/contacts',
       icon: Mail,
       badge: 2, // Unread messages count
     },
     {
-      name: { ar: "العملاء", en: "Customers" },
-      href: "/admin/customers",
+      name: { ar: 'العملاء', en: 'Customers' },
+      href: '/admin/customers',
       icon: Users,
     },
     {
-      name: { ar: "الإعدادات", en: "Settings" },
-      href: "/admin/settings",
+      name: { ar: 'الإعدادات', en: 'Settings' },
+      href: '/admin/settings',
       icon: Settings,
     },
   ];
@@ -133,10 +133,10 @@ export default function AdminLayout({
             </div>
             <div>
               <h2 className="text-lg font-bold text-neutral-900">
-                {currentLang === "ar" ? "لوحة الإدارة" : "Admin Panel"}
+                {currentLang === 'ar' ? 'لوحة الإدارة' : 'Admin Panel'}
               </h2>
               <p className="text-sm text-neutral-600">
-                {currentLang === "ar" ? "مجوهرات أورنا" : "Orna Jewelry"}
+                {currentLang === 'ar' ? 'مجوهرات أورنا' : 'Orna Jewelry'}
               </p>
             </div>
           </div>
@@ -156,8 +156,8 @@ export default function AdminLayout({
                   flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 group
                   ${
                     active
-                      ? "bg-gradient-to-r from-amber-100 to-amber-50 text-amber-900 shadow-md border border-amber-200"
-                      : "text-neutral-700 hover:bg-gradient-to-r hover:from-neutral-100 hover:to-neutral-50 hover:shadow-sm"
+                      ? 'bg-gradient-to-r from-amber-100 to-amber-50 text-amber-900 shadow-md border border-amber-200'
+                      : 'text-neutral-700 hover:bg-gradient-to-r hover:from-neutral-100 hover:to-neutral-50 hover:shadow-sm'
                   }
                 `}
               >
@@ -179,7 +179,7 @@ export default function AdminLayout({
         <div className="p-4 border-t border-neutral-200 space-y-2">
           <Button variant="outline" className="w-full justify-start" asChild>
             <Link href="/">
-              {currentLang === "ar" ? "زيارة الموقع" : "Visit Site"}
+              {currentLang === 'ar' ? 'زيارة الموقع' : 'Visit Site'}
             </Link>
           </Button>
           <Button
@@ -188,7 +188,7 @@ export default function AdminLayout({
             onClick={handleLogout}
           >
             <LogOut className="h-4 w-4 mr-2" />
-            {currentLang === "ar" ? "تسجيل الخروج" : "Logout"}
+            {currentLang === 'ar' ? 'تسجيل الخروج' : 'Logout'}
           </Button>
         </div>
       </div>
@@ -202,33 +202,33 @@ export default function AdminLayout({
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
                 <span className="text-sm text-green-600 font-medium">
-                  {currentLang === "ar" ? "متصل" : "Online"}
+                  {currentLang === 'ar' ? 'متصل' : 'Online'}
                 </span>
               </div>
               <h1 className="text-3xl font-bold gradient-text-gold">
-                {pathname === "/admin" &&
-                  (currentLang === "ar" ? "لوحة التحكم" : "Dashboard")}
-                {pathname === "/admin/products" &&
-                  (currentLang === "ar"
-                    ? "إدارة المنتجات"
-                    : "Product Management")}
-                {pathname === "/admin/orders" &&
-                  (currentLang === "ar" ? "إدارة الطلبات" : "Order Management")}
-                {pathname === "/admin/contacts" &&
-                  (currentLang === "ar"
-                    ? "إدارة الرسائل"
-                    : "Message Management")}
-                {pathname === "/admin/customers" &&
-                  (currentLang === "ar"
-                    ? "إدارة العملاء"
-                    : "Customer Management")}
-                {pathname === "/admin/settings" &&
-                  (currentLang === "ar" ? "الإعدادات" : "Settings")}
+                {pathname === '/admin' &&
+                  (currentLang === 'ar' ? 'لوحة التحكم' : 'Dashboard')}
+                {pathname === '/admin/products' &&
+                  (currentLang === 'ar'
+                    ? 'إدارة المنتجات'
+                    : 'Product Management')}
+                {pathname === '/admin/orders' &&
+                  (currentLang === 'ar' ? 'إدارة الطلبات' : 'Order Management')}
+                {pathname === '/admin/contacts' &&
+                  (currentLang === 'ar'
+                    ? 'إدارة الرسائل'
+                    : 'Message Management')}
+                {pathname === '/admin/customers' &&
+                  (currentLang === 'ar'
+                    ? 'إدارة العملاء'
+                    : 'Customer Management')}
+                {pathname === '/admin/settings' &&
+                  (currentLang === 'ar' ? 'الإعدادات' : 'Settings')}
               </h1>
             </div>
             <div className="flex items-center gap-4">
               <Badge className="bg-gradient-to-r from-amber-100 to-amber-50 text-amber-800 border-amber-200 px-3 py-1">
-                {currentLang === "ar" ? "مدير النظام" : "System Admin"}
+                {currentLang === 'ar' ? 'مدير النظام' : 'System Admin'}
               </Badge>
             </div>
           </div>

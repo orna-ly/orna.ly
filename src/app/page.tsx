@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { useAtom } from "jotai";
-import { currentLangAtom, productsAtom } from "@/lib/atoms";
-import { HeroCarousel } from "@/components/layout/hero-carousel";
-import { ProductCarousel } from "@/components/product";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Star, Shield, Truck, Award } from "lucide-react";
-import Link from "next/link";
+import { useAtom } from 'jotai';
+import { currentLangAtom, productsAtom } from '@/lib/atoms';
+import { HeroCarousel } from '@/components/layout/hero-carousel';
+import { ProductCarousel } from '@/components/product';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Star, Shield, Truck, Award } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Home() {
   const [products] = useAtom(productsAtom);
@@ -17,33 +17,33 @@ export default function Home() {
   const features = [
     {
       icon: Star,
-      title: { ar: "جودة استثنائية", en: "Premium Quality" },
+      title: { ar: 'جودة استثنائية', en: 'Premium Quality' },
       description: {
-        ar: "مجوهرات فاخرة بأعلى معايير الجودة",
-        en: "Luxury jewelry with highest quality standards",
+        ar: 'مجوهرات فاخرة بأعلى معايير الجودة',
+        en: 'Luxury jewelry with highest quality standards',
       },
     },
     {
       icon: Shield,
-      title: { ar: "ضمان شامل", en: "Full Warranty" },
+      title: { ar: 'ضمان شامل', en: 'Full Warranty' },
       description: {
-        ar: "ضمان مدى الحياة على جميع منتجاتنا",
-        en: "Lifetime warranty on all our products",
+        ar: 'ضمان مدى الحياة على جميع منتجاتنا',
+        en: 'Lifetime warranty on all our products',
       },
     },
     {
       icon: Truck,
-      title: { ar: "توصيل سريع", en: "Fast Delivery" },
+      title: { ar: 'توصيل سريع', en: 'Fast Delivery' },
       description: {
-        ar: "توصيل سريع داخل ليبيا",
-        en: "Fast delivery across Libya",
+        ar: 'توصيل سريع داخل ليبيا',
+        en: 'Fast delivery across Libya',
       },
     },
     {
       icon: Award,
-      title: { ar: "تصاميم حصرية", en: "Exclusive Designs" },
+      title: { ar: 'تصاميم حصرية', en: 'Exclusive Designs' },
       description: {
-        ar: "تصاميم فريدة لا تجدها في مكان آخر",
+        ar: 'تصاميم فريدة لا تجدها في مكان آخر',
         en: "Unique designs you won't find elsewhere",
       },
     },
@@ -59,17 +59,17 @@ export default function Home() {
         <div className="container-width">
           <div className="text-center mb-12">
             <Badge className="mb-4 bg-amber-100 text-amber-800 text-sm px-4 py-2">
-              {currentLang === "ar"
-                ? "مجموعتنا المميزة"
-                : "Featured Collection"}
+              {currentLang === 'ar'
+                ? 'مجموعتنا المميزة'
+                : 'Featured Collection'}
             </Badge>
             <h2 className="heading-2 mb-6 gradient-text-gold">
-              {currentLang === "ar" ? "أحدث إبداعاتنا" : "Our Latest Creations"}
+              {currentLang === 'ar' ? 'أحدث إبداعاتنا' : 'Our Latest Creations'}
             </h2>
             <p className="body-text text-lg max-w-3xl mx-auto leading-relaxed">
-              {currentLang === "ar"
-                ? "استكشف مجموعتنا الحصرية من المجوهرات الفاخرة المصممة بحرفية عالية لتناسب جميع المناسبات الخاصة"
-                : "Explore our exclusive collection of luxury jewelry crafted with exceptional artistry for all your special occasions"}
+              {currentLang === 'ar'
+                ? 'استكشف مجموعتنا الحصرية من المجوهرات الفاخرة المصممة بحرفية عالية لتناسب جميع المناسبات الخاصة'
+                : 'Explore our exclusive collection of luxury jewelry crafted with exceptional artistry for all your special occasions'}
             </p>
           </div>
 
@@ -77,14 +77,17 @@ export default function Home() {
             <ProductCarousel products={products} />
           ) : (
             <div className="text-center py-16">
-              <div className="animate-pulse">
-                <div className="text-6xl mb-4">💍</div>
-                <p className="text-neutral-600 text-lg">
-                  {currentLang === "ar"
-                    ? "جاري تحميل المنتجات..."
-                    : "Loading products..."}
-                </p>
-              </div>
+              <div className="text-6xl mb-4">💍</div>
+              <p className="text-neutral-600 text-lg mb-4">
+                {currentLang === 'ar'
+                  ? 'لا توجد منتجات متاحة حاليًا'
+                  : 'No products available at the moment'}
+              </p>
+              <p className="text-neutral-500 text-sm mb-6">
+                {currentLang === 'ar'
+                  ? 'نعمل على إضافة منتجات جديدة قريبًا'
+                  : "We're working on adding new products soon"}
+              </p>
             </div>
           )}
 
@@ -95,11 +98,11 @@ export default function Home() {
               className="btn-primary px-8 py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300 group"
             >
               <Link href="/products">
-                {currentLang === "ar"
-                  ? "تصفح المجموعة الكاملة"
-                  : "Browse Full Collection"}
+                {currentLang === 'ar'
+                  ? 'تصفح المجموعة الكاملة'
+                  : 'Browse Full Collection'}
                 <span className="inline-block transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1 ml-2 rtl:ml-0 rtl:mr-2">
-                  {currentLang === "ar" ? "←" : "→"}
+                  {currentLang === 'ar' ? '←' : '→'}
                 </span>
               </Link>
             </Button>
@@ -112,14 +115,14 @@ export default function Home() {
         <div className="container-width">
           <div className="text-center mb-16">
             <h2 className="heading-2 mb-6">
-              {currentLang === "ar"
-                ? "لماذا تختار مجوهرات أورنا؟"
-                : "Why Choose Orna Jewelry?"}
+              {currentLang === 'ar'
+                ? 'لماذا تختار مجوهرات أورنا؟'
+                : 'Why Choose Orna Jewelry?'}
             </h2>
             <p className="body-text text-lg max-w-2xl mx-auto">
-              {currentLang === "ar"
-                ? "نحن نقدم أفضل تجربة تسوق للمجوهرات مع ضمان الجودة والخدمة المتميزة"
-                : "We provide the best jewelry shopping experience with quality guarantee and exceptional service"}
+              {currentLang === 'ar'
+                ? 'نحن نقدم أفضل تجربة تسوق للمجوهرات مع ضمان الجودة والخدمة المتميزة'
+                : 'We provide the best jewelry shopping experience with quality guarantee and exceptional service'}
             </p>
           </div>
 
@@ -158,14 +161,14 @@ export default function Home() {
         <div className="container-width text-center">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              {currentLang === "ar"
-                ? "ابدأ رحلتك مع الجمال"
-                : "Begin Your Journey with Beauty"}
+              {currentLang === 'ar'
+                ? 'ابدأ رحلتك مع الجمال'
+                : 'Begin Your Journey with Beauty'}
             </h2>
             <p className="text-xl mb-8 opacity-90 leading-relaxed">
-              {currentLang === "ar"
-                ? "اكتشف مجموعة لا تُضاهى من المجوهرات الفاخرة واجعل كل لحظة خاصة لا تُنسى"
-                : "Discover an unparalleled collection of luxury jewelry and make every moment uniquely memorable"}
+              {currentLang === 'ar'
+                ? 'اكتشف مجموعة لا تُضاهى من المجوهرات الفاخرة واجعل كل لحظة خاصة لا تُنسى'
+                : 'Discover an unparalleled collection of luxury jewelry and make every moment uniquely memorable'}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
@@ -174,7 +177,7 @@ export default function Home() {
                 className="bg-white text-amber-600 hover:bg-neutral-100 px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
               >
                 <Link href="/products">
-                  {currentLang === "ar" ? "تسوق الآن" : "Shop Now"}
+                  {currentLang === 'ar' ? 'تسوق الآن' : 'Shop Now'}
                 </Link>
               </Button>
               <Button
@@ -184,7 +187,7 @@ export default function Home() {
                 className="border-white text-white hover:bg-white hover:text-amber-600 px-8 py-4 text-lg font-semibold transition-all duration-300"
               >
                 <Link href="/contact">
-                  {currentLang === "ar" ? "تواصل معنا" : "Contact Us"}
+                  {currentLang === 'ar' ? 'تواصل معنا' : 'Contact Us'}
                 </Link>
               </Button>
             </div>

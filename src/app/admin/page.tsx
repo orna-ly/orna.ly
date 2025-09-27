@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useAtom } from "jotai";
-import { useEffect } from "react";
+import { useAtom } from 'jotai';
+import { useEffect } from 'react';
 import {
   productsAtom,
   ordersAtom,
@@ -10,9 +10,9 @@ import {
   loadProductsAtom,
   loadOrdersAtom,
   loadContactsAtom,
-} from "@/lib/atoms";
-import { formatPrice } from "@/lib/utils";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+} from '@/lib/atoms';
+import { formatPrice } from '@/lib/utils';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Package,
   ShoppingBag,
@@ -21,8 +21,8 @@ import {
   Star,
   AlertCircle,
   CheckCircle,
-} from "lucide-react";
-import Link from "next/link";
+} from 'lucide-react';
+import Link from 'next/link';
 
 export default function AdminDashboard() {
   const [products] = useAtom(productsAtom);
@@ -51,55 +51,55 @@ export default function AdminDashboard() {
   const totalProducts = products.length;
   const featuredProducts = products.filter((p) => p.featured).length;
   const totalOrders = orders.length;
-  const pendingOrders = orders.filter((o) => o.status === "PENDING").length;
-  const newContacts = contacts.filter((c) => c.status === "NEW").length;
+  const pendingOrders = orders.filter((o) => o.status === 'PENDING').length;
+  const newContacts = contacts.filter((c) => c.status === 'NEW').length;
   const totalRevenue = orders.reduce(
     (sum, order) => sum + order.totalAmount,
-    0,
+    0
   );
   const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
 
   const stats = [
     {
-      title: { ar: "إجمالي المنتجات", en: "Total Products" },
+      title: { ar: 'إجمالي المنتجات', en: 'Total Products' },
       value: totalProducts,
       icon: Package,
-      change: "+12%",
-      changeType: "increase" as const,
-      color: "amber",
+      change: '+12%',
+      changeType: 'increase' as const,
+      color: 'amber',
     },
     {
-      title: { ar: "إجمالي الطلبات", en: "Total Orders" },
+      title: { ar: 'إجمالي الطلبات', en: 'Total Orders' },
       value: totalOrders,
       icon: ShoppingBag,
-      change: "+8%",
-      changeType: "increase" as const,
-      color: "blue",
+      change: '+8%',
+      changeType: 'increase' as const,
+      color: 'blue',
     },
     {
-      title: { ar: "الرسائل الجديدة", en: "New Messages" },
+      title: { ar: 'الرسائل الجديدة', en: 'New Messages' },
       value: newContacts,
       icon: Mail,
-      change: "+2",
-      changeType: "increase" as const,
-      color: "green",
+      change: '+2',
+      changeType: 'increase' as const,
+      color: 'green',
     },
     {
-      title: { ar: "إجمالي الإيرادات", en: "Total Revenue" },
-      value: formatPrice(totalRevenue, "LYD", currentLang),
+      title: { ar: 'إجمالي الإيرادات', en: 'Total Revenue' },
+      value: formatPrice(totalRevenue, 'LYD', currentLang),
       icon: TrendingUp,
-      change: "+15%",
-      changeType: "increase" as const,
-      color: "purple",
+      change: '+15%',
+      changeType: 'increase' as const,
+      color: 'purple',
     },
   ];
 
   const getColorClasses = (color: string) => {
     const colors = {
-      amber: "bg-amber-100 text-amber-600",
-      blue: "bg-blue-100 text-blue-600",
-      green: "bg-green-100 text-green-600",
-      purple: "bg-purple-100 text-purple-600",
+      amber: 'bg-amber-100 text-amber-600',
+      blue: 'bg-blue-100 text-blue-600',
+      green: 'bg-green-100 text-green-600',
+      purple: 'bg-purple-100 text-purple-600',
     };
     return colors[color as keyof typeof colors] || colors.amber;
   };
@@ -123,20 +123,20 @@ export default function AdminDashboard() {
                     </p>
                     <p
                       className={`text-sm mt-2 ${
-                        stat.changeType === "increase"
-                          ? "text-green-600"
-                          : "text-red-600"
+                        stat.changeType === 'increase'
+                          ? 'text-green-600'
+                          : 'text-red-600'
                       }`}
                     >
-                      {stat.change}{" "}
-                      {currentLang === "ar"
-                        ? "من الشهر الماضي"
-                        : "from last month"}
+                      {stat.change}{' '}
+                      {currentLang === 'ar'
+                        ? 'من الشهر الماضي'
+                        : 'from last month'}
                     </p>
                   </div>
                   <div
                     className={`w-12 h-12 rounded-full flex items-center justify-center ${getColorClasses(
-                      stat.color,
+                      stat.color
                     )}`}
                   >
                     <IconComponent className="h-6 w-6" />
@@ -154,7 +154,7 @@ export default function AdminDashboard() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <ShoppingBag className="h-5 w-5" />
-              {currentLang === "ar" ? "الطلبات الأخيرة" : "Recent Orders"}
+              {currentLang === 'ar' ? 'الطلبات الأخيرة' : 'Recent Orders'}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -172,30 +172,30 @@ export default function AdminDashboard() {
                   </div>
                   <div className="text-right">
                     <p className="font-medium text-sm">
-                      {order.totalAmount} {currentLang === "ar" ? "د.ل" : "LYD"}
+                      {order.totalAmount} {currentLang === 'ar' ? 'د.ل' : 'LYD'}
                     </p>
                     <div className="flex items-center gap-1">
-                      {order.status === "PENDING" && (
+                      {order.status === 'PENDING' && (
                         <AlertCircle className="h-3 w-3 text-orange-500" />
                       )}
-                      {order.status === "PROCESSING" && (
+                      {order.status === 'PROCESSING' && (
                         <CheckCircle className="h-3 w-3 text-blue-500" />
                       )}
                       <span
                         className={`text-xs ${
-                          order.status === "PENDING"
-                            ? "text-orange-600"
-                            : order.status === "PROCESSING"
-                              ? "text-blue-600"
-                              : "text-green-600"
+                          order.status === 'PENDING'
+                            ? 'text-orange-600'
+                            : order.status === 'PROCESSING'
+                              ? 'text-blue-600'
+                              : 'text-green-600'
                         }`}
                       >
-                        {order.status === "PENDING" &&
-                          (currentLang === "ar" ? "قيد الانتظار" : "Pending")}
-                        {order.status === "PROCESSING" &&
-                          (currentLang === "ar"
-                            ? "قيد المعالجة"
-                            : "Processing")}
+                        {order.status === 'PENDING' &&
+                          (currentLang === 'ar' ? 'قيد الانتظار' : 'Pending')}
+                        {order.status === 'PROCESSING' &&
+                          (currentLang === 'ar'
+                            ? 'قيد المعالجة'
+                            : 'Processing')}
                       </span>
                     </div>
                   </div>
@@ -210,16 +210,16 @@ export default function AdminDashboard() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Star className="h-5 w-5" />
-              {currentLang === "ar" ? "أداء المنتجات" : "Product Performance"}
+              {currentLang === 'ar' ? 'أداء المنتجات' : 'Product Performance'}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">
-                  {currentLang === "ar"
-                    ? "المنتجات المميزة"
-                    : "Featured Products"}
+                  {currentLang === 'ar'
+                    ? 'المنتجات المميزة'
+                    : 'Featured Products'}
                 </span>
                 <span className="text-sm text-neutral-600">
                   {featuredProducts} / {totalProducts}
@@ -236,19 +236,19 @@ export default function AdminDashboard() {
 
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">
-                  {currentLang === "ar"
-                    ? "متوسط قيمة الطلب"
-                    : "Average Order Value"}
+                  {currentLang === 'ar'
+                    ? 'متوسط قيمة الطلب'
+                    : 'Average Order Value'}
                 </span>
                 <span className="text-sm text-neutral-600">
-                  {Math.round(averageOrderValue)}{" "}
-                  {currentLang === "ar" ? "د.ل" : "LYD"}
+                  {Math.round(averageOrderValue)}{' '}
+                  {currentLang === 'ar' ? 'د.ل' : 'LYD'}
                 </span>
               </div>
 
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">
-                  {currentLang === "ar" ? "الطلبات المعلقة" : "Pending Orders"}
+                  {currentLang === 'ar' ? 'الطلبات المعلقة' : 'Pending Orders'}
                 </span>
                 <span className="text-sm text-orange-600">{pendingOrders}</span>
               </div>
@@ -261,7 +261,7 @@ export default function AdminDashboard() {
       <Card>
         <CardHeader>
           <CardTitle>
-            {currentLang === "ar" ? "إجراءات سريعة" : "Quick Actions"}
+            {currentLang === 'ar' ? 'إجراءات سريعة' : 'Quick Actions'}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -271,14 +271,14 @@ export default function AdminDashboard() {
                 <div className="text-center">
                   <Package className="h-8 w-8 text-amber-600 mx-auto mb-2" />
                   <h3 className="font-medium">
-                    {currentLang === "ar"
-                      ? "إضافة منتج جديد"
-                      : "Add New Product"}
+                    {currentLang === 'ar'
+                      ? 'إضافة منتج جديد'
+                      : 'Add New Product'}
                   </h3>
                   <p className="text-sm text-neutral-600 mt-1">
-                    {currentLang === "ar"
-                      ? "إضافة منتج جديد للمتجر"
-                      : "Add a new product to the store"}
+                    {currentLang === 'ar'
+                      ? 'إضافة منتج جديد للمتجر'
+                      : 'Add a new product to the store'}
                   </p>
                 </div>
               </Card>
@@ -289,12 +289,12 @@ export default function AdminDashboard() {
                 <div className="text-center">
                   <ShoppingBag className="h-8 w-8 text-blue-600 mx-auto mb-2" />
                   <h3 className="font-medium">
-                    {currentLang === "ar" ? "معالجة الطلبات" : "Process Orders"}
+                    {currentLang === 'ar' ? 'معالجة الطلبات' : 'Process Orders'}
                   </h3>
                   <p className="text-sm text-neutral-600 mt-1">
-                    {currentLang === "ar"
-                      ? "معالجة الطلبات المعلقة"
-                      : "Process pending orders"}
+                    {currentLang === 'ar'
+                      ? 'معالجة الطلبات المعلقة'
+                      : 'Process pending orders'}
                   </p>
                 </div>
               </Card>
@@ -305,14 +305,14 @@ export default function AdminDashboard() {
                 <div className="text-center">
                   <Mail className="h-8 w-8 text-green-600 mx-auto mb-2" />
                   <h3 className="font-medium">
-                    {currentLang === "ar"
-                      ? "الرد على الرسائل"
-                      : "Reply to Messages"}
+                    {currentLang === 'ar'
+                      ? 'الرد على الرسائل'
+                      : 'Reply to Messages'}
                   </h3>
                   <p className="text-sm text-neutral-600 mt-1">
-                    {currentLang === "ar"
-                      ? "الرد على استفسارات العملاء"
-                      : "Reply to customer inquiries"}
+                    {currentLang === 'ar'
+                      ? 'الرد على استفسارات العملاء'
+                      : 'Reply to customer inquiries'}
                   </p>
                 </div>
               </Card>

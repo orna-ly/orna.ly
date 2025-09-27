@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -9,7 +9,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
 
 interface UserRow {
   id: string;
@@ -26,7 +26,7 @@ export default function AdminCustomersPage() {
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await fetch("/api/users");
+        const res = await fetch('/api/users');
         const data = await res.json();
         setUsers(data);
       } finally {
@@ -66,10 +66,10 @@ export default function AdminCustomersPage() {
                   users.map((u) => (
                     <TableRow key={u.id}>
                       <TableCell>{u.email}</TableCell>
-                      <TableCell>{u.name || "-"}</TableCell>
+                      <TableCell>{u.name || '-'}</TableCell>
                       <TableCell>{u.role}</TableCell>
                       <TableCell>
-                        {new Date(u.createdAt).toLocaleDateString("en-LY")}
+                        {new Date(u.createdAt).toLocaleDateString('en-LY')}
                       </TableCell>
                     </TableRow>
                   ))

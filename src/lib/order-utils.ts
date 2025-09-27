@@ -8,7 +8,7 @@ export function generateOrderNumber(): string {
   const year = new Date().getFullYear();
   const timestamp = Date.now();
   // Use last 6 digits of timestamp for uniqueness
-  const orderSequence = String(timestamp).slice(-6).padStart(6, "0");
+  const orderSequence = String(timestamp).slice(-6).padStart(6, '0');
   return `ORN-${year}-${orderSequence}`;
 }
 

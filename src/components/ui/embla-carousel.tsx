@@ -1,14 +1,14 @@
-import React from "react";
-import { EmblaOptionsType } from "embla-carousel";
-import useEmblaCarousel from "embla-carousel-react";
-import ClassNames from "embla-carousel-class-names";
-import Image from "next/image";
+import React from 'react';
+import { EmblaOptionsType } from 'embla-carousel';
+import useEmblaCarousel from 'embla-carousel-react';
+import ClassNames from 'embla-carousel-class-names';
+import Image from 'next/image';
 import {
   NextButton,
   PrevButton,
   usePrevNextButtons,
-} from "./embla-carousel-arrow-buttons";
-import { DotButton, useDotButton } from "./embla-carousel-dot-button";
+} from './embla-carousel-arrow-buttons';
+import { DotButton, useDotButton } from './embla-carousel-dot-button';
 
 type PropType = {
   slides: number[];
@@ -58,8 +58,8 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
             <DotButton
               key={index}
               onClick={() => onDotButtonClick(index)}
-              className={"embla__dot".concat(
-                index === selectedIndex ? " embla__dot--selected" : "",
+              className={'embla__dot'.concat(
+                index === selectedIndex ? ' embla__dot--selected' : ''
               )}
             />
           ))}

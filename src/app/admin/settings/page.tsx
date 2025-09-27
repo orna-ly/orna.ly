@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { useEffect, useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 interface SettingItem {
   key: string;
@@ -18,7 +18,7 @@ export default function AdminSettingsPage() {
 
   useEffect(() => {
     const load = async () => {
-      const res = await fetch("/api/settings");
+      const res = await fetch('/api/settings');
       const data: SettingItem[] = await res.json();
       const map: Record<string, string | number | boolean | object> = {};
       for (const s of data) map[s.key] = s.value;
@@ -31,27 +31,27 @@ export default function AdminSettingsPage() {
     setSaving(true);
     try {
       const payload = [
-        { key: "store:name", value: settings["store:name"] || "" },
-        { key: "store:currency", value: settings["store:currency"] || "LYD" },
+        { key: 'store:name', value: settings['store:name'] || '' },
+        { key: 'store:currency', value: settings['store:currency'] || 'LYD' },
         {
-          key: "store:deliveryRegion",
-          value: settings["store:deliveryRegion"] || "Libya",
+          key: 'store:deliveryRegion',
+          value: settings['store:deliveryRegion'] || 'Libya',
         },
         {
-          key: "store:contactPhone",
-          value: settings["store:contactPhone"] || "",
+          key: 'store:contactPhone',
+          value: settings['store:contactPhone'] || '',
         },
         {
-          key: "store:contactEmail",
-          value: settings["store:contactEmail"] || "",
+          key: 'store:contactEmail',
+          value: settings['store:contactEmail'] || '',
         },
       ];
-      const res = await fetch("/api/settings", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-      if (!res.ok) throw new Error("Failed to save");
+      if (!res.ok) throw new Error('Failed to save');
     } catch (e) {
       console.error(e);
     } finally {
@@ -69,20 +69,20 @@ export default function AdminSettingsPage() {
           <div>
             <label className="block text-sm mb-1">Store Name</label>
             <Input
-              value={String(settings["store:name"] || "")}
+              value={String(settings['store:name'] || '')}
               onChange={(e) =>
-                setSettings((s) => ({ ...s, ["store:name"]: e.target.value }))
+                setSettings((s) => ({ ...s, ['store:name']: e.target.value }))
               }
             />
           </div>
           <div>
             <label className="block text-sm mb-1">Currency</label>
             <Input
-              value={String(settings["store:currency"] || "LYD")}
+              value={String(settings['store:currency'] || 'LYD')}
               onChange={(e) =>
                 setSettings((s) => ({
                   ...s,
-                  ["store:currency"]: e.target.value,
+                  ['store:currency']: e.target.value,
                 }))
               }
             />
@@ -100,11 +100,11 @@ export default function AdminSettingsPage() {
           <div>
             <label className="block text-sm mb-1">Delivery Region</label>
             <Input
-              value={String(settings["store:deliveryRegion"] || "Libya")}
+              value={String(settings['store:deliveryRegion'] || 'Libya')}
               onChange={(e) =>
                 setSettings((s) => ({
                   ...s,
-                  ["store:deliveryRegion"]: e.target.value,
+                  ['store:deliveryRegion']: e.target.value,
                 }))
               }
             />
@@ -112,11 +112,11 @@ export default function AdminSettingsPage() {
           <div>
             <label className="block text-sm mb-1">Contact Phone</label>
             <Input
-              value={String(settings["store:contactPhone"] || "")}
+              value={String(settings['store:contactPhone'] || '')}
               onChange={(e) =>
                 setSettings((s) => ({
                   ...s,
-                  ["store:contactPhone"]: e.target.value,
+                  ['store:contactPhone']: e.target.value,
                 }))
               }
             />
@@ -124,11 +124,11 @@ export default function AdminSettingsPage() {
           <div>
             <label className="block text-sm mb-1">Contact Email</label>
             <Input
-              value={String(settings["store:contactEmail"] || "")}
+              value={String(settings['store:contactEmail'] || '')}
               onChange={(e) =>
                 setSettings((s) => ({
                   ...s,
-                  ["store:contactEmail"]: e.target.value,
+                  ['store:contactEmail']: e.target.value,
                 }))
               }
             />
@@ -139,7 +139,7 @@ export default function AdminSettingsPage() {
               disabled={saving}
               className="bg-amber-600 hover:bg-amber-700"
             >
-              {saving ? "Saving..." : "Save Settings"}
+              {saving ? 'Saving...' : 'Save Settings'}
             </Button>
           </div>
         </CardContent>

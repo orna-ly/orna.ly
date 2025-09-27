@@ -1,5 +1,5 @@
-import jwt from "jsonwebtoken";
-import { NextRequest } from "next/server";
+import jwt from 'jsonwebtoken';
+import { NextRequest } from 'next/server';
 
 export type AuthUser = {
   sub: string;
@@ -11,7 +11,7 @@ export function verifyToken(token: string): AuthUser | null {
   try {
     const decoded = jwt.verify(
       token,
-      process.env.JWT_SECRET || "dev-secret",
+      process.env.JWT_SECRET || 'dev-secret'
     ) as AuthUser;
     return decoded;
   } catch {
@@ -20,11 +20,11 @@ export function verifyToken(token: string): AuthUser | null {
 }
 
 export function isAdmin(user: AuthUser | null): boolean {
-  return !!user && (user.role === "ADMIN" || user.role === "SUPER_ADMIN");
+  return !!user && (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN');
 }
 
 export function requireAdmin(request: NextRequest): AuthUser | null {
-  const token = request.cookies.get("orna_admin_token")?.value;
+  const token = request.cookies.get('orna_admin_token')?.value;
   if (!token) return null;
   const user = verifyToken(token);
   if (!isAdmin(user)) return null;

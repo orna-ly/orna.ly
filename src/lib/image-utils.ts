@@ -3,7 +3,7 @@ export interface ImageOptimizationOptions {
   width?: number;
   height?: number;
   quality?: number;
-  format?: "webp" | "jpeg" | "png";
+  format?: 'webp' | 'jpeg' | 'png';
 }
 
 export function getOptimizedImageUrl(src: string): string {
@@ -27,16 +27,16 @@ export function preloadImages(srcs: string[]): Promise<boolean[]> {
 
 // Generate responsive image sizes
 export function getResponsiveImageSizes(
-  breakpoints: number[] = [640, 768, 1024, 1280, 1920],
+  breakpoints: number[] = [640, 768, 1024, 1280, 1920]
 ): string {
-  return breakpoints.map((width) => `${width}w`).join(", ");
+  return breakpoints.map((width) => `${width}w`).join(', ');
 }
 
 // Create a placeholder image data URL
 export function createPlaceholderImage(
   width: number = 400,
   height: number = 400,
-  text: string = "Image",
+  text: string = 'Image'
 ): string {
   const svg = `
     <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">

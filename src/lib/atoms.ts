@@ -65,21 +65,33 @@ export const ordersErrorAtom = atom<string | null>(null);
 export const contactsLoadingAtom = atom(false);
 export const contactsErrorAtom = atom<string | null>(null);
 
-// Data Loading Atoms
+// Data Loading Atoms with retry logic
 export const loadProductsAtom = atom(null, async (get, set) => {
+  // Prevent multiple simultaneous loads
+  if (get(productsLoadingAtom)) {
+    console.log('Products already loading, skipping...');
+    return;
+  }
+
   set(productsLoadingAtom, true);
   set(productsErrorAtom, null);
+
   try {
     const result = await fetchProducts();
-    if (result.data) {
+    if (result.data && Array.isArray(result.data)) {
       set(productsAtom, result.data);
+      console.log(`✅ Loaded ${result.data.length} products successfully`);
     } else {
       console.error('Failed to load products:', result.error);
       set(productsErrorAtom, result.error || 'Failed to load products');
+      // Set empty array to prevent infinite loading
+      set(productsAtom, []);
     }
   } catch (error) {
     console.error('Error loading products:', error);
     set(productsErrorAtom, 'Error loading products');
+    // Set empty array to prevent infinite loading
+    set(productsAtom, []);
   } finally {
     set(productsLoadingAtom, false);
   }

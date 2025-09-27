@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { requireAdmin } from "@/lib/admin-auth";
+import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { requireAdmin } from '@/lib/admin-auth';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
@@ -22,26 +22,26 @@ export async function GET(
     });
 
     if (!order) {
-      return NextResponse.json({ error: "Order not found" }, { status: 404 });
+      return NextResponse.json({ error: 'Order not found' }, { status: 404 });
     }
 
     return NextResponse.json(order);
   } catch (error) {
-    console.error("Error fetching order:", error);
+    console.error('Error fetching order:', error);
     return NextResponse.json(
-      { error: "Failed to fetch order" },
-      { status: 500 },
+      { error: 'Failed to fetch order' },
+      { status: 500 }
     );
   }
 }
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     if (!requireAdmin(request)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     const { id } = await params;
     const body = await request.json();
@@ -67,22 +67,22 @@ export async function PUT(
 
     return NextResponse.json(order);
   } catch (error) {
-    console.error("Error updating order:", error);
+    console.error('Error updating order:', error);
     return NextResponse.json(
-      { error: "Failed to update order" },
-      { status: 500 },
+      { error: 'Failed to update order' },
+      { status: 500 }
     );
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = requireAdmin(request);
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = await params;
@@ -97,12 +97,12 @@ export async function DELETE(
       where: { id },
     });
 
-    return NextResponse.json({ message: "Order deleted successfully" });
+    return NextResponse.json({ message: 'Order deleted successfully' });
   } catch (error) {
-    console.error("Error deleting order:", error);
+    console.error('Error deleting order:', error);
     return NextResponse.json(
-      { error: "Failed to delete order" },
-      { status: 500 },
+      { error: 'Failed to delete order' },
+      { status: 500 }
     );
   }
 }

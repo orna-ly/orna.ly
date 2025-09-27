@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @layer base {
   :root {
@@ -56,37 +56,37 @@
   }
 
   /* RTL/LTR Support */
-  [dir="rtl"] {
+  [dir='rtl'] {
     direction: rtl;
   }
 
-  [dir="ltr"] {
+  [dir='ltr'] {
     direction: ltr;
   }
 
   /* RTL-specific styling */
-  [dir="rtl"] .rtl\:text-right {
+  [dir='rtl'] .rtl\:text-right {
     text-align: right;
   }
 
-  [dir="rtl"] .rtl\:text-left {
+  [dir='rtl'] .rtl\:text-left {
     text-align: left;
   }
 
-  [dir="rtl"] .rtl\:ml-0 {
+  [dir='rtl'] .rtl\:ml-0 {
     margin-left: 0;
   }
 
-  [dir="rtl"] .rtl\:mr-2 {
+  [dir='rtl'] .rtl\:mr-2 {
     margin-right: 0.5rem;
   }
 
-  [dir="rtl"] .rtl\:flex-row-reverse {
+  [dir='rtl'] .rtl\:flex-row-reverse {
     flex-direction: row-reverse;
   }
 
   /* Language-specific transitions */
-  [dir="rtl"] .rtl\:group-hover\:-translate-x-1:hover {
+  [dir='rtl'] .rtl\:group-hover\:-translate-x-1:hover {
     transform: translateX(-0.25rem);
   }
 
@@ -198,6 +198,6 @@
 
   /* Arabic font support */
   .font-arabic {
-    font-family: "Noto Sans Arabic", "Cairo", "Tajawal", sans-serif;
+    font-family: 'Noto Sans Arabic', 'Cairo', 'Tajawal', sans-serif;
   }
 }

@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useAtom } from "jotai";
-import { currentLangAtom } from "@/lib/atoms";
-import { Header } from "@/components/layout/header";
-import { useEffect, useState } from "react";
+import { useAtom } from 'jotai';
+import { currentLangAtom } from '@/lib/atoms';
+import { Header } from '@/components/layout/header';
+import { useEffect, useState } from 'react';
 
 export function LayoutContent({ children }: { children: React.ReactNode }) {
   const [currentLang] = useAtom(currentLangAtom);
@@ -16,13 +16,13 @@ export function LayoutContent({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (mounted) {
       document.documentElement.lang = currentLang;
-      document.documentElement.dir = currentLang === "ar" ? "rtl" : "ltr";
+      document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
       // Update body classes for better RTL/LTR styling
       document.body.className = document.body.className.replace(
         /\b(rtl|ltr)\b/g,
-        "",
+        ''
       );
-      document.body.classList.add(currentLang === "ar" ? "rtl" : "ltr");
+      document.body.classList.add(currentLang === 'ar' ? 'rtl' : 'ltr');
     }
   }, [currentLang, mounted]);
 
@@ -30,7 +30,7 @@ export function LayoutContent({ children }: { children: React.ReactNode }) {
     <>
       <Header />
       <main
-        className={`transition-all duration-300 ${currentLang === "ar" ? "text-right" : "text-left"}`}
+        className={`transition-all duration-300 ${currentLang === 'ar' ? 'text-right' : 'text-left'}`}
       >
         {children}
       </main>

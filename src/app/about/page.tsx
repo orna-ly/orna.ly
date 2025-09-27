@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useAtom } from "jotai";
-import { currentLangAtom } from "@/lib/atoms";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Star, Award, Shield, Heart } from "lucide-react";
+import { useAtom } from 'jotai';
+import { currentLangAtom } from '@/lib/atoms';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Star, Award, Shield, Heart } from 'lucide-react';
 
 export default function AboutPage() {
   const [currentLang] = useAtom(currentLangAtom);
@@ -12,46 +12,46 @@ export default function AboutPage() {
   const features = [
     {
       icon: Star,
-      title: { ar: "جودة استثنائية", en: "Exceptional Quality" },
+      title: { ar: 'جودة استثنائية', en: 'Exceptional Quality' },
       description: {
-        ar: "نستخدم أفضل المواد الخام والأحجار الكريمة الطبيعية في صناعة مجوهراتنا",
-        en: "We use the finest raw materials and natural gemstones in crafting our jewelry",
+        ar: 'نستخدم أفضل المواد الخام والأحجار الكريمة الطبيعية في صناعة مجوهراتنا',
+        en: 'We use the finest raw materials and natural gemstones in crafting our jewelry',
       },
     },
     {
       icon: Award,
-      title: { ar: "تصميمات حصرية", en: "Exclusive Designs" },
+      title: { ar: 'تصميمات حصرية', en: 'Exclusive Designs' },
       description: {
-        ar: "كل قطعة مجوهرات مصممة بعناية فائقة لتعكس الأناقة والجمال",
-        en: "Each piece of jewelry is carefully designed to reflect elegance and beauty",
+        ar: 'كل قطعة مجوهرات مصممة بعناية فائقة لتعكس الأناقة والجمال',
+        en: 'Each piece of jewelry is carefully designed to reflect elegance and beauty',
       },
     },
     {
       icon: Shield,
-      title: { ar: "ضمان مدى الحياة", en: "Lifetime Guarantee" },
+      title: { ar: 'ضمان مدى الحياة', en: 'Lifetime Guarantee' },
       description: {
-        ar: "نقدم ضمان شامل على جميع منتجاتنا مع خدمة صيانة مجانية",
-        en: "We provide comprehensive warranty on all our products with free maintenance service",
+        ar: 'نقدم ضمان شامل على جميع منتجاتنا مع خدمة صيانة مجانية',
+        en: 'We provide comprehensive warranty on all our products with free maintenance service',
       },
     },
     {
       icon: Heart,
-      title: { ar: "صناعة يدوية", en: "Handcrafted" },
+      title: { ar: 'صناعة يدوية', en: 'Handcrafted' },
       description: {
-        ar: "كل قطعة مصنوعة بحب واهتمام من قبل حرفيين ماهرين",
-        en: "Every piece is made with love and care by skilled artisans",
+        ar: 'كل قطعة مصنوعة بحب واهتمام من قبل حرفيين ماهرين',
+        en: 'Every piece is made with love and care by skilled artisans',
       },
     },
   ];
 
   const stats = [
     {
-      number: "10+",
-      label: { ar: "سنوات من الخبرة", en: "Years of Experience" },
+      number: '10+',
+      label: { ar: 'سنوات من الخبرة', en: 'Years of Experience' },
     },
-    { number: "5000+", label: { ar: "عميل راضي", en: "Satisfied Customers" } },
-    { number: "500+", label: { ar: "تصميم حصري", en: "Exclusive Designs" } },
-    { number: "50+", label: { ar: "حرفي ماهر", en: "Skilled Craftsmen" } },
+    { number: '5000+', label: { ar: 'عميل راضي', en: 'Satisfied Customers' } },
+    { number: '500+', label: { ar: 'تصميم حصري', en: 'Exclusive Designs' } },
+    { number: '50+', label: { ar: 'حرفي ماهر', en: 'Skilled Craftsmen' } },
   ];
 
   return (
@@ -61,12 +61,12 @@ export default function AboutPage() {
         <div className="container-width text-center">
           <div className="max-w-4xl mx-auto">
             <h1 className="text-5xl md:text-6xl font-bold mb-6">
-              {currentLang === "ar" ? "عن مجوهرات أورنا" : "About Orna Jewelry"}
+              {currentLang === 'ar' ? 'عن مجوهرات أورنا' : 'About Orna Jewelry'}
             </h1>
             <p className="text-xl md:text-2xl opacity-90 leading-relaxed">
-              {currentLang === "ar"
-                ? "رحلة من الإبداع والتميز في عالم المجوهرات الفاخرة منذ أكثر من عقد من الزمان"
-                : "A journey of creativity and excellence in the world of luxury jewelry for over a decade"}
+              {currentLang === 'ar'
+                ? 'رحلة من الإبداع والتميز في عالم المجوهرات الفاخرة منذ أكثر من عقد من الزمان'
+                : 'A journey of creativity and excellence in the world of luxury jewelry for over a decade'}
             </p>
           </div>
         </div>
@@ -78,23 +78,23 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <Badge className="mb-4 bg-amber-100 text-amber-800 text-sm px-3 py-1">
-                {currentLang === "ar" ? "قصتنا" : "Our Story"}
+                {currentLang === 'ar' ? 'قصتنا' : 'Our Story'}
               </Badge>
               <h2 className="heading-2 mb-6">
-                {currentLang === "ar"
-                  ? "رحلة الإبداع والتميز"
-                  : "Journey of Creativity and Excellence"}
+                {currentLang === 'ar'
+                  ? 'رحلة الإبداع والتميز'
+                  : 'Journey of Creativity and Excellence'}
               </h2>
               <div className="body-text space-y-4 text-lg leading-relaxed">
                 <p>
-                  {currentLang === "ar"
-                    ? "بدأت رحلتنا من حلم بسيط: إنشاء مجوهرات تحكي قصة كل امرأة وتبرز جمالها الطبيعي. منذ تأسيس مجوهرات أورنا، التزمنا بأعلى معايير الجودة والحرفية."
+                  {currentLang === 'ar'
+                    ? 'بدأت رحلتنا من حلم بسيط: إنشاء مجوهرات تحكي قصة كل امرأة وتبرز جمالها الطبيعي. منذ تأسيس مجوهرات أورنا، التزمنا بأعلى معايير الجودة والحرفية.'
                     : "Our journey began with a simple dream: to create jewelry that tells every woman's story and highlights her natural beauty. Since founding Orna Jewelry, we have committed to the highest standards of quality and craftsmanship."}
                 </p>
                 <p>
-                  {currentLang === "ar"
-                    ? "نحن نؤمن بأن كل قطعة مجوهرات يجب أن تكون استثمار في الجمال والذكريات، لذلك نختار بعناية كل حجر كريم وكل تفصيل."
-                    : "We believe that every piece of jewelry should be an investment in beauty and memories, which is why we carefully select every gemstone and every detail."}
+                  {currentLang === 'ar'
+                    ? 'نحن نؤمن بأن كل قطعة مجوهرات يجب أن تكون استثمار في الجمال والذكريات، لذلك نختار بعناية كل حجر كريم وكل تفصيل.'
+                    : 'We believe that every piece of jewelry should be an investment in beauty and memories, which is why we carefully select every gemstone and every detail.'}
                 </p>
               </div>
             </div>
@@ -103,14 +103,14 @@ export default function AboutPage() {
                 <div className="text-center">
                   <div className="text-8xl mb-4">💎</div>
                   <h3 className="text-2xl font-bold text-amber-700 mb-2">
-                    {currentLang === "ar"
-                      ? "التميز في كل التفاصيل"
-                      : "Excellence in Every Detail"}
+                    {currentLang === 'ar'
+                      ? 'التميز في كل التفاصيل'
+                      : 'Excellence in Every Detail'}
                   </h3>
                   <p className="text-amber-600">
-                    {currentLang === "ar"
-                      ? "من التصميم إلى التسليم"
-                      : "From Design to Delivery"}
+                    {currentLang === 'ar'
+                      ? 'من التصميم إلى التسليم'
+                      : 'From Design to Delivery'}
                   </p>
                 </div>
               </div>
@@ -124,9 +124,9 @@ export default function AboutPage() {
         <div className="container-width">
           <div className="text-center mb-12">
             <h2 className="heading-2 text-white mb-4">
-              {currentLang === "ar"
-                ? "إنجازاتنا بالأرقام"
-                : "Our Achievements in Numbers"}
+              {currentLang === 'ar'
+                ? 'إنجازاتنا بالأرقام'
+                : 'Our Achievements in Numbers'}
             </h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -149,12 +149,12 @@ export default function AboutPage() {
         <div className="container-width">
           <div className="text-center mb-12">
             <h2 className="heading-2 mb-4">
-              {currentLang === "ar" ? "ما يميزنا" : "What Makes Us Special"}
+              {currentLang === 'ar' ? 'ما يميزنا' : 'What Makes Us Special'}
             </h2>
             <p className="body-text text-lg max-w-2xl mx-auto">
-              {currentLang === "ar"
-                ? "نحن نتميز بالتزامنا بالجودة والابتكار والخدمة الاستثنائية"
-                : "We stand out through our commitment to quality, innovation, and exceptional service"}
+              {currentLang === 'ar'
+                ? 'نحن نتميز بالتزامنا بالجودة والابتكار والخدمة الاستثنائية'
+                : 'We stand out through our commitment to quality, innovation, and exceptional service'}
             </p>
           </div>
 
@@ -200,13 +200,13 @@ export default function AboutPage() {
           <div className="text-center">
             <div className="max-w-4xl mx-auto">
               <h2 className="heading-2 mb-8">
-                {currentLang === "ar" ? "رسالتنا" : "Our Mission"}
+                {currentLang === 'ar' ? 'رسالتنا' : 'Our Mission'}
               </h2>
               <div className="jewelry-card p-8 bg-white/80 backdrop-blur-sm">
                 <p className="text-xl leading-relaxed text-neutral-700">
-                  {currentLang === "ar"
-                    ? "أن نكون الرائدين في صناعة المجوهرات الفاخرة من خلال تقديم قطع استثنائية تجمع بين التصميم المبتكر والحرفية التقليدية، مع الحفاظ على أعلى معايير الجودة والاستدامة."
-                    : "To be leaders in the luxury jewelry industry by providing exceptional pieces that combine innovative design with traditional craftsmanship, while maintaining the highest standards of quality and sustainability."}
+                  {currentLang === 'ar'
+                    ? 'أن نكون الرائدين في صناعة المجوهرات الفاخرة من خلال تقديم قطع استثنائية تجمع بين التصميم المبتكر والحرفية التقليدية، مع الحفاظ على أعلى معايير الجودة والاستدامة.'
+                    : 'To be leaders in the luxury jewelry industry by providing exceptional pieces that combine innovative design with traditional craftsmanship, while maintaining the highest standards of quality and sustainability.'}
                 </p>
               </div>
             </div>

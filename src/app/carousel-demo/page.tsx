@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import EmblaCarousel from "@/components/ui/embla-carousel";
-import "@/components/ui/embla-carousel.css";
+import EmblaCarousel from '@/components/ui/embla-carousel';
+import '@/components/ui/embla-carousel.css';
 
 export default function CarouselDemo() {
   // Create an array of slide indices
   const slides = Array.from({ length: 8 }, (_, index) => index);
 
   const carouselOptions = {
-    align: "start" as const,
+    align: 'start' as const,
     loop: true,
     skipSnaps: false,
     dragFree: false,

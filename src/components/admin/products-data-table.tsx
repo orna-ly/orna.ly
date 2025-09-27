@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useAtom } from "jotai";
-import { currentLangAtom, type Product, loadProductsAtom } from "@/lib/atoms";
+import { useAtom } from 'jotai';
+import { currentLangAtom, type Product, loadProductsAtom } from '@/lib/atoms';
 import {
   Table,
   TableBody,
@@ -9,15 +9,15 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 import {
   MoreHorizontal,
   Edit,
@@ -29,27 +29,27 @@ import {
   Star,
   ChevronLeft,
   ChevronRight,
-} from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { useState, useMemo } from "react";
+} from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useState, useMemo } from 'react';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+} from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 interface ProductsDataTableProps {
   products: Product[];
@@ -85,31 +85,31 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
   }
 
   const [form, setForm] = useState<EditForm>({
-    price: "",
-    priceBeforeDiscount: "",
-    wrappingPrice: "",
-    stockQuantity: "",
+    price: '',
+    priceBeforeDiscount: '',
+    wrappingPrice: '',
+    stockQuantity: '',
     featured: false,
-    status: "ACTIVE",
-    images: "",
+    status: 'ACTIVE',
+    images: '',
   });
 
   const openEdit = (p: Product) => {
     setEditing(p);
     setForm({
-      price: String(p.price ?? ""),
+      price: String(p.price ?? ''),
       priceBeforeDiscount:
-        p.priceBeforeDiscount != null ? String(p.priceBeforeDiscount) : "",
-      wrappingPrice: p.wrappingPrice != null ? String(p.wrappingPrice) : "",
+        p.priceBeforeDiscount != null ? String(p.priceBeforeDiscount) : '',
+      wrappingPrice: p.wrappingPrice != null ? String(p.wrappingPrice) : '',
       stockQuantity:
         typeof (p as Product & { stockQuantity?: number }).stockQuantity !==
-          "undefined" &&
+          'undefined' &&
         (p as Product & { stockQuantity?: number }).stockQuantity !== null
           ? String((p as Product & { stockQuantity?: number }).stockQuantity)
-          : "0",
+          : '0',
       featured: p.featured,
       status: p.status,
-      images: (p.images || []).join(", "),
+      images: (p.images || []).join(', '),
     });
   };
 
@@ -126,7 +126,7 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
         status: string;
         images: string[];
       } = {
-        price: parseFloat(form.price || "0"),
+        price: parseFloat(form.price || '0'),
         priceBeforeDiscount: form.priceBeforeDiscount
           ? parseFloat(form.priceBeforeDiscount)
           : undefined,
@@ -137,17 +137,17 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
         featured: form.featured,
         status: form.status,
         images: form.images
-          .split(",")
+          .split(',')
           .map((s) => s.trim())
           .filter(Boolean),
       };
       const res = await fetch(`/api/products/${editing.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
-        credentials: "include",
+        credentials: 'include',
       });
-      if (!res.ok) throw new Error("Failed to save");
+      if (!res.ok) throw new Error('Failed to save');
       setEditing(null);
       await loadProducts();
     } catch (e) {
@@ -165,16 +165,16 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
   const handleDelete = async (productId: string) => {
     if (
       !confirm(
-        currentLang === "ar" ? "تأكيد حذف المنتج؟" : "Delete this product?",
+        currentLang === 'ar' ? 'تأكيد حذف المنتج؟' : 'Delete this product?'
       )
     )
       return;
     try {
       const res = await fetch(`/api/products/${productId}`, {
-        method: "DELETE",
-        credentials: "include",
+        method: 'DELETE',
+        credentials: 'include',
       });
-      if (!res.ok) throw new Error("Failed to delete");
+      if (!res.ok) throw new Error('Failed to delete');
       await loadProducts();
     } catch (err) {
       console.error(err);
@@ -186,12 +186,12 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
       <div className="text-center py-12">
         <div className="text-6xl mb-4">📦</div>
         <h3 className="text-lg font-semibold text-neutral-900 mb-2">
-          {currentLang === "ar" ? "لا توجد منتجات" : "No products found"}
+          {currentLang === 'ar' ? 'لا توجد منتجات' : 'No products found'}
         </h3>
         <p className="text-neutral-600">
-          {currentLang === "ar"
-            ? "ابدأ بإضافة منتجات جديدة إلى متجرك"
-            : "Start by adding new products to your store"}
+          {currentLang === 'ar'
+            ? 'ابدأ بإضافة منتجات جديدة إلى متجرك'
+            : 'Start by adding new products to your store'}
         </p>
       </div>
     );
@@ -203,16 +203,16 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
         <TableHeader>
           <TableRow>
             <TableHead className="w-20">
-              {currentLang === "ar" ? "صورة" : "Image"}
+              {currentLang === 'ar' ? 'صورة' : 'Image'}
             </TableHead>
-            <TableHead>{currentLang === "ar" ? "الاسم" : "Name"}</TableHead>
-            <TableHead>{currentLang === "ar" ? "السعر" : "Price"}</TableHead>
-            <TableHead>{currentLang === "ar" ? "الحالة" : "Status"}</TableHead>
+            <TableHead>{currentLang === 'ar' ? 'الاسم' : 'Name'}</TableHead>
+            <TableHead>{currentLang === 'ar' ? 'السعر' : 'Price'}</TableHead>
+            <TableHead>{currentLang === 'ar' ? 'الحالة' : 'Status'}</TableHead>
             <TableHead>
-              {currentLang === "ar" ? "تاريخ الإنشاء" : "Created"}
+              {currentLang === 'ar' ? 'تاريخ الإنشاء' : 'Created'}
             </TableHead>
             <TableHead className="w-20">
-              {currentLang === "ar" ? "الإجراءات" : "Actions"}
+              {currentLang === 'ar' ? 'الإجراءات' : 'Actions'}
             </TableHead>
           </TableRow>
         </TableHeader>
@@ -252,16 +252,16 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
                 <div>
                   <div className="font-medium">
                     {new Intl.NumberFormat(
-                      currentLang === "ar" ? "ar-LY" : "en-LY",
-                    ).format(product.price)}{" "}
-                    {currentLang === "ar" ? "د.ل" : "LYD"}
+                      currentLang === 'ar' ? 'ar-LY' : 'en-LY'
+                    ).format(product.price)}{' '}
+                    {currentLang === 'ar' ? 'د.ل' : 'LYD'}
                   </div>
                   {product.priceBeforeDiscount && (
                     <div className="text-sm text-neutral-500 line-through">
                       {new Intl.NumberFormat(
-                        currentLang === "ar" ? "ar-LY" : "en-LY",
-                      ).format(product.priceBeforeDiscount)}{" "}
-                      {currentLang === "ar" ? "د.ل" : "LYD"}
+                        currentLang === 'ar' ? 'ar-LY' : 'en-LY'
+                      ).format(product.priceBeforeDiscount)}{' '}
+                      {currentLang === 'ar' ? 'د.ل' : 'LYD'}
                     </div>
                   )}
                   {product.priceBeforeDiscount && (
@@ -269,7 +269,7 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
                       {Math.round(
                         ((product.priceBeforeDiscount - product.price) /
                           product.priceBeforeDiscount) *
-                          100,
+                          100
                       )}
                       % OFF
                     </div>
@@ -279,18 +279,18 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
 
               <TableCell>
                 <div className="space-y-1">
-                  <Badge variant={product.featured ? "default" : "secondary"}>
+                  <Badge variant={product.featured ? 'default' : 'secondary'}>
                     {product.featured
-                      ? currentLang === "ar"
-                        ? "مميز"
-                        : "Featured"
-                      : currentLang === "ar"
-                        ? "عادي"
-                        : "Regular"}
+                      ? currentLang === 'ar'
+                        ? 'مميز'
+                        : 'Featured'
+                      : currentLang === 'ar'
+                        ? 'عادي'
+                        : 'Regular'}
                   </Badge>
                   {product.priceBeforeDiscount && (
                     <Badge variant="outline" className="text-xs">
-                      {currentLang === "ar" ? "خصم" : "Sale"}
+                      {currentLang === 'ar' ? 'خصم' : 'Sale'}
                     </Badge>
                   )}
                 </div>
@@ -299,13 +299,13 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
               <TableCell>
                 <div className="text-sm">
                   {new Date(product.createdAt).toLocaleDateString(
-                    currentLang === "ar" ? "ar-SA" : "en-US",
+                    currentLang === 'ar' ? 'ar-SA' : 'en-US'
                   )}
                 </div>
                 <div className="text-xs text-neutral-500">
                   {new Date(product.createdAt).toLocaleTimeString(
-                    currentLang === "ar" ? "ar-SA" : "en-US",
-                    { hour: "2-digit", minute: "2-digit" },
+                    currentLang === 'ar' ? 'ar-SA' : 'en-US',
+                    { hour: '2-digit', minute: '2-digit' }
                   )}
                 </div>
               </TableCell>
@@ -324,23 +324,23 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
                     <DropdownMenuItem asChild>
                       <Link href={`/products/${product.slug}`}>
                         <Eye className="h-4 w-4 mr-2" />
-                        {currentLang === "ar" ? "عرض" : "View"}
+                        {currentLang === 'ar' ? 'عرض' : 'View'}
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => openEdit(product)}>
                       <Edit className="h-4 w-4 mr-2" />
-                      {currentLang === "ar" ? "تعديل" : "Edit"}
+                      {currentLang === 'ar' ? 'تعديل' : 'Edit'}
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => handleCopyId(product.id)}>
                       <Copy className="h-4 w-4 mr-2" />
-                      {currentLang === "ar" ? "نسخ المعرف" : "Copy ID"}
+                      {currentLang === 'ar' ? 'نسخ المعرف' : 'Copy ID'}
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       className="text-red-600 focus:text-red-600"
                       onClick={() => handleDelete(product.id)}
                     >
                       <Trash2 className="h-4 w-4 mr-2" />
-                      {currentLang === "ar" ? "حذف" : "Delete"}
+                      {currentLang === 'ar' ? 'حذف' : 'Delete'}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -359,7 +359,7 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
           <DialogContent className="bg-white max-w-2xl">
             <DialogHeader>
               <DialogTitle className="gradient-text-gold">
-                {currentLang === "ar" ? "تعديل المنتج" : "Edit Product"}
+                {currentLang === 'ar' ? 'تعديل المنتج' : 'Edit Product'}
               </DialogTitle>
             </DialogHeader>
 
@@ -368,15 +368,15 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
               <div className="space-y-4">
                 <h3 className="font-semibold text-neutral-900 flex items-center gap-2">
                   <TrendingUp className="h-5 w-5 text-green-600" />
-                  {currentLang === "ar" ? "التسعير" : "Pricing"}
+                  {currentLang === 'ar' ? 'التسعير' : 'Pricing'}
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="edit-price" className="text-sm font-medium">
-                      {currentLang === "ar"
-                        ? "السعر الحالي (د.ل)"
-                        : "Current Price (LYD)"}
+                      {currentLang === 'ar'
+                        ? 'السعر الحالي (د.ل)'
+                        : 'Current Price (LYD)'}
                     </Label>
                     <Input
                       id="edit-price"
@@ -398,9 +398,9 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
                       htmlFor="edit-price-before"
                       className="text-sm font-medium"
                     >
-                      {currentLang === "ar"
-                        ? "السعر قبل الخصم (د.ل)"
-                        : "Price Before Discount (LYD)"}
+                      {currentLang === 'ar'
+                        ? 'السعر قبل الخصم (د.ل)'
+                        : 'Price Before Discount (LYD)'}
                     </Label>
                     <Input
                       id="edit-price-before"
@@ -422,9 +422,9 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
                       htmlFor="edit-wrapping"
                       className="text-sm font-medium"
                     >
-                      {currentLang === "ar"
-                        ? "سعر التغليف (د.ل)"
-                        : "Gift Wrapping (LYD)"}
+                      {currentLang === 'ar'
+                        ? 'سعر التغليف (د.ل)'
+                        : 'Gift Wrapping (LYD)'}
                     </Label>
                     <Input
                       id="edit-wrapping"
@@ -443,9 +443,9 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
 
                   <div className="space-y-2">
                     <Label htmlFor="edit-stock" className="text-sm font-medium">
-                      {currentLang === "ar"
-                        ? "الكمية المتوفرة"
-                        : "Stock Quantity"}
+                      {currentLang === 'ar'
+                        ? 'الكمية المتوفرة'
+                        : 'Stock Quantity'}
                     </Label>
                     <Input
                       id="edit-stock"
@@ -470,20 +470,20 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
                     <div className="p-4 bg-green-50 rounded-lg border border-green-200">
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-medium text-green-700">
-                          {currentLang === "ar" ? "نسبة الخصم:" : "Discount:"}
+                          {currentLang === 'ar' ? 'نسبة الخصم:' : 'Discount:'}
                         </span>
                         <span className="text-lg font-bold text-green-600">
                           {Math.round(
                             ((parseFloat(form.priceBeforeDiscount) -
                               parseFloat(form.price)) /
                               parseFloat(form.priceBeforeDiscount)) *
-                              100,
+                              100
                           )}
                           %
                         </span>
                       </div>
                       <div className="text-xs text-green-600 mt-1">
-                        {currentLang === "ar"
+                        {currentLang === 'ar'
                           ? `توفير ${(
                               parseFloat(form.priceBeforeDiscount) -
                               parseFloat(form.price)
@@ -501,13 +501,13 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
               <div className="space-y-4">
                 <h3 className="font-semibold text-neutral-900 flex items-center gap-2">
                   <Package className="h-5 w-5 text-amber-600" />
-                  {currentLang === "ar" ? "الإعدادات" : "Settings"}
+                  {currentLang === 'ar' ? 'الإعدادات' : 'Settings'}
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label className="text-sm font-medium">
-                      {currentLang === "ar" ? "حالة المنتج" : "Product Status"}
+                      {currentLang === 'ar' ? 'حالة المنتج' : 'Product Status'}
                     </Label>
                     <Select
                       value={form.status}
@@ -520,15 +520,15 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
                       </SelectTrigger>
                       <SelectContent className="bg-white">
                         <SelectItem value="ACTIVE">
-                          {currentLang === "ar" ? "نشط" : "Active"}
+                          {currentLang === 'ar' ? 'نشط' : 'Active'}
                         </SelectItem>
                         <SelectItem value="INACTIVE">
-                          {currentLang === "ar" ? "غير نشط" : "Inactive"}
+                          {currentLang === 'ar' ? 'غير نشط' : 'Inactive'}
                         </SelectItem>
                         <SelectItem value="OUT_OF_STOCK">
-                          {currentLang === "ar"
-                            ? "نفد المخزون"
-                            : "Out of Stock"}
+                          {currentLang === 'ar'
+                            ? 'نفد المخزون'
+                            : 'Out of Stock'}
                         </SelectItem>
                       </SelectContent>
                     </Select>
@@ -536,9 +536,9 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
 
                   <div className="space-y-2">
                     <Label className="text-sm font-medium">
-                      {currentLang === "ar"
-                        ? "خيارات العرض"
-                        : "Display Options"}
+                      {currentLang === 'ar'
+                        ? 'خيارات العرض'
+                        : 'Display Options'}
                     </Label>
                     <div className="flex items-center space-x-3 h-11 px-3 border rounded-md bg-neutral-50">
                       <Checkbox
@@ -555,9 +555,9 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
                         htmlFor="edit-featured"
                         className="text-sm cursor-pointer"
                       >
-                        {currentLang === "ar"
-                          ? "منتج مميز"
-                          : "Featured Product"}
+                        {currentLang === 'ar'
+                          ? 'منتج مميز'
+                          : 'Featured Product'}
                       </Label>
                     </div>
                   </div>
@@ -568,12 +568,12 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
               <div className="space-y-4">
                 <h3 className="font-semibold text-neutral-900 flex items-center gap-2">
                   <Star className="h-5 w-5 text-amber-600" />
-                  {currentLang === "ar" ? "الصور" : "Images"}
+                  {currentLang === 'ar' ? 'الصور' : 'Images'}
                 </h3>
 
                 <div className="space-y-2">
                   <Label htmlFor="edit-images" className="text-sm font-medium">
-                    {currentLang === "ar" ? "روابط الصور" : "Image URLs"}
+                    {currentLang === 'ar' ? 'روابط الصور' : 'Image URLs'}
                   </Label>
                   <Textarea
                     id="edit-images"
@@ -585,9 +585,9 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
                       }))
                     }
                     placeholder={
-                      currentLang === "ar"
-                        ? "افصل بين الروابط بفواصل"
-                        : "Separate URLs with commas"
+                      currentLang === 'ar'
+                        ? 'افصل بين الروابط بفواصل'
+                        : 'Separate URLs with commas'
                     }
                     className="min-h-[80px]"
                   />
@@ -598,7 +598,7 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
             {/* Actions */}
             <div className="flex justify-end gap-3 pt-4 border-t">
               <Button variant="outline" onClick={() => setEditing(null)}>
-                {currentLang === "ar" ? "إلغاء" : "Cancel"}
+                {currentLang === 'ar' ? 'إلغاء' : 'Cancel'}
               </Button>
               <Button
                 onClick={saveEdit}
@@ -608,12 +608,12 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
                 {saving ? (
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    {currentLang === "ar" ? "جاري الحفظ..." : "Saving..."}
+                    {currentLang === 'ar' ? 'جاري الحفظ...' : 'Saving...'}
                   </div>
                 ) : (
                   <>
                     <Edit className="h-4 w-4 mr-2" />
-                    {currentLang === "ar" ? "حفظ التغييرات" : "Save Changes"}
+                    {currentLang === 'ar' ? 'حفظ التغييرات' : 'Save Changes'}
                   </>
                 )}
               </Button>
@@ -626,14 +626,14 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
       {products.length > itemsPerPage && (
         <div className="flex items-center justify-between px-4 py-3 border-t border-neutral-200">
           <div className="text-sm text-neutral-600">
-            {currentLang === "ar"
+            {currentLang === 'ar'
               ? `عرض ${(currentPage - 1) * itemsPerPage + 1} إلى ${Math.min(
                   currentPage * itemsPerPage,
-                  products.length,
+                  products.length
                 )} من ${products.length} منتج`
               : `Showing ${(currentPage - 1) * itemsPerPage + 1} to ${Math.min(
                   currentPage * itemsPerPage,
-                  products.length,
+                  products.length
                 )} of ${products.length} products`}
           </div>
 
@@ -664,7 +664,7 @@ export function ProductsDataTable({ products }: ProductsDataTableProps) {
                 return (
                   <Button
                     key={pageNumber}
-                    variant={currentPage === pageNumber ? "default" : "outline"}
+                    variant={currentPage === pageNumber ? 'default' : 'outline'}
                     size="sm"
                     onClick={() => setCurrentPage(pageNumber)}
                     className="h-8 w-8 p-0"
