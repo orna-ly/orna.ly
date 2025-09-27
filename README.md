@@ -13,14 +13,14 @@ A multilingual e-commerce experience for Orna Jewelry built with Next.js 15, the
 
 ```bash
 bun install
-# Apply the latest Prisma schema changes
-bun run db:push
+# Apply the latest Prisma migrations
+bun run db:migrate
 # Optional: seed the catalog and sample orders
 bun run db:seed
 bun run dev
 ```
 
-The development server runs on [http://localhost:3001](http://localhost:3001). Environment variables required for local development are documented in [`SETUP.md`](SETUP.md) and mirrored in [`.env.example`](.env.example). Re-run `bun run db:push` whenever new columns or enum values are added so that your database stays aligned with the codebase.
+The development server runs on [http://localhost:3001](http://localhost:3001). Environment variables required for local development are documented in [`SETUP.md`](SETUP.md) and mirrored in [`.env.example`](.env.example). When you change the Prisma schema locally, create a new migration (`bunx prisma migrate dev`) so `bun run db:migrate` stays in sync across environments.
 
 ## Available scripts
 
@@ -30,7 +30,8 @@ The development server runs on [http://localhost:3001](http://localhost:3001). E
 | `bun run build`        | Create an optimized production build.                                                  |
 | `bun run start`        | Run the production server locally (after `bun run build`).                             |
 | `bun run lint`         | Execute ESLint across the project.                                                     |
-| `bun run db:push`      | Push the Prisma schema to the configured database.                                     |
+| `bun run db:migrate`   | Apply the committed Prisma migrations to the configured database.                      |
+| `bun run db:push`      | Rapidly sync the Prisma schema during prototyping (local-only).                        |
 | `bun run db:seed`      | Seed the database with sample catalog, order, and contact data.                        |
 | `bun run vercel-build` | Production build command used by Vercel (runs Prisma client generation automatically). |
 
@@ -45,3 +46,14 @@ The development server runs on [http://localhost:3001](http://localhost:3001). E
 ## Deployment
 
 Detailed instructions for preparing infrastructure, configuring environment variables, and running production builds on Vercel live in [`docs/deployment/vercel.md`](docs/deployment/vercel.md).
+
+## Containerised runtime
+
+To run the storefront alongside PostgreSQL with Docker:
+
+```bash
+cp docker/.env.docker.example docker/.env.docker # optional – adjust values as needed
+docker compose up --build
+```
+
+The compose file automatically loads variables from `docker/.env.docker`; update it (or supply overrides via `--env-file`) to point at production-grade credentials before deploying anywhere outside your laptop. The application becomes available on [http://localhost:3000](http://localhost:3000) while PostgreSQL listens on port `5432`. The container entrypoint runs `bunx prisma migrate deploy` on startup so schema changes flow through automatically. Set `SKIP_MIGRATIONS=1` on the `web` service if you prefer to manage migrations manually.

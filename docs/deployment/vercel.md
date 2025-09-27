@@ -32,15 +32,16 @@ If you are migrating data from the legacy Laravel app you also need the `OLD_DB_
 ## 3. Database preparation
 
 1. Provision the production PostgreSQL database and note the connection string.
-2. Run the Prisma schema against the new database from your local machine:
+
+2. Apply the Prisma migrations against the new database from your local machine:
 
    ```bash
    bun install
-   bun run db:push -- --skip-generate
+   bun run db:migrate
    bun run db:seed
    ```
 
-   `db push` is used because this repository currently ships with a declarative schema but no migration history. Re-run the command whenever the schema changes until migrations are introduced.
+   `db:migrate` wraps `prisma migrate deploy` so every committed migration is applied in order. When the schema evolves, create a new migration locally (`bunx prisma migrate dev`) and commit it before promoting the build.
 
 3. Update any external integrations (payment gateways, storage buckets, email providers) so that the credentials you enter in Vercel point to production services.
 
