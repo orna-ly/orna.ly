@@ -1,13 +1,37 @@
-version: "3.9"
+version: '3.9'
 
 services:
   postgres:
-    image: postgres:15-alpine
-    ports:
-      - 5432:5432
-    volumes:
-      - ~/apps/postgres:/var/lib/postgresql/data
+    image: postgres:16-alpine
+    restart: unless-stopped
     environment:
-      - POSTGRES_PASSWORD=S3cret
-      - POSTGRES_USER=citizix_user
-      - POSTGRES_DB=citizix_db
+      POSTGRES_DB: orna_app
+      POSTGRES_USER: orna_app
+      POSTGRES_PASSWORD: orna_app
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U orna_app -d orna_app']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build:
+      context: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - docker/.env.docker
+    ports:
+      - '3000:3000'
+    volumes:
+      - uploads:/app/public/uploads
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+  uploads:

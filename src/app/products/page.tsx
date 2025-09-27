@@ -43,23 +43,15 @@ export default function ProductsPage() {
 
     // Apply category filter
     if (filterCategory !== 'all') {
-      // Add category filtering logic based on your product categories
       filtered = filtered.filter((product) => {
-        // For now, we'll use featured status as a simple filter
         if (filterCategory === 'featured') {
           return product.featured;
         }
-        if (filterCategory === 'rings') {
-          return (
-            product.name[currentLang]?.toLowerCase().includes('خاتم') ||
-            product.name[currentLang]?.toLowerCase().includes('ring')
-          );
+        if (filterCategory === 'natural') {
+          return product.category === 'NATURAL_PEARLS';
         }
-        if (filterCategory === 'necklaces') {
-          return (
-            product.name[currentLang]?.toLowerCase().includes('عقد') ||
-            product.name[currentLang]?.toLowerCase().includes('necklace')
-          );
+        if (filterCategory === 'artificial') {
+          return product.category === 'ARTIFICIAL_PEARLS';
         }
         return true;
       });

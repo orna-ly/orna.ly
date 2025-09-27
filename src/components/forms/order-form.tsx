@@ -1,9 +1,9 @@
 'use client';
 
 import { useAtom } from 'jotai';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { currentLangAtom, cartItemsAtom } from '@/lib/atoms';
-import { createOrder } from '@/lib/api';
+import { createOrder as createOrderApi } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -13,13 +13,178 @@ import { ShoppingCart, Check, AlertCircle } from 'lucide-react';
 import Image from 'next/image';
 import { formatPrice } from '@/lib/utils';
 
-interface OrderFormProps {
-  onOrderCreated?: (orderId: string) => void;
+export type SupportedLanguage = 'ar' | 'en';
+
+export interface CardDetailsState {
+  cardholderName: string;
+  cardNumber: string;
+  expiry: string;
+  cvv: string;
 }
 
-export function OrderForm({ onOrderCreated }: OrderFormProps) {
+export interface ExpiryInfo {
+  month: string;
+  year: string;
+  isValid: boolean;
+}
+
+export interface CardValidationResult {
+  sanitizedNumber: string;
+  expiryInfo: ExpiryInfo;
+  cvvDigits: string;
+  errors: Record<string, string>;
+  isValid: boolean;
+}
+
+export interface PaymentResponsePayload {
+  data?: { transactionId?: string };
+  error?: string;
+  message?: string;
+}
+
+export function sanitizeCardNumber(value: string): string {
+  return value.replace(/\D/g, '').slice(0, 19);
+}
+
+export function formatCardNumber(value: string): string {
+  const digits = sanitizeCardNumber(value);
+  return digits.replace(/(\d{4})(?=\d)/g, '$1 ').trim();
+}
+
+export function formatExpiry(value: string): string {
+  const digits = value.replace(/\D/g, '').slice(0, 4);
+  if (digits.length <= 2) {
+    return digits;
+  }
+  return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+}
+
+export function luhnCheck(value: string): boolean {
+  const digits = value.replace(/\D/g, '');
+  if (digits.length < 12) {
+    return false;
+  }
+  let sum = 0;
+  let shouldDouble = false;
+  for (let i = digits.length - 1; i >= 0; i -= 1) {
+    let digit = parseInt(digits.charAt(i), 10);
+    if (Number.isNaN(digit)) {
+      return false;
+    }
+    if (shouldDouble) {
+      digit *= 2;
+      if (digit > 9) {
+        digit -= 9;
+      }
+    }
+    sum += digit;
+    shouldDouble = !shouldDouble;
+  }
+  return sum % 10 === 0;
+}
+
+export function getExpiryInfo(value: string): ExpiryInfo {
+  const digits = value.replace(/\D/g, '').slice(0, 4);
+  const month = digits.slice(0, 2);
+  const year = digits.slice(2, 4);
+  if (month.length !== 2 || year.length !== 2) {
+    return { month: '', year: '', isValid: false };
+  }
+  const monthNumber = Number(month);
+  const yearNumber = Number(year);
+  const fullYear = 2000 + yearNumber;
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1;
+  const isValidMonth = monthNumber >= 1 && monthNumber <= 12;
+  const isExpired =
+    fullYear < currentYear ||
+    (fullYear === currentYear && monthNumber < currentMonth);
+
+  return {
+    month,
+    year: fullYear.toString(),
+    isValid: isValidMonth && !isExpired,
+  };
+}
+
+export function validateCardDetails(
+  details: CardDetailsState,
+  lang: SupportedLanguage
+): CardValidationResult {
+  const sanitizedNumber = sanitizeCardNumber(details.cardNumber);
+  const expiryInfo = getExpiryInfo(details.expiry);
+  const cvvDigits = details.cvv.replace(/\D/g, '').slice(0, 4);
+  const errors: Record<string, string> = {};
+
+  if (!details.cardholderName.trim()) {
+    errors.cardholderName =
+      lang === 'ar' ? 'اسم حامل البطاقة مطلوب' : 'Cardholder name is required';
+  }
+
+  if (!sanitizedNumber) {
+    errors.cardNumber =
+      lang === 'ar' ? 'رقم البطاقة مطلوب' : 'Card number is required';
+  } else if (!luhnCheck(sanitizedNumber)) {
+    errors.cardNumber =
+      lang === 'ar' ? 'رقم البطاقة غير صالح' : 'Invalid card number';
+  }
+
+  if (!expiryInfo.isValid) {
+    errors.expiry =
+      lang === 'ar' ? 'تاريخ الانتهاء غير صالح' : 'Invalid expiration date';
+  }
+
+  if (cvvDigits.length < 3) {
+    errors.cvv =
+      lang === 'ar' ? 'رمز الأمان غير صالح' : 'Invalid security code';
+  }
+
+  return {
+    sanitizedNumber,
+    expiryInfo,
+    cvvDigits,
+    errors,
+    isValid: Object.keys(errors).length === 0,
+  };
+}
+
+export function interpretPaymentResponse(
+  ok: boolean,
+  payload: PaymentResponsePayload,
+  lang: SupportedLanguage
+): { success: boolean; transactionId?: string; errorMessage?: string } {
+  if (!ok || !payload?.data?.transactionId) {
+    const fallback =
+      lang === 'ar'
+        ? 'تعذر معالجة الدفع. يرجى التحقق من بيانات البطاقة.'
+        : 'Unable to process your card. Please verify the card details.';
+
+    return {
+      success: false,
+      errorMessage: payload?.error || payload?.message || fallback,
+    };
+  }
+
+  return {
+    success: true,
+    transactionId: payload.data.transactionId,
+  };
+}
+
+function toSupportedLanguage(value: string): SupportedLanguage {
+  return value === 'ar' ? 'ar' : 'en';
+}
+
+interface OrderFormProps {
+  onOrderCreated?: (orderId: string) => void;
+  createOrderFn?: typeof createOrderApi;
+}
+
+export function OrderForm({ onOrderCreated, createOrderFn }: OrderFormProps) {
   const [currentLang] = useAtom(currentLangAtom);
   const [cartItems, setCartItems] = useAtom(cartItemsAtom);
+  const submitOrder = createOrderFn ?? createOrderApi;
 
   const [formData, setFormData] = useState({
     customerName: '',
@@ -35,10 +200,39 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
   const [paymentMethod, setPaymentMethod] = useState<
     'card' | 'apple_pay' | 'stc_pay' | 'cod'
   >('card');
+  const [cardDetails, setCardDetails] = useState({
+    cardholderName: '',
+    cardNumber: '',
+    expiry: '',
+    cvv: '',
+  });
+  const [cardErrors, setCardErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const handleCardChange = (field: keyof typeof cardDetails, value: string) => {
+    let formattedValue = value;
+    if (field === 'cardNumber') {
+      formattedValue = formatCardNumber(value);
+    } else if (field === 'expiry') {
+      formattedValue = formatExpiry(value);
+    } else if (field === 'cvv') {
+      formattedValue = value.replace(/\D/g, '').slice(0, 4);
+    }
+
+    setCardDetails((prev) => ({ ...prev, [field]: formattedValue }));
+    if (cardErrors[field]) {
+      setCardErrors((prev) => ({ ...prev, [field]: '' }));
+    }
+  };
+
+  useEffect(() => {
+    if (paymentMethod !== 'card') {
+      setCardErrors({});
+    }
+  }, [paymentMethod]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -73,8 +267,23 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
         currentLang === 'ar' ? 'المدينة مطلوبة' : 'City is required';
     }
 
+    let isValid = Object.keys(newErrors).length === 0;
+
+    if (paymentMethod === 'card') {
+      const cardValidation = validateCardDetails(
+        cardDetails,
+        toSupportedLanguage(currentLang)
+      );
+      setCardErrors(cardValidation.errors);
+      if (!cardValidation.isValid) {
+        isValid = false;
+      }
+    } else {
+      setCardErrors({});
+    }
+
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return isValid;
   };
 
   const calculateTotal = () => {
@@ -119,6 +328,51 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
     try {
       const totals = calculateTotal();
 
+      let paymentReference: string | undefined;
+      let paymentStatus: 'PENDING' | 'PAID' = 'PENDING';
+
+      if (paymentMethod === 'card') {
+        const lang = toSupportedLanguage(currentLang);
+        const cardValidation = validateCardDetails(cardDetails, lang);
+
+        if (!cardValidation.isValid) {
+          setCardErrors(cardValidation.errors);
+          return;
+        }
+
+        const chargeResponse = await fetch('/api/payments/charge', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            cardNumber: cardValidation.sanitizedNumber,
+            cardholderName: cardDetails.cardholderName.trim(),
+            expiryMonth: cardValidation.expiryInfo.month,
+            expiryYear: cardValidation.expiryInfo.year,
+            cvv: cardValidation.cvvDigits,
+            amount: totals.total,
+            currency: 'LYD',
+          }),
+        });
+
+        const chargeResult =
+          (await chargeResponse.json()) as PaymentResponsePayload;
+        const outcome = interpretPaymentResponse(
+          chargeResponse.ok,
+          chargeResult,
+          lang
+        );
+
+        if (!outcome.success || !outcome.transactionId) {
+          setSubmitError(outcome.errorMessage ?? '');
+          return;
+        }
+
+        paymentReference = outcome.transactionId;
+        paymentStatus = 'PAID';
+      }
+
       const orderData = {
         customerName: formData.customerName,
         customerPhone: formData.customerPhone,
@@ -132,6 +386,8 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
         wrappingCost: needsWrapping ? totals.wrappingCost : 0,
         needsWrapping,
         paymentMethod,
+        paymentStatus,
+        paymentReference,
         notes: formData.notes.trim() || undefined,
         items: cartItems.map((item) => ({
           productId: item.product.id,
@@ -141,7 +397,7 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
         })),
       };
 
-      const result = await createOrder(orderData);
+      const result = await submitOrder(orderData);
 
       if (result.error) {
         setSubmitError(result.error);
@@ -161,6 +417,13 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
         });
         setNeedsWrapping(false);
         setPaymentMethod('card');
+        setCardDetails({
+          cardholderName: '',
+          cardNumber: '',
+          expiry: '',
+          cvv: '',
+        });
+        setCardErrors({});
 
         // Clear cart items after successful order submission to keep checkout state in sync
         setCartItems([]);
@@ -491,6 +754,98 @@ export function OrderForm({ onOrderCreated }: OrderFormProps) {
                 </button>
               ))}
             </div>
+            {paymentMethod === 'card' && (
+              <div className="mt-4 space-y-3 rounded-lg border border-neutral-200 bg-neutral-50 p-4">
+                <p className="text-sm font-semibold text-neutral-700">
+                  {currentLang === 'ar'
+                    ? 'تفاصيل البطاقة البنكية'
+                    : 'Card details'}
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-medium text-neutral-600 mb-1">
+                      {currentLang === 'ar'
+                        ? 'اسم حامل البطاقة'
+                        : 'Cardholder name'}
+                    </label>
+                    <Input
+                      value={cardDetails.cardholderName}
+                      onChange={(e) =>
+                        handleCardChange('cardholderName', e.target.value)
+                      }
+                      placeholder={
+                        currentLang === 'ar'
+                          ? 'كما يظهر على البطاقة'
+                          : 'As shown on card'
+                      }
+                      autoComplete="cc-name"
+                    />
+                    {cardErrors.cardholderName && (
+                      <p className="text-xs text-red-600 mt-1">
+                        {cardErrors.cardholderName}
+                      </p>
+                    )}
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-medium text-neutral-600 mb-1">
+                      {currentLang === 'ar' ? 'رقم البطاقة' : 'Card number'}
+                    </label>
+                    <Input
+                      value={cardDetails.cardNumber}
+                      onChange={(e) =>
+                        handleCardChange('cardNumber', e.target.value)
+                      }
+                      placeholder="0000 0000 0000 0000"
+                      autoComplete="cc-number"
+                      inputMode="numeric"
+                    />
+                    {cardErrors.cardNumber && (
+                      <p className="text-xs text-red-600 mt-1">
+                        {cardErrors.cardNumber}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-neutral-600 mb-1">
+                      {currentLang === 'ar' ? 'تاريخ الانتهاء' : 'Expiry date'}
+                    </label>
+                    <Input
+                      value={cardDetails.expiry}
+                      onChange={(e) =>
+                        handleCardChange('expiry', e.target.value)
+                      }
+                      placeholder="MM/YY"
+                      autoComplete="cc-exp"
+                      inputMode="numeric"
+                    />
+                    {cardErrors.expiry && (
+                      <p className="text-xs text-red-600 mt-1">
+                        {cardErrors.expiry}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-neutral-600 mb-1">
+                      {currentLang === 'ar'
+                        ? 'رمز الأمان (CVV)'
+                        : 'Security code (CVV)'}
+                    </label>
+                    <Input
+                      value={cardDetails.cvv}
+                      onChange={(e) => handleCardChange('cvv', e.target.value)}
+                      placeholder="123"
+                      autoComplete="cc-csc"
+                      inputMode="numeric"
+                    />
+                    {cardErrors.cvv && (
+                      <p className="text-xs text-red-600 mt-1">
+                        {cardErrors.cvv}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
           {/* Cart Items */}
           <div className="space-y-3">

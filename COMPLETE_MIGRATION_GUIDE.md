@@ -236,8 +236,8 @@ PAYMENT_GATEWAY_SECRET="your-payment-secret"
 
 ```typescript
 // src/lib/atoms.ts
-import { atom } from "jotai";
-import { atomWithStorage } from "jotai/utils";
+import { atom } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
 
 // Types
 export interface Product {
@@ -268,7 +268,7 @@ export interface Order {
   totalAmount: number;
   wrapping: boolean;
   wrappingPrice?: number;
-  paymentStatus: "PENDING" | "PAID" | "FAILED";
+  paymentStatus: 'PENDING' | 'PAID' | 'FAILED';
   paymentUrl?: string;
   mailSent: boolean;
   notes?: string;
@@ -282,7 +282,7 @@ export interface Contact {
   phone?: string;
   subject: string;
   message: string;
-  status: "NEW" | "READ" | "REPLIED" | "RESOLVED";
+  status: 'NEW' | 'READ' | 'REPLIED' | 'RESOLVED';
   userId?: string;
   createdAt: Date;
 }
@@ -293,19 +293,19 @@ export interface CartItem {
 }
 
 // Global State Atoms
-export const currentLangAtom = atomWithStorage<string>("currentLang", "ar");
+export const currentLangAtom = atomWithStorage<string>('currentLang', 'ar');
 
 export const productsAtom = atom<Product[]>([]);
 export const featuredProductsAtom = atom<Product[]>((get) =>
-  get(productsAtom).filter((p) => p.featured),
+  get(productsAtom).filter((p) => p.featured)
 );
 
-export const cartItemsAtom = atomWithStorage<CartItem[]>("cartItems", []);
+export const cartItemsAtom = atomWithStorage<CartItem[]>('cartItems', []);
 export const cartTotalAtom = atom((get) =>
   get(cartItemsAtom).reduce(
     (total, item) => total + item.product.price * item.quantity,
-    0,
-  ),
+    0
+  )
 );
 
 export const ordersAtom = atom<Order[]>([]);
@@ -314,21 +314,21 @@ export const contactsAtom = atom<Contact[]>([]);
 // UI State Atoms
 export const mobileMenuOpenAtom = atom(false);
 export const loadingAtom = atom(false);
-export const searchQueryAtom = atom("");
-export const filterCategoryAtom = atom<string>("all");
+export const searchQueryAtom = atom('');
+export const filterCategoryAtom = atom<string>('all');
 
 // Cart Actions
 export const addToCartAtom = atom(null, (get, set, product: Product) => {
   const currentItems = get(cartItemsAtom);
   const existingItem = currentItems.find(
-    (item) => item.product.id === product.id,
+    (item) => item.product.id === product.id
   );
 
   if (existingItem) {
     const updatedItems = currentItems.map((item) =>
       item.product.id === product.id
         ? { ...item, quantity: item.quantity + 1 }
-        : item,
+        : item
     );
     set(cartItemsAtom, updatedItems);
   } else {
@@ -339,7 +339,7 @@ export const addToCartAtom = atom(null, (get, set, product: Product) => {
 export const removeFromCartAtom = atom(null, (get, set, productId: string) => {
   const currentItems = get(cartItemsAtom);
   const updatedItems = currentItems.filter(
-    (item) => item.product.id !== productId,
+    (item) => item.product.id !== productId
   );
   set(cartItemsAtom, updatedItems);
 });
@@ -349,34 +349,34 @@ export const removeFromCartAtom = atom(null, (get, set, productId: string) => {
 
 ```typescript
 // scripts/migrate-data.ts
-import mysql from "mysql2/promise";
-import { prisma } from "../src/lib/db";
+import mysql from 'mysql2/promise';
+import { prisma } from '../src/lib/db';
 
 // Old Laravel database connection
 const oldDb = await mysql.createConnection({
   host: process.env.OLD_DB_HOST,
-  port: parseInt(process.env.OLD_DB_PORT || "3306"),
+  port: parseInt(process.env.OLD_DB_PORT || '3306'),
   user: process.env.OLD_DB_USER,
   password: process.env.OLD_DB_PASS,
   database: process.env.OLD_DB_NAME,
 });
 
 async function migrateProducts() {
-  console.log("🔄 Migrating products...");
+  console.log('🔄 Migrating products...');
 
-  const [products] = await oldDb.execute("SELECT * FROM product ORDER BY id");
+  const [products] = await oldDb.execute('SELECT * FROM product ORDER BY id');
 
   for (const product of products as any[]) {
     try {
       // Parse JSON fields (name, description, etc.)
       let name = product.name;
-      if (typeof name === "string" && name.startsWith("{")) {
+      if (typeof name === 'string' && name.startsWith('{')) {
         name = JSON.parse(name);
       } else {
         // Convert single value to multilingual
         name = {
-          ar: product.name || "اسم المنتج",
-          en: product.name || "Product Name",
+          ar: product.name || 'اسم المنتج',
+          en: product.name || 'Product Name',
         };
       }
 
@@ -384,12 +384,12 @@ async function migrateProducts() {
         data: {
           name: name,
           slug: product.slug || `product-${product.id}`,
-          price: parseFloat(product.price || "0"),
+          price: parseFloat(product.price || '0'),
           wrappingPrice: product.wrapping_price
             ? parseFloat(product.wrapping_price)
             : null,
           image: product.image,
-          status: "ACTIVE",
+          status: 'ACTIVE',
           createdAt: new Date(product.created_at),
           updatedAt: new Date(product.updated_at),
         },
@@ -403,26 +403,26 @@ async function migrateProducts() {
 }
 
 async function migrateOrders() {
-  console.log("🔄 Migrating orders...");
+  console.log('🔄 Migrating orders...');
 
-  const [orders] = await oldDb.execute("SELECT * FROM `order` ORDER BY id");
+  const [orders] = await oldDb.execute('SELECT * FROM `order` ORDER BY id');
 
   for (const order of orders as any[]) {
     try {
       await prisma.order.create({
         data: {
           orderNumber: `ORN-${order.id}`,
-          customerName: order.name || "Unknown Customer",
-          customerPhone: order.phone || "",
-          address: order.address || "",
-          city: "Unknown",
-          state: "Unknown",
-          totalAmount: parseFloat(order.price || "0"),
+          customerName: order.name || 'Unknown Customer',
+          customerPhone: order.phone || '',
+          address: order.address || '',
+          city: 'Unknown',
+          state: 'Unknown',
+          totalAmount: parseFloat(order.price || '0'),
           wrappingCost: order.wrapping_price
             ? parseFloat(order.wrapping_price)
             : null,
           needsWrapping: Boolean(order.wrapping),
-          paymentStatus: order.payment_status === "paid" ? "PAID" : "PENDING",
+          paymentStatus: order.payment_status === 'paid' ? 'PAID' : 'PENDING',
           paymentUrl: order.payment_url,
           mailSent: Boolean(order.mail_sent),
           createdAt: new Date(order.created_at),
@@ -438,20 +438,20 @@ async function migrateOrders() {
 }
 
 async function migrateContacts() {
-  console.log("🔄 Migrating contacts...");
+  console.log('🔄 Migrating contacts...');
 
-  const [contacts] = await oldDb.execute("SELECT * FROM contacts ORDER BY id");
+  const [contacts] = await oldDb.execute('SELECT * FROM contacts ORDER BY id');
 
   for (const contact of contacts as any[]) {
     try {
       await prisma.contact.create({
         data: {
-          name: contact.name || "Unknown",
-          email: contact.email || "unknown@example.com",
+          name: contact.name || 'Unknown',
+          email: contact.email || 'unknown@example.com',
           phone: contact.phone,
-          subject: contact.subject || "General Inquiry",
-          message: contact.message || "",
-          status: "NEW",
+          subject: contact.subject || 'General Inquiry',
+          message: contact.message || '',
+          status: 'NEW',
           userId: contact.user_id ? contact.user_id.toString() : null,
           createdAt: new Date(contact.created_at),
           updatedAt: new Date(contact.updated_at),
@@ -466,13 +466,13 @@ async function migrateContacts() {
 }
 
 async function main() {
-  console.log("🚀 Starting data migration...");
+  console.log('🚀 Starting data migration...');
 
   await migrateProducts();
   await migrateOrders();
   await migrateContacts();
 
-  console.log("✅ Migration completed!");
+  console.log('✅ Migration completed!');
 
   await oldDb.end();
   await prisma.$disconnect();
@@ -543,8 +543,8 @@ bun start
 
 # Database operations
 bun run db:generate    # Generate Prisma client
-bun run db:push        # Push schema to database
-bun run db:migrate     # Run migrations
+bun run db:migrate     # Apply committed migrations
+bun run db:push        # Local-only schema sync during rapid prototyping
 bun run db:studio      # Open Prisma Studio
 
 # Data migration

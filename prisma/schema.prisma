@@ -9,8 +9,8 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -44,11 +44,15 @@ model Product {
   subtitle            Json?
   price               Float
   priceBeforeDiscount Float?
+  discountPercentage  Float?
   wrappingPrice       Float?
   images              Json
   stockQuantity       Int           @default(0)
   status              ProductStatus @default(ACTIVE)
   featured            Boolean       @default(false)
+  category            ProductCategory @default(NATURAL_PEARLS)
+  tags                Json?
+  highlights          Json?
   createdAt           DateTime      @default(now())
   updatedAt           DateTime      @updatedAt
 
@@ -61,6 +65,11 @@ enum ProductStatus {
   ACTIVE
   INACTIVE
   OUT_OF_STOCK
+}
+
+enum ProductCategory {
+  NATURAL_PEARLS
+  ARTIFICIAL_PEARLS
 }
 
 model Order {
@@ -77,6 +86,7 @@ model Order {
   paymentStatus   PaymentStatus @default(PENDING)
   paymentUrl      String?
   paymentMethod   String?
+  paymentReference String?
   notes           String?
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt

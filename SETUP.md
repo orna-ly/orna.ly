@@ -5,7 +5,7 @@
 ### 1. Install Dependencies
 
 ```bash
-npm install
+bun install
 ```
 
 ### 2. Environment Setup
@@ -24,21 +24,27 @@ NEXT_PUBLIC_APP_NAME="Orna Jewelry"
 ### 3. Database Setup
 
 ```bash
-# Generate Prisma client
-npm run db:generate
+# Apply migrations and generate the Prisma client
+bun run db:migrate
 
-# Push database schema (creates tables)
-npx prisma db push
-
-# Seed database with sample data
-npm run db:seed
+# Seed the database with sample data
+bun run db:seed
 ```
 
 ### 4. Start Development Server
 
 ```bash
-npm run dev
+bun run dev
 ```
+
+### 5. Run everything with Docker (optional)
+
+```bash
+cp docker/.env.docker.example docker/.env.docker
+docker compose up --build
+```
+
+This boots the Next.js app on port `3000` and a PostgreSQL instance on `5432`. Edit `docker/.env.docker` (or provide an `--env-file`) before deploying the stack anywhere outside of local development.
 
 ## 📁 Project Structure
 
@@ -133,17 +139,17 @@ src/
 
 ```bash
 # Development
-npm run dev              # Start development server
-npm run build           # Build for production
-npm run start           # Start production server
+bun run dev              # Start development server
+bun run build            # Build for production
+bun run start            # Start production server
 
 # Database
-npm run db:generate     # Generate Prisma client
-npm run db:push         # Push schema to database
-npm run db:seed         # Seed database with sample data
+bun run db:migrate       # Apply committed migrations
+bun run db:push          # Experimental: push schema during prototyping
+bun run db:seed          # Seed database with sample data
 
 # Code Quality
-npm run lint            # Run ESLint
+bun run lint             # Run ESLint
 ```
 
 ## 📱 Pages Overview
