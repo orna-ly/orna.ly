@@ -261,9 +261,17 @@ function normalizeOrder(payload: unknown): Order {
     id: String(payload.id ?? ''),
     orderNumber: String(payload.orderNumber ?? ''),
     customerName: String(payload.customerName ?? ''),
-    customerPhone: String(payload.customerPhone ?? ''),
+    customerPhone:
+      typeof payload.customerPhone === 'string' &&
+      payload.customerPhone.trim().length > 0
+        ? payload.customerPhone
+        : '',
     customerEmail,
-    shippingAddress,
+    shippingAddress: Object.fromEntries(
+      Object.entries(shippingAddress).filter(
+        ([, value]) => typeof value === 'string'
+      )
+    ) as Record<string, string>,
     totalAmount:
       typeof payload.totalAmount === 'number'
         ? payload.totalAmount
@@ -350,7 +358,9 @@ async function parseResponse<T>(
   }
 
   const payload =
-    'data' in body ? (body as ApiSuccessEnvelope<unknown>).data : body;
+    'data' in body
+      ? (body as unknown as ApiSuccessEnvelope<unknown>).data
+      : body;
 
   let data: T;
   try {
