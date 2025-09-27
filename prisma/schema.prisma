@@ -9,14 +9,14 @@ generator client {
 }
 
 datasource db {
-  provider = env("DATABASE_PROVIDER")
-  url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("POSTGRES_URL")
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
+  id                 String    @id @default(cuid())
+  email              String    @unique
+  name               String?
   role               UserRole  @default(USER)
   image              String?
   emailVerified      Boolean   @default(false)
@@ -37,9 +37,9 @@ enum UserRole {
 }
 
 model Product {
-  id                  String        @id @default(cuid())
+  id                  String          @id @default(cuid())
   name                Json // { en: "Gold Ring", ar: "خاتم ذهبي" }
-  slug                String        @unique
+  slug                String          @unique
   description         Json?
   subtitle            Json?
   price               Float
@@ -47,14 +47,14 @@ model Product {
   discountPercentage  Float?
   wrappingPrice       Float?
   images              Json
-  stockQuantity       Int           @default(0)
-  status              ProductStatus @default(ACTIVE)
-  featured            Boolean       @default(false)
+  stockQuantity       Int             @default(0)
+  status              ProductStatus   @default(ACTIVE)
+  featured            Boolean         @default(false)
   category            ProductCategory @default(NATURAL_PEARLS)
   tags                Json?
   highlights          Json?
-  createdAt           DateTime      @default(now())
-  updatedAt           DateTime      @updatedAt
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
 
   orderItems OrderItem[]
 
@@ -73,23 +73,23 @@ enum ProductCategory {
 }
 
 model Order {
-  id              String        @id @default(cuid())
-  orderNumber     String        @unique
-  customerName    String
-  customerPhone   String
-  customerEmail   String?
-  shippingAddress Json
-  totalAmount     Float
-  wrappingCost    Float?
-  needsWrapping   Boolean       @default(false)
-  status          OrderStatus   @default(PENDING)
-  paymentStatus   PaymentStatus @default(PENDING)
-  paymentUrl      String?
-  paymentMethod   String?
+  id               String        @id @default(cuid())
+  orderNumber      String        @unique
+  customerName     String
+  customerPhone    String
+  customerEmail    String?
+  shippingAddress  Json
+  totalAmount      Float
+  wrappingCost     Float?
+  needsWrapping    Boolean       @default(false)
+  status           OrderStatus   @default(PENDING)
+  paymentStatus    PaymentStatus @default(PENDING)
+  paymentUrl       String?
+  paymentMethod    String?
   paymentReference String?
-  notes           String?
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  notes            String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
 
   customer   User?       @relation(fields: [customerId], references: [id])
   customerId String?
