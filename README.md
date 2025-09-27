@@ -13,33 +13,34 @@ A multilingual e-commerce experience for Orna Jewelry built with Next.js 15, the
 
 ```bash
 bun install
-# Apply the latest Prisma migrations
-bun run db:migrate
+# Apply the latest Prisma migrations or push the schema for SQLite
+bun run db:deploy
 # Optional: seed the catalog and sample orders
 bun run db:seed
 bun run dev
 ```
 
-The development server runs on [http://localhost:3001](http://localhost:3001). Environment variables required for local development are documented in [`SETUP.md`](SETUP.md) and mirrored in [`.env.example`](.env.example). When you change the Prisma schema locally, create a new migration (`bunx prisma migrate dev`) so `bun run db:migrate` stays in sync across environments.
+The development server runs on [http://localhost:3001](http://localhost:3001). Environment variables required for local development are documented in [`SETUP.md`](SETUP.md) and mirrored in [`.env.example`](.env.example). When you change the Prisma schema locally, create a new migration (`bunx prisma migrate dev`) so `bun run db:migrate` (and consequently `bun run db:deploy`) stays in sync across environments.
 
 ## Available scripts
 
-| Command                | Description                                                                            |
-| ---------------------- | -------------------------------------------------------------------------------------- |
-| `bun run dev`          | Start the development server with Turbopack on port `3001`.                            |
-| `bun run build`        | Create an optimized production build.                                                  |
-| `bun run start`        | Run the production server locally (after `bun run build`).                             |
-| `bun run lint`         | Execute ESLint across the project.                                                     |
-| `bun run db:migrate`   | Apply the committed Prisma migrations to the configured database.                      |
-| `bun run db:push`      | Rapidly sync the Prisma schema during prototyping (local-only).                        |
-| `bun run db:seed`      | Seed the database with sample catalog, order, and contact data.                        |
-| `bun run vercel-build` | Production build command used by Vercel (runs Prisma client generation automatically). |
+| Command                | Description                                                                                            |
+| ---------------------- | ------------------------------------------------------------------------------------------------------ |
+| `bun run dev`          | Start the development server with Turbopack on port `3001`.                                            |
+| `bun run build`        | Create an optimized production build.                                                                  |
+| `bun run start`        | Run the production server locally (after `bun run build`).                                             |
+| `bun run lint`         | Execute ESLint across the project.                                                                     |
+| `bun run db:deploy`    | Deploy the Prisma schema based on `DATABASE_PROVIDER` (migrate for PostgreSQL, push for SQLite).       |
+| `bun run db:migrate`   | Apply the committed Prisma migrations to the configured database.                                      |
+| `bun run db:push`      | Rapidly sync the Prisma schema during prototyping (local-only).                                        |
+| `bun run db:seed`      | Seed the database with sample catalog, order, and contact data.                                        |
+| `bun run vercel-build` | Production build command used by Vercel (runs `db:deploy` and Prisma client generation automatically). |
 
 ## Tech stack highlights
 
 - **Next.js 15 App Router** with server components, React 19, and internationalised routing.
 - **Tailwind CSS 4** and Shadcn UI components for a responsive, RTL-friendly design system.
-- **Prisma ORM** backed by PostgreSQL, with seed scripts for realistic fixtures.
+- **Prisma ORM** backed by PostgreSQL (or hosted SQLite services), with seed scripts for realistic fixtures.
 - **Jotai** for client-side state (cart, language switching, and admin filters).
 - **TypeScript** everywhere for compile-time safety.
 

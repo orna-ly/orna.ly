@@ -15,12 +15,13 @@
     "db:seed": "bunx tsx prisma/seed.ts",
     "db:push": "bunx prisma db push",
     "db:migrate": "bunx prisma migrate deploy",
+    "db:deploy": "bunx tsx scripts/prepare-database.ts",
     "db:generate": "bunx prisma generate",
     "db:studio": "bunx prisma studio",
     "prettier": "bunx prettier --write .",
     "prepare": "husky",
     "postinstall": "bunx prisma generate",
-    "vercel-build": "bunx prisma generate && bunx next build --turbopack"
+    "vercel-build": "bun run db:deploy && bunx next build --turbopack"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

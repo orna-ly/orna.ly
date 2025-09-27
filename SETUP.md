@@ -14,6 +14,7 @@ Create a `.env.local` file in the root directory with the following variables:
 
 ```bash
 # Database
+DATABASE_PROVIDER="postgresql" # or "sqlite" when using a file/remote SQLite instance
 DATABASE_URL="postgresql://username:password@localhost:5432/orna_jewelry"
 
 # App Configuration
@@ -24,8 +25,8 @@ NEXT_PUBLIC_APP_NAME="Orna Jewelry"
 ### 3. Database Setup
 
 ```bash
-# Apply migrations and generate the Prisma client
-bun run db:migrate
+# Apply migrations (PostgreSQL) or push the schema (SQLite)
+bun run db:deploy
 
 # Seed the database with sample data
 bun run db:seed
@@ -143,8 +144,7 @@ bun run dev              # Start development server
 bun run build            # Build for production
 bun run start            # Start production server
 
-# Database
-bun run db:migrate       # Apply committed migrations
+bun run db:deploy        # Deploy schema based on DATABASE_PROVIDER
 bun run db:push          # Experimental: push schema during prototyping
 bun run db:seed          # Seed database with sample data
 
