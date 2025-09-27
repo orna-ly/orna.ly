@@ -20,6 +20,7 @@ import type { Product } from '@/lib/atoms';
 import { formatPrice } from '@/lib/utils';
 import { createPlaceholderImage } from '@/lib/image-utils';
 import { showToast, toastError, toastSuccess } from '@/lib/toast';
+import { ProductImageZoom } from '@/components/product/product-image-zoom';
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -61,16 +62,39 @@ export default function ProductDetailPage() {
   }, [slug, products, loadProducts]);
 
   const handleAddToCart = () => {
-    if (product) {
-      for (let i = 0; i < quantity; i++) {
-        addToCart(product);
-      }
-      setAddedToCart(true);
-      showToast.success(
-        currentLang === 'ar' ? 'تمت إضافة المنتج إلى السلة' : 'Added to cart'
+    if (!product) return;
+
+    const availableStock = product.stockQuantity ?? 0;
+    const isSoldOut = availableStock <= 0 || product.status === 'OUT_OF_STOCK';
+
+    if (isSoldOut) {
+      showToast.error(
+        currentLang === 'ar'
+          ? 'عذراً، هذا المنتج غير متوفر حالياً'
+          : 'Sorry, this product is sold out right now'
       );
-      setTimeout(() => setAddedToCart(false), 2000);
+      return;
     }
+
+    if (availableStock > 0 && quantity > availableStock) {
+      setQuantity(availableStock);
+      showToast.error(
+        currentLang === 'ar'
+          ? 'تم تعديل الكمية لتتناسب مع المتوفر'
+          : 'Quantity adjusted to available stock'
+      );
+      return;
+    }
+
+    for (let i = 0; i < quantity; i++) {
+      addToCart(product);
+    }
+
+    setAddedToCart(true);
+    showToast.success(
+      currentLang === 'ar' ? 'تمت إضافة المنتج إلى السلة' : 'Added to cart'
+    );
+    setTimeout(() => setAddedToCart(false), 2000);
   };
 
   const handleToggleFavorite = () => {
@@ -181,6 +205,29 @@ export default function ProductDetailPage() {
     );
   }
 
+  const availableStock = product.stockQuantity ?? 0;
+  const isSoldOut = availableStock <= 0 || product.status === 'OUT_OF_STOCK';
+  const lowStock = !isSoldOut && availableStock <= 3;
+  const discountValue = product.discountPercentage
+    ? Math.round(product.discountPercentage)
+    : product.priceBeforeDiscount
+      ? Math.round(
+          ((product.priceBeforeDiscount - product.price) /
+            product.priceBeforeDiscount) *
+            100
+        )
+      : null;
+  const categoryLabel =
+    product.category === 'NATURAL_PEARLS'
+      ? currentLang === 'ar'
+        ? 'لؤلؤ طبيعي'
+        : 'Natural Pearls'
+      : currentLang === 'ar'
+        ? 'لؤلؤ صناعي'
+        : 'Artificial Pearls';
+  const productTags = product.tags?.[currentLang] ?? [];
+  const highlights = product.highlights?.[currentLang] ?? [];
+
   return (
     <div className="min-h-screen bg-neutral-50 py-8">
       <div className="max-w-7xl mx-auto px-4">
@@ -206,36 +253,41 @@ export default function ProductDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Product Images */}
           <div className="space-y-4">
-            <div className="relative aspect-square bg-white rounded-xl overflow-hidden">
-              <Image
+            <div className="relative aspect-square">
+              <ProductImageZoom
                 src={
                   product.images[selectedImage] ||
                   product.images[0] ||
                   '/orna/1.jpeg'
                 }
                 alt={product.name[currentLang]}
-                fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                priority
-                className="object-cover"
-                placeholder="blur"
-                blurDataURL={createPlaceholderImage(600, 600, 'Orna')}
+                className="h-full w-full"
               />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-amber-50/20 via-rose-50/30 to-amber-100/20" />
-              {product.featured && (
-                <Badge className="absolute top-4 left-4 bg-amber-600 hover:bg-amber-700">
-                  {currentLang === 'ar' ? 'مميز' : 'Featured'}
+              <div className="absolute top-4 left-4 flex flex-col gap-2">
+                {product.featured && (
+                  <Badge className="bg-amber-600 hover:bg-amber-700">
+                    {currentLang === 'ar' ? 'مميز' : 'Featured'}
+                  </Badge>
+                )}
+                <Badge
+                  variant="secondary"
+                  className="bg-white/90 text-neutral-800"
+                >
+                  {categoryLabel}
+                </Badge>
+              </div>
+              {discountValue !== null && (
+                <Badge variant="destructive" className="absolute top-4 right-4">
+                  {discountValue}%{currentLang === 'ar' ? ' خصم' : ' OFF'}
                 </Badge>
               )}
-              {product.priceBeforeDiscount && (
-                <Badge variant="destructive" className="absolute top-4 right-4">
-                  {Math.round(
-                    ((product.priceBeforeDiscount - product.price) /
-                      product.priceBeforeDiscount) *
-                      100
-                  )}
-                  %{currentLang === 'ar' ? ' خصم' : ' OFF'}
-                </Badge>
+              {isSoldOut && (
+                <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
+                  <span className="text-white text-xl font-semibold">
+                    {currentLang === 'ar' ? 'تم البيع بالكامل' : 'Sold Out'}
+                  </span>
+                </div>
               )}
             </div>
 
@@ -285,6 +337,23 @@ export default function ProductDetailPage() {
                   {product.subtitle[currentLang]}
                 </p>
               )}
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Badge
+                  variant="outline"
+                  className="border-amber-200 bg-amber-50 text-amber-700"
+                >
+                  {categoryLabel}
+                </Badge>
+                {productTags.map((tag) => (
+                  <Badge
+                    key={tag}
+                    variant="outline"
+                    className="border-neutral-200 text-neutral-600"
+                  >
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
             </div>
 
             {/* Price */}
@@ -296,6 +365,16 @@ export default function ProductDetailPage() {
                 <span className="text-xl text-neutral-400 line-through">
                   {formatPrice(product.priceBeforeDiscount, 'LYD', currentLang)}
                 </span>
+              )}
+              {discountValue !== null && (
+                <Badge
+                  variant="destructive"
+                  className="bg-red-50 text-red-600 border-red-200"
+                >
+                  {currentLang === 'ar'
+                    ? `${discountValue}% خصم`
+                    : `${discountValue}% off`}
+                </Badge>
               )}
             </div>
 
@@ -312,12 +391,58 @@ export default function ProductDetailPage() {
                   {product.subdescription[currentLang]}
                 </p>
               )}
+              {highlights.length > 0 && (
+                <div className="mt-4 space-y-2">
+                  <h4 className="text-sm font-semibold text-neutral-800">
+                    {currentLang === 'ar' ? 'أبرز المزايا' : 'Key Highlights'}
+                  </h4>
+                  <ul className="space-y-1">
+                    {highlights.map((item) => (
+                      <li
+                        key={item}
+                        className="flex items-start gap-2 text-sm text-neutral-700"
+                      >
+                        <Check className="h-4 w-4 text-amber-600 mt-0.5" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
 
             <Separator />
 
             {/* Quantity and Actions */}
             <div className="space-y-4">
+              <div className="flex items-center gap-3 text-sm">
+                {isSoldOut ? (
+                  <span className="font-medium text-red-600">
+                    {currentLang === 'ar'
+                      ? 'هذا المنتج غير متوفر حالياً'
+                      : 'This product is currently sold out'}
+                  </span>
+                ) : (
+                  <>
+                    <span className="text-neutral-600">
+                      {currentLang === 'ar'
+                        ? `المتوفر: ${availableStock} قطعة`
+                        : `Available: ${availableStock} pieces`}
+                    </span>
+                    {lowStock && (
+                      <Badge
+                        variant="secondary"
+                        className="bg-amber-100 text-amber-700"
+                      >
+                        {currentLang === 'ar'
+                          ? 'متبقي كمية محدودة'
+                          : 'Limited stock'}
+                      </Badge>
+                    )}
+                  </>
+                )}
+              </div>
+
               <div>
                 <label className="text-sm font-medium text-neutral-700 mb-2 block">
                   {currentLang === 'ar' ? 'الكمية' : 'Quantity'}
@@ -327,7 +452,8 @@ export default function ProductDetailPage() {
                     variant="outline"
                     size="icon"
                     type="button"
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    disabled={quantity <= 1 || isSoldOut}
+                    onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
                   >
                     -
                   </Button>
@@ -338,7 +464,17 @@ export default function ProductDetailPage() {
                     variant="outline"
                     size="icon"
                     type="button"
-                    onClick={() => setQuantity(quantity + 1)}
+                    disabled={
+                      isSoldOut ||
+                      (availableStock > 0 && quantity >= availableStock)
+                    }
+                    onClick={() =>
+                      setQuantity((prev) =>
+                        availableStock > 0
+                          ? Math.min(availableStock, prev + 1)
+                          : prev + 1
+                      )
+                    }
                   >
                     +
                   </Button>
@@ -351,6 +487,7 @@ export default function ProductDetailPage() {
                   className="flex-1 bg-amber-600 hover:bg-amber-700"
                   type="button"
                   onClick={handleAddToCart}
+                  disabled={isSoldOut}
                 >
                   {addedToCart ? (
                     <>
@@ -360,7 +497,13 @@ export default function ProductDetailPage() {
                   ) : (
                     <>
                       <ShoppingCart className="h-4 w-4 mr-2" />
-                      {currentLang === 'ar' ? 'إضافة للسلة' : 'Add to Cart'}
+                      {isSoldOut
+                        ? currentLang === 'ar'
+                          ? 'غير متوفر'
+                          : 'Unavailable'
+                        : currentLang === 'ar'
+                          ? 'إضافة للسلة'
+                          : 'Add to Cart'}
                     </>
                   )}
                 </Button>
@@ -427,6 +570,46 @@ export default function ProductDetailPage() {
                     </span>
                     <span className="font-medium">{product.id}</span>
                   </div>
+                  <div className="flex justify-between">
+                    <span>{currentLang === 'ar' ? 'الفئة:' : 'Category:'}</span>
+                    <span className="font-medium">{categoryLabel}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>
+                      {currentLang === 'ar' ? 'حالة المخزون:' : 'Stock Status:'}
+                    </span>
+                    <span
+                      className={`font-medium ${
+                        isSoldOut
+                          ? 'text-red-600'
+                          : lowStock
+                            ? 'text-amber-600'
+                            : 'text-emerald-600'
+                      }`}
+                    >
+                      {isSoldOut
+                        ? currentLang === 'ar'
+                          ? 'غير متوفر'
+                          : 'Sold out'
+                        : lowStock
+                          ? currentLang === 'ar'
+                            ? 'كمية محدودة'
+                            : 'Limited stock'
+                          : currentLang === 'ar'
+                            ? 'متوفر'
+                            : 'In stock'}
+                    </span>
+                  </div>
+                  {!isSoldOut && (
+                    <div className="flex justify-between">
+                      <span>
+                        {currentLang === 'ar'
+                          ? 'الكمية المتاحة:'
+                          : 'Available:'}
+                      </span>
+                      <span className="font-medium">{availableStock}</span>
+                    </div>
+                  )}
                   {product.wrappingPrice && (
                     <div className="flex justify-between">
                       <span>
@@ -449,6 +632,14 @@ export default function ProductDetailPage() {
                       )}
                     </span>
                   </div>
+                  {discountValue !== null && (
+                    <div className="flex justify-between">
+                      <span>
+                        {currentLang === 'ar' ? 'نسبة الخصم:' : 'Discount:'}
+                      </span>
+                      <span className="font-medium">{discountValue}%</span>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>

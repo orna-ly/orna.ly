@@ -114,11 +114,21 @@ async function main() {
         },
         price: 1850,
         priceBeforeDiscount: 2100,
+        discountPercentage: 12,
         wrappingPrice: 100,
         images: ['/orna/خاتم الآمل(1).JPG', '/orna/1.jpeg'],
         featured: true,
         stockQuantity: 8,
         status: 'ACTIVE',
+        category: 'ARTIFICIAL_PEARLS',
+        tags: {
+          ar: ['مجوهرات راقية', 'لؤلؤ صناعي'],
+          en: ['Fine Jewelry', 'Artificial Pearl'],
+        },
+        highlights: {
+          ar: ['مصنوع يدويًا', 'طلاء ذهبي مقاوم للخدوش'],
+          en: ['Hand-crafted detail', 'Scratch resistant gold plating'],
+        },
       },
     }),
     prisma.product.create({
@@ -138,6 +148,15 @@ async function main() {
         featured: true,
         stockQuantity: 5,
         status: 'ACTIVE',
+        category: 'NATURAL_PEARLS',
+        tags: {
+          ar: ['لؤلؤ طبيعي', 'عقد فاخر'],
+          en: ['Natural Pearl', 'Luxury Necklace'],
+        },
+        highlights: {
+          ar: ['إغلاق من الذهب الأبيض', 'لآلئ تاهيتي أصلية'],
+          en: ['White gold clasp', 'Genuine Tahitian pearls'],
+        },
       },
     }),
     prisma.product.create({
@@ -157,6 +176,7 @@ async function main() {
         },
         price: 4500,
         priceBeforeDiscount: 5000,
+        discountPercentage: 10,
         wrappingPrice: 200,
         images: [
           '/orna/طقم الطاووس الآبيض.JPG',
@@ -166,6 +186,15 @@ async function main() {
         featured: true,
         stockQuantity: 3,
         status: 'ACTIVE',
+        category: 'ARTIFICIAL_PEARLS',
+        tags: {
+          ar: ['طقم متكامل', 'لؤلؤ صناعي'],
+          en: ['Complete Set', 'Artificial Pearl'],
+        },
+        highlights: {
+          ar: ['يشمل عقد وأقراط وخاتم', 'تصميم مرصع بالألماس'],
+          en: ['Includes necklace, earrings & ring', 'Diamond-accented design'],
+        },
       },
     }),
     prisma.product.create({
@@ -185,6 +214,15 @@ async function main() {
         featured: false,
         stockQuantity: 10,
         status: 'ACTIVE',
+        category: 'NATURAL_PEARLS',
+        tags: {
+          ar: ['ألماس طبيعي', 'تصميم كلاسيكي'],
+          en: ['Natural Diamond', 'Classic Style'],
+        },
+        highlights: {
+          ar: ['تصميم مريح للأذن', 'ثبات آمن للأقراط'],
+          en: ['Comfort-fit backings', 'Secure clasp'],
+        },
       },
     }),
     prisma.product.create({
@@ -204,6 +242,15 @@ async function main() {
         featured: false,
         stockQuantity: 12,
         status: 'ACTIVE',
+        category: 'ARTIFICIAL_PEARLS',
+        tags: {
+          ar: ['إطلالة يومية', 'لؤلؤ صناعي'],
+          en: ['Everyday Elegance', 'Artificial Pearl'],
+        },
+        highlights: {
+          ar: ['سوار قابل للتعديل', 'لمسة نهائية لامعة'],
+          en: ['Adjustable bracelet', 'High-gloss finish'],
+        },
       },
     }),
     prisma.product.create({
@@ -223,11 +270,21 @@ async function main() {
         },
         price: 2350,
         priceBeforeDiscount: 2590,
+        discountPercentage: 9,
         wrappingPrice: 120,
         images: ['/orna/سلسال آفروديت.JPG', '/orna/333.jpg'],
         featured: true,
         stockQuantity: 6,
         status: 'ACTIVE',
+        category: 'ARTIFICIAL_PEARLS',
+        tags: {
+          ar: ['تصميم معاصر', 'لؤلؤ صناعي'],
+          en: ['Contemporary Design', 'Artificial Pearl'],
+        },
+        highlights: {
+          ar: ['طلاء مقاوم للتشقق', 'كريستالات لامعة'],
+          en: ['Crack-resistant plating', 'Shimmering crystals'],
+        },
       },
     }),
     prisma.product.create({
@@ -247,6 +304,15 @@ async function main() {
         featured: false,
         stockQuantity: 15,
         status: 'ACTIVE',
+        category: 'ARTIFICIAL_PEARLS',
+        tags: {
+          ar: ['هدية مثالية', 'لمسة تراثية'],
+          en: ['Gift Ready', 'Heritage Inspired'],
+        },
+        highlights: {
+          ar: ['تفاصيل محفورة يدويًا', 'سلسلة قابلة للتعديل'],
+          en: ['Hand-engraved details', 'Adjustable chain'],
+        },
       },
     }),
     prisma.product.create({
@@ -266,11 +332,21 @@ async function main() {
         },
         price: 3820,
         priceBeforeDiscount: 4200,
+        discountPercentage: 9,
         wrappingPrice: 180,
         images: ['/orna/طقم الحديقة السرية.jpg', '/orna/66.jpg'],
         featured: false,
         stockQuantity: 4,
         status: 'ACTIVE',
+        category: 'ARTIFICIAL_PEARLS',
+        tags: {
+          ar: ['طقم فاخر', 'ألوان داكنة'],
+          en: ['Luxury Set', 'Deep Gemstones'],
+        },
+        highlights: {
+          ar: ['مستوحى من الحدائق الليلية', 'تشكيلة متعددة القطع'],
+          en: ['Midnight garden inspiration', 'Multi-piece ensemble'],
+        },
       },
     }),
     prisma.product.create({
@@ -290,6 +366,15 @@ async function main() {
         featured: true,
         stockQuantity: 7,
         status: 'ACTIVE',
+        category: 'ARTIFICIAL_PEARLS',
+        tags: {
+          ar: ['تصميم زهري', 'لؤلؤ صناعي'],
+          en: ['Floral Design', 'Artificial Pearl'],
+        },
+        highlights: {
+          ar: ['توازن مثالي بين القلادة والأقراط', 'تشطيب لامع طويل الأمد'],
+          en: ['Balanced necklace & earrings', 'Long-lasting shine'],
+        },
       },
     }),
     prisma.product.create({
@@ -312,6 +397,15 @@ async function main() {
         featured: true,
         stockQuantity: 5,
         status: 'ACTIVE',
+        category: 'NATURAL_PEARLS',
+        tags: {
+          ar: ['لؤلؤ طبيعي', 'طقم فاخر'],
+          en: ['Natural Pearl', 'Luxury Suite'],
+        },
+        highlights: {
+          ar: ['لآلئ باروك أصلية', 'إغلاق آمن'],
+          en: ['Authentic baroque pearls', 'Secure clasp system'],
+        },
       },
     }),
   ]);

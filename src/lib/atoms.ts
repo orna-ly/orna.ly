@@ -1,6 +1,7 @@
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 import { fetchProducts, fetchOrders, fetchContacts } from './api';
+import { showToast } from './toast';
 import type {
   Product,
   Order,
@@ -175,14 +176,37 @@ export const logoutAtom = atom(null, async (get, set) => {
 // Cart Actions
 export const addToCartAtom = atom(null, (get, set, product: Product) => {
   const currentItems = get(cartItemsAtom);
+  const currentLang = get(currentLangAtom);
+  const availableStock = product.stockQuantity ?? 0;
+
+  if (availableStock <= 0) {
+    showToast.error(
+      currentLang === 'ar'
+        ? 'هذا المنتج غير متوفر حالياً'
+        : 'This product is currently sold out'
+    );
+    return;
+  }
+
   const existingItem = currentItems.find(
     (item) => item.product.id === product.id
   );
 
+  const nextQuantity = existingItem ? existingItem.quantity + 1 : 1;
+
+  if (nextQuantity > availableStock) {
+    showToast.error(
+      currentLang === 'ar'
+        ? 'لقد وصلت إلى الحد الأقصى للكمية المتاحة'
+        : 'You have reached the available stock limit'
+    );
+    return;
+  }
+
   if (existingItem) {
     const updatedItems = currentItems.map((item) =>
       item.product.id === product.id
-        ? { ...item, quantity: item.quantity + 1 }
+        ? { ...item, quantity: nextQuantity }
         : item
     );
     set(cartItemsAtom, updatedItems);
@@ -207,9 +231,33 @@ export const updateCartQuantityAtom = atom(
     { productId, quantity }: { productId: string; quantity: number }
   ) => {
     const currentItems = get(cartItemsAtom);
-    const updatedItems = currentItems.map((item) =>
-      item.product.id === productId ? { ...item, quantity } : item
-    );
+    const currentLang = get(currentLangAtom);
+
+    const updatedItems = currentItems
+      .map((item) => {
+        if (item.product.id !== productId) {
+          return item;
+        }
+
+        const stockLimit = item.product.stockQuantity ?? 0;
+
+        if (quantity <= 0) {
+          return null;
+        }
+
+        if (stockLimit > 0 && quantity > stockLimit) {
+          showToast.error(
+            currentLang === 'ar'
+              ? 'لا تتوفر هذه الكمية في المخزون'
+              : 'Requested quantity exceeds available stock'
+          );
+          return { ...item, quantity: stockLimit };
+        }
+
+        return { ...item, quantity };
+      })
+      .filter((item): item is CartItem => item !== null);
+
     set(cartItemsAtom, updatedItems);
   }
 );

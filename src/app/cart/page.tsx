@@ -1,19 +1,20 @@
-"use client";
+'use client';
 
-import { useAtom } from "jotai";
+import { useAtom } from 'jotai';
 import {
   cartItemsAtom,
   cartTotalAtom,
   currentLangAtom,
   removeFromCartAtom,
   updateCartQuantityAtom,
-} from "@/lib/atoms";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ShoppingCart, Minus, Plus, X, ArrowRight } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { formatPrice } from "@/lib/utils";
+} from '@/lib/atoms';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { ShoppingCart, Minus, Plus, X, ArrowRight } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { formatPrice } from '@/lib/utils';
 
 export default function CartPage() {
   const [cartItems] = useAtom(cartItemsAtom);
@@ -32,12 +33,12 @@ export default function CartPage() {
           <div className="bg-white rounded-xl p-12 shadow-sm">
             <ShoppingCart className="h-24 w-24 text-neutral-400 mx-auto mb-6" />
             <h1 className="text-3xl font-bold text-neutral-900 mb-4">
-              {currentLang === "ar" ? "سلة التسوق فارغة" : "Your cart is empty"}
+              {currentLang === 'ar' ? 'سلة التسوق فارغة' : 'Your cart is empty'}
             </h1>
             <p className="text-neutral-600 mb-8 text-lg">
-              {currentLang === "ar"
-                ? "ابدأ التسوق واكتشف مجموعتنا الرائعة من المجوهرات"
-                : "Start shopping and discover our amazing jewelry collection"}
+              {currentLang === 'ar'
+                ? 'ابدأ التسوق واكتشف مجموعتنا الرائعة من المجوهرات'
+                : 'Start shopping and discover our amazing jewelry collection'}
             </p>
             <Button
               asChild
@@ -45,7 +46,7 @@ export default function CartPage() {
               className="bg-amber-600 hover:bg-amber-700"
             >
               <Link href="/products">
-                {currentLang === "ar" ? "تسوق الآن" : "Shop Now"}
+                {currentLang === 'ar' ? 'تسوق الآن' : 'Shop Now'}
                 <ArrowRight className="h-4 w-4 ml-2" />
               </Link>
             </Button>
@@ -61,124 +62,174 @@ export default function CartPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-neutral-900">
-            {currentLang === "ar" ? "سلة التسوق" : "Shopping Cart"}
+            {currentLang === 'ar' ? 'سلة التسوق' : 'Shopping Cart'}
           </h1>
           <p className="text-neutral-600 mt-2">
-            {currentLang === "ar"
-              ? "راجع عناصرك قبل المتابعة للدفع"
-              : "Review your items before checkout"}
+            {currentLang === 'ar'
+              ? 'راجع عناصرك قبل المتابعة للدفع'
+              : 'Review your items before checkout'}
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
-            {cartItems.map((item) => (
-              <Card key={item.product.id}>
-                <CardContent className="p-6">
-                  <div className="flex gap-4">
-                    {/* Product Image */}
-                    <div className="relative w-24 h-24 flex-shrink-0">
-                      <Image
-                        src={item.product.images[0] || "/placeholder.jpg"}
-                        alt={item.product.name[currentLang]}
-                        fill
-                        className="object-cover rounded-lg"
-                      />
-                    </div>
+            {cartItems.map((item) => {
+              const availableStock = item.product.stockQuantity ?? 0;
+              const isSoldOut =
+                availableStock <= 0 || item.product.status === 'OUT_OF_STOCK';
+              const canIncrease =
+                !isSoldOut &&
+                (availableStock === 0 || item.quantity < availableStock);
 
-                    {/* Product Details */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="font-semibold text-neutral-900 mb-1">
-                            {item.product.name[currentLang]}
-                          </h3>
-                          {item.product.subtitle && (
-                            <p className="text-sm text-neutral-600">
-                              {item.product.subtitle[currentLang]}
-                            </p>
-                          )}
-                          <p className="text-lg font-bold text-amber-600 mt-2">
-                            {formatPrice(
-                              item.product.price,
-                              "LYD",
-                              currentLang,
+              return (
+                <Card key={item.product.id}>
+                  <CardContent className="p-6">
+                    <div className="flex gap-4">
+                      {/* Product Image */}
+                      <div className="relative w-24 h-24 flex-shrink-0">
+                        <Image
+                          src={item.product.images[0] || '/placeholder.jpg'}
+                          alt={item.product.name[currentLang]}
+                          fill
+                          className="object-cover rounded-lg"
+                        />
+                      </div>
+
+                      {/* Product Details */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h3 className="font-semibold text-neutral-900 mb-1">
+                              {item.product.name[currentLang]}
+                            </h3>
+                            {item.product.subtitle && (
+                              <p className="text-sm text-neutral-600">
+                                {item.product.subtitle[currentLang]}
+                              </p>
                             )}
-                          </p>
+                            <div className="mt-2 flex flex-wrap gap-2">
+                              <Badge
+                                variant="outline"
+                                className="border-neutral-200 text-neutral-600"
+                              >
+                                {item.product.category === 'NATURAL_PEARLS'
+                                  ? currentLang === 'ar'
+                                    ? 'لؤلؤ طبيعي'
+                                    : 'Natural Pearls'
+                                  : currentLang === 'ar'
+                                    ? 'لؤلؤ صناعي'
+                                    : 'Artificial Pearls'}
+                              </Badge>
+                              {item.product.tags?.[currentLang]
+                                ?.slice(0, 2)
+                                .map((tag) => (
+                                  <Badge
+                                    key={tag}
+                                    variant="secondary"
+                                    className="bg-amber-50 text-amber-700"
+                                  >
+                                    {tag}
+                                  </Badge>
+                                ))}
+                            </div>
+                            <p className="text-lg font-bold text-amber-600 mt-2">
+                              {formatPrice(
+                                item.product.price,
+                                'LYD',
+                                currentLang
+                              )}
+                            </p>
+                            {isSoldOut ? (
+                              <p className="text-sm font-medium text-red-600 mt-2">
+                                {currentLang === 'ar'
+                                  ? 'تم بيع هذا المنتج بالكامل'
+                                  : 'This product has sold out'}
+                              </p>
+                            ) : availableStock > 0 &&
+                              availableStock - item.quantity <= 2 ? (
+                              <p className="text-xs text-amber-600 mt-1">
+                                {currentLang === 'ar'
+                                  ? 'تسرع، تبقى عدد قليل في المخزون'
+                                  : 'Hurry, only a few left in stock'}
+                              </p>
+                            ) : null}
+                          </div>
+
+                          {/* Remove Button */}
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-neutral-400 hover:text-red-500"
+                            onClick={() => removeFromCart(item.product.id)}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
                         </div>
 
-                        {/* Remove Button */}
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-neutral-400 hover:text-red-500"
-                          onClick={() => removeFromCart(item.product.id)}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-
-                      {/* Quantity Controls */}
-                      <div className="flex items-center gap-3 mt-4">
-                        <span className="text-sm font-medium text-neutral-700">
-                          {currentLang === "ar" ? "الكمية:" : "Quantity:"}
-                        </span>
-                        <div className="flex items-center gap-2">
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="h-8 w-8"
-                            onClick={() =>
-                              updateCartQuantity({
-                                productId: item.product.id,
-                                quantity: Math.max(1, item.quantity - 1),
-                              })
-                            }
-                          >
-                            <Minus className="h-3 w-3" />
-                          </Button>
-
-                          <span className="text-sm font-medium w-8 text-center">
-                            {item.quantity}
+                        {/* Quantity Controls */}
+                        <div className="flex items-center gap-3 mt-4">
+                          <span className="text-sm font-medium text-neutral-700">
+                            {currentLang === 'ar' ? 'الكمية:' : 'Quantity:'}
                           </span>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={() =>
+                                updateCartQuantity({
+                                  productId: item.product.id,
+                                  quantity: Math.max(1, item.quantity - 1),
+                                })
+                              }
+                              disabled={item.quantity <= 1}
+                            >
+                              <Minus className="h-3 w-3" />
+                            </Button>
 
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="h-8 w-8"
-                            onClick={() =>
-                              updateCartQuantity({
-                                productId: item.product.id,
-                                quantity: item.quantity + 1,
-                              })
-                            }
-                          >
-                            <Plus className="h-3 w-3" />
-                          </Button>
+                            <span className="text-sm font-medium w-8 text-center">
+                              {item.quantity}
+                            </span>
+
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={() =>
+                                updateCartQuantity({
+                                  productId: item.product.id,
+                                  quantity: item.quantity + 1,
+                                })
+                              }
+                              disabled={!canIncrease}
+                            >
+                              <Plus className="h-3 w-3" />
+                            </Button>
+                          </div>
                         </div>
-                      </div>
 
-                      {/* Item Total */}
-                      <div className="mt-3">
-                        <span className="text-sm text-neutral-600">
-                          {currentLang === "ar"
-                            ? "المجموع الفرعي:"
-                            : "Subtotal:"}
-                        </span>
-                        <span className="text-lg font-bold text-neutral-900 ml-2">
-                          {formatPrice(
-                            item.product.price * item.quantity,
-                            "LYD",
-                            currentLang,
-                          )}
-                        </span>
+                        {/* Item Total */}
+                        <div className="mt-3">
+                          <span className="text-sm text-neutral-600">
+                            {currentLang === 'ar'
+                              ? 'المجموع الفرعي:'
+                              : 'Subtotal:'}
+                          </span>
+                          <span className="text-lg font-bold text-neutral-900 ml-2">
+                            {formatPrice(
+                              item.product.price * item.quantity,
+                              'LYD',
+                              currentLang
+                            )}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
 
           {/* Order Summary */}
@@ -186,28 +237,28 @@ export default function CartPage() {
             <Card className="sticky top-24">
               <CardHeader>
                 <CardTitle>
-                  {currentLang === "ar" ? "ملخص الطلب" : "Order Summary"}
+                  {currentLang === 'ar' ? 'ملخص الطلب' : 'Order Summary'}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
                     <span>
-                      {currentLang === "ar" ? "المجموع الفرعي:" : "Subtotal:"}
+                      {currentLang === 'ar' ? 'المجموع الفرعي:' : 'Subtotal:'}
                     </span>
-                    <span>{formatPrice(cartTotal, "LYD", currentLang)}</span>
+                    <span>{formatPrice(cartTotal, 'LYD', currentLang)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span>{currentLang === "ar" ? "الشحن:" : "Shipping:"}</span>
-                    <span>{formatPrice(shippingCost, "LYD", currentLang)}</span>
+                    <span>{currentLang === 'ar' ? 'الشحن:' : 'Shipping:'}</span>
+                    <span>{formatPrice(shippingCost, 'LYD', currentLang)}</span>
                   </div>
                   <div className="border-t pt-3">
                     <div className="flex justify-between font-semibold text-lg">
                       <span>
-                        {currentLang === "ar" ? "المجموع:" : "Total:"}
+                        {currentLang === 'ar' ? 'المجموع:' : 'Total:'}
                       </span>
                       <span className="text-amber-600">
-                        {formatPrice(finalTotal, "LYD", currentLang)}
+                        {formatPrice(finalTotal, 'LYD', currentLang)}
                       </span>
                     </div>
                   </div>
@@ -219,18 +270,18 @@ export default function CartPage() {
                   size="lg"
                 >
                   <Link href="/checkout">
-                    {currentLang === "ar"
-                      ? "متابعة للدفع"
-                      : "Proceed to Checkout"}
+                    {currentLang === 'ar'
+                      ? 'متابعة للدفع'
+                      : 'Proceed to Checkout'}
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </Link>
                 </Button>
 
                 <Button variant="outline" asChild className="w-full">
                   <Link href="/products">
-                    {currentLang === "ar"
-                      ? "متابعة التسوق"
-                      : "Continue Shopping"}
+                    {currentLang === 'ar'
+                      ? 'متابعة التسوق'
+                      : 'Continue Shopping'}
                   </Link>
                 </Button>
               </CardContent>

@@ -67,6 +67,32 @@ function toOptionalLocalized(
   return Object.keys(localized).length > 0 ? localized : undefined;
 }
 
+function toLocalizedStringArray(
+  value: unknown
+): Record<string, string[]> | undefined {
+  if (!isRecord(value)) {
+    return undefined;
+  }
+
+  const mapped = Object.entries(value).reduce(
+    (acc, [key, entry]) => {
+      if (Array.isArray(entry)) {
+        const values = entry.filter(
+          (item): item is string =>
+            typeof item === 'string' && item.trim().length > 0
+        );
+        if (values.length > 0) {
+          acc[key] = values;
+        }
+      }
+      return acc;
+    },
+    {} as Record<string, string[]>
+  );
+
+  return Object.keys(mapped).length > 0 ? mapped : undefined;
+}
+
 function toStringArray(value: unknown): string[] {
   if (!Array.isArray(value)) {
     return [];
@@ -104,6 +130,11 @@ function normalizeProduct(payload: unknown): Product {
       payload.priceBeforeDiscount !== undefined
         ? Number(payload.priceBeforeDiscount)
         : undefined,
+    discountPercentage:
+      payload.discountPercentage !== null &&
+      payload.discountPercentage !== undefined
+        ? Number(payload.discountPercentage)
+        : undefined,
     images: toStringArray(payload.images),
     description: toRecordOfStrings(payload.description),
     subtitle: toOptionalLocalized(payload.subtitle),
@@ -117,6 +148,12 @@ function normalizeProduct(payload: unknown): Product {
       typeof payload.stockQuantity === 'number'
         ? payload.stockQuantity
         : undefined,
+    category:
+      typeof payload.category === 'string'
+        ? (payload.category as Product['category'])
+        : 'NATURAL_PEARLS',
+    tags: toLocalizedStringArray(payload.tags),
+    highlights: toLocalizedStringArray(payload.highlights),
     status:
       typeof payload.status === 'string'
         ? (payload.status as Product['status'])
@@ -199,6 +236,12 @@ function normalizeOrder(payload: unknown): Order {
       ? payload.paymentUrl
       : undefined;
 
+  const paymentReference =
+    typeof payload.paymentReference === 'string' &&
+    payload.paymentReference.length > 0
+      ? payload.paymentReference
+      : undefined;
+
   const paymentMethod =
     typeof payload.paymentMethod === 'string' &&
     payload.paymentMethod.length > 0
@@ -235,6 +278,7 @@ function normalizeOrder(payload: unknown): Order {
         ? (payload.paymentStatus as Order['paymentStatus'])
         : 'PENDING',
     paymentUrl,
+    paymentReference,
     paymentMethod,
     status:
       typeof payload.status === 'string'

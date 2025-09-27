@@ -88,83 +88,137 @@ const getOrders = compose(
 });
 
 // POST /api/orders - Create a new order
-const createOrder = compose(
-  withErrorHandling,
-  withMethods(['POST']),
-  withValidation(createOrderSchema)
-)(async (request: NextRequest, context: ApiContext) => {
-  const orderData = context.validatedData as CreateOrderInput;
+export function createOrderHandler(prismaClient: typeof prisma = prisma) {
+  return compose(
+    withErrorHandling,
+    withMethods(['POST']),
+    withValidation(createOrderSchema)
+  )(async (request: NextRequest, context: ApiContext) => {
+    const orderData = context.validatedData as CreateOrderInput;
 
-  try {
-    // Verify that all products exist and are available
-    const productIds = orderData.items.map((item) => item.productId);
-    const products = await prisma.product.findMany({
-      where: {
-        id: { in: productIds },
-        status: 'ACTIVE',
-      },
-    });
+    try {
+      // Verify that all products exist and are available
+      const productIds = orderData.items.map((item) => item.productId);
+      const products = await prismaClient.product.findMany({
+        where: {
+          id: { in: productIds },
+          status: 'ACTIVE',
+        },
+      });
 
-    if (products.length !== productIds.length) {
-      return apiSuccess(null, 'One or more products are not available', 400);
-    }
+      if (products.length !== productIds.length) {
+        return apiSuccess(null, 'One or more products are not available', 400);
+      }
 
-    // Validate item prices against current product prices
-    const priceValidationErrors: string[] = [];
-    for (const item of orderData.items) {
-      const product = products.find((p) => p.id === item.productId);
-      if (product && product.price !== item.unitPrice) {
-        const productName =
-          typeof product.name === 'object' && product.name
-            ? (product.name as Record<string, string>).en ||
-              (product.name as Record<string, string>).ar ||
-              'Unknown Product'
-            : 'Unknown Product';
-        priceValidationErrors.push(
-          `Price mismatch for product ${productName}: expected ${product.price}, got ${item.unitPrice}`
+      const insufficientStock = orderData.items.filter((item) => {
+        const product = products.find((p) => p.id === item.productId);
+        return (
+          product !== undefined &&
+          typeof product.stockQuantity === 'number' &&
+          product.stockQuantity < item.quantity
+        );
+      });
+
+      if (insufficientStock.length > 0) {
+        return apiSuccess(
+          null,
+          'One or more products do not have enough stock',
+          400
         );
       }
-    }
 
-    if (priceValidationErrors.length > 0) {
-      return apiSuccess(
-        null,
-        'Product prices have changed. Please refresh and try again.',
-        400
-      );
-    }
+      // Validate item prices against current product prices
+      const priceValidationErrors: string[] = [];
+      for (const item of orderData.items) {
+        const product = products.find((p) => p.id === item.productId);
+        if (product && product.price !== item.unitPrice) {
+          const productName =
+            typeof product.name === 'object' && product.name
+              ? (product.name as Record<string, string>).en ||
+                (product.name as Record<string, string>).ar ||
+                'Unknown Product'
+              : 'Unknown Product';
+          priceValidationErrors.push(
+            `Price mismatch for product ${productName}: expected ${product.price}, got ${item.unitPrice}`
+          );
+        }
+      }
 
-    // Create the order with items
-    const order = await prisma.order.create({
-      data: {
-        orderNumber: generateOrderNumber(),
-        customerName: orderData.customerName,
-        customerPhone: orderData.customerPhone,
-        customerEmail: orderData.customerEmail,
-        shippingAddress: orderData.shippingAddress,
-        totalAmount: orderData.totalAmount,
-        wrappingCost: orderData.wrappingCost,
-        needsWrapping: orderData.needsWrapping,
-        paymentMethod: orderData.paymentMethod,
-        notes: orderData.notes,
-        items: {
-          create: orderData.items,
-        },
-      },
-      include: {
-        items: {
-          include: {
-            product: true,
+      if (priceValidationErrors.length > 0) {
+        return apiSuccess(
+          null,
+          'Product prices have changed. Please refresh and try again.',
+          400
+        );
+      }
+
+      // Create the order with items
+      const order = await prismaClient.$transaction(async (tx) => {
+        const createdOrder = await tx.order.create({
+          data: {
+            orderNumber: generateOrderNumber(),
+            customerName: orderData.customerName,
+            customerPhone: orderData.customerPhone,
+            customerEmail: orderData.customerEmail,
+            shippingAddress: orderData.shippingAddress,
+            totalAmount: orderData.totalAmount,
+            wrappingCost: orderData.wrappingCost,
+            needsWrapping: orderData.needsWrapping,
+            paymentMethod: orderData.paymentMethod,
+            paymentStatus: orderData.paymentStatus,
+            paymentReference: orderData.paymentReference,
+            notes: orderData.notes,
+            items: {
+              create: orderData.items,
+            },
           },
-        },
-      },
-    });
+          include: {
+            items: {
+              include: {
+                product: true,
+              },
+            },
+          },
+        });
 
-    return apiSuccess(order, 'Order created successfully', 201);
-  } catch (error) {
-    return handleDatabaseError(error);
-  }
-});
+        await Promise.all(
+          orderData.items.map(async (item) => {
+            const product = products.find((p) => p.id === item.productId);
+            if (!product) {
+              return;
+            }
+
+            const nextQuantity = Math.max(
+              0,
+              (product.stockQuantity ?? 0) - item.quantity
+            );
+
+            await tx.product.update({
+              where: { id: item.productId },
+              data: {
+                stockQuantity: nextQuantity,
+                status:
+                  nextQuantity === 0
+                    ? 'OUT_OF_STOCK'
+                    : product.status === 'INACTIVE'
+                      ? 'INACTIVE'
+                      : 'ACTIVE',
+              },
+            });
+          })
+        );
+
+        return createdOrder;
+      });
+
+      return apiSuccess(order, 'Order created successfully', 201);
+    } catch (error) {
+      return handleDatabaseError(error);
+    }
+  });
+}
+
+const createOrder = createOrderHandler();
 
 export async function GET(request: NextRequest) {
   return getOrders(request, {});

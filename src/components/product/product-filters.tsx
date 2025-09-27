@@ -1,81 +1,91 @@
-"use client";
+'use client';
 
-import { useAtom } from "jotai";
-import { currentLangAtom, filterCategoryAtom } from "@/lib/atoms";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+import { useMemo } from 'react';
+import { useAtom } from 'jotai';
+import { currentLangAtom, filterCategoryAtom, productsAtom } from '@/lib/atoms';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 
 export function ProductFilters() {
   const [currentLang] = useAtom(currentLangAtom);
   const [filterCategory, setFilterCategory] = useAtom(filterCategoryAtom);
+  const [products] = useAtom(productsAtom);
 
-  const categories = [
-    {
-      id: "all",
-      name: { ar: "جميع المنتجات", en: "All Products" },
-      count: 0,
-    },
-    {
-      id: "featured",
-      name: { ar: "المنتجات المميزة", en: "Featured Products" },
-      count: 0,
-    },
-    {
-      id: "rings",
-      name: { ar: "الخواتم", en: "Rings" },
-      count: 0,
-    },
-    {
-      id: "necklaces",
-      name: { ar: "العقود", en: "Necklaces" },
-      count: 0,
-    },
-    {
-      id: "earrings",
-      name: { ar: "الأقراط", en: "Earrings" },
-      count: 0,
-    },
-    {
-      id: "bracelets",
-      name: { ar: "الأساور", en: "Bracelets" },
-      count: 0,
-    },
-  ];
+  const categories = useMemo(() => {
+    const counts = products.reduce(
+      (acc, product) => {
+        if (product.featured) {
+          acc.featured += 1;
+        }
+        if (product.category === 'NATURAL_PEARLS') {
+          acc.natural += 1;
+        }
+        if (product.category === 'ARTIFICIAL_PEARLS') {
+          acc.artificial += 1;
+        }
+        return acc;
+      },
+      { all: products.length, featured: 0, natural: 0, artificial: 0 }
+    );
+
+    return [
+      {
+        id: 'all',
+        name: { ar: 'جميع المنتجات', en: 'All Products' },
+        count: counts.all,
+      },
+      {
+        id: 'featured',
+        name: { ar: 'المنتجات المميزة', en: 'Featured' },
+        count: counts.featured,
+      },
+      {
+        id: 'natural',
+        name: { ar: 'لؤلؤ طبيعي', en: 'Natural Pearls' },
+        count: counts.natural,
+      },
+      {
+        id: 'artificial',
+        name: { ar: 'لؤلؤ صناعي', en: 'Artificial Pearls' },
+        count: counts.artificial,
+      },
+    ];
+  }, [products]);
 
   const priceRanges = [
     {
-      id: "under-1000",
-      name: { ar: "أقل من 1000 د.ل", en: "Under 1000 LYD" },
+      id: 'under-1000',
+      name: { ar: 'أقل من 1000 د.ل', en: 'Under 1000 LYD' },
       min: 0,
       max: 1000,
     },
     {
-      id: "1000-2000",
-      name: { ar: "1000 - 2000 د.ل", en: "1000 - 2000 LYD" },
+      id: '1000-2000',
+      name: { ar: '1000 - 2000 د.ل', en: '1000 - 2000 LYD' },
       min: 1000,
       max: 2000,
     },
     {
-      id: "2000-3000",
-      name: { ar: "2000 - 3000 د.ل", en: "2000 - 3000 LYD" },
+      id: '2000-3000',
+      name: { ar: '2000 - 3000 د.ل', en: '2000 - 3000 LYD' },
       min: 2000,
       max: 3000,
     },
     {
-      id: "above-3000",
-      name: { ar: "أكثر من 3000 د.ل", en: "Above 3000 LYD" },
+      id: 'above-3000',
+      name: { ar: 'أكثر من 3000 د.ل', en: 'Above 3000 LYD' },
       min: 3000,
       max: Infinity,
     },
   ];
 
   const materials = [
-    { id: "gold", name: { ar: "ذهب", en: "Gold" } },
-    { id: "silver", name: { ar: "فضة", en: "Silver" } },
-    { id: "diamond", name: { ar: "ألماس", en: "Diamond" } },
-    { id: "pearl", name: { ar: "لؤلؤ", en: "Pearl" } },
+    { id: 'gold', name: { ar: 'ذهب', en: 'Gold' } },
+    { id: 'silver', name: { ar: 'فضة', en: 'Silver' } },
+    { id: 'diamond', name: { ar: 'ألماس', en: 'Diamond' } },
+    { id: 'pearl', name: { ar: 'لؤلؤ', en: 'Pearl' } },
   ];
 
   return (
@@ -84,14 +94,14 @@ export function ProductFilters() {
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">
-            {currentLang === "ar" ? "الفئات" : "Categories"}
+            {currentLang === 'ar' ? 'الفئات' : 'Categories'}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           {categories.map((category) => (
             <Button
               key={category.id}
-              variant={filterCategory === category.id ? "default" : "ghost"}
+              variant={filterCategory === category.id ? 'default' : 'ghost'}
               className="w-full justify-start"
               onClick={() => setFilterCategory(category.id)}
             >
@@ -112,7 +122,7 @@ export function ProductFilters() {
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">
-            {currentLang === "ar" ? "نطاق السعر" : "Price Range"}
+            {currentLang === 'ar' ? 'نطاق السعر' : 'Price Range'}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
@@ -123,7 +133,7 @@ export function ProductFilters() {
               className="w-full justify-start"
               onClick={() => {
                 // Add price filtering logic here
-                console.log("Price filter:", range);
+                console.log('Price filter:', range);
               }}
             >
               {range.name[currentLang as keyof typeof range.name]}
@@ -136,7 +146,7 @@ export function ProductFilters() {
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">
-            {currentLang === "ar" ? "المواد" : "Materials"}
+            {currentLang === 'ar' ? 'المواد' : 'Materials'}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
@@ -147,7 +157,7 @@ export function ProductFilters() {
               className="w-full justify-start"
               onClick={() => {
                 // Add material filtering logic here
-                console.log("Material filter:", material);
+                console.log('Material filter:', material);
               }}
             >
               {material.name[currentLang as keyof typeof material.name]}
@@ -163,11 +173,11 @@ export function ProductFilters() {
         variant="outline"
         className="w-full"
         onClick={() => {
-          setFilterCategory("all");
+          setFilterCategory('all');
           // Clear other filters when implemented
         }}
       >
-        {currentLang === "ar" ? "مسح الفلاتر" : "Clear Filters"}
+        {currentLang === 'ar' ? 'مسح الفلاتر' : 'Clear Filters'}
       </Button>
     </div>
   );

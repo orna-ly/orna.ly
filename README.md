@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Orna Jewelry Storefront
 
-## Getting Started
+A multilingual e-commerce experience for Orna Jewelry built with Next.js 15, the App Router, Tailwind CSS 4, Prisma, and Bun. The application includes a full admin area for managing products, orders, and contact requests alongside the public storefront.
 
-First, run the development server:
+## Project resources
+
+- [Local development setup](SETUP.md)
+- [Complete migration notes](COMPLETE_MIGRATION_GUIDE.md)
+- [Type safety improvements](TYPE_IMPROVEMENTS_SUMMARY.md)
+- [Vercel deployment guide](docs/deployment/vercel.md)
+
+## Quick start
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+bun install
+# Apply the latest Prisma schema changes
+bun run db:push
+# Optional: seed the catalog and sample orders
+bun run db:seed
+bun run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The development server runs on [http://localhost:3001](http://localhost:3001). Environment variables required for local development are documented in [`SETUP.md`](SETUP.md) and mirrored in [`.env.example`](.env.example). Re-run `bun run db:push` whenever new columns or enum values are added so that your database stays aligned with the codebase.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Available scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command                | Description                                                                            |
+| ---------------------- | -------------------------------------------------------------------------------------- |
+| `bun run dev`          | Start the development server with Turbopack on port `3001`.                            |
+| `bun run build`        | Create an optimized production build.                                                  |
+| `bun run start`        | Run the production server locally (after `bun run build`).                             |
+| `bun run lint`         | Execute ESLint across the project.                                                     |
+| `bun run db:push`      | Push the Prisma schema to the configured database.                                     |
+| `bun run db:seed`      | Seed the database with sample catalog, order, and contact data.                        |
+| `bun run vercel-build` | Production build command used by Vercel (runs Prisma client generation automatically). |
 
-## Learn More
+## Tech stack highlights
 
-To learn more about Next.js, take a look at the following resources:
+- **Next.js 15 App Router** with server components, React 19, and internationalised routing.
+- **Tailwind CSS 4** and Shadcn UI components for a responsive, RTL-friendly design system.
+- **Prisma ORM** backed by PostgreSQL, with seed scripts for realistic fixtures.
+- **Jotai** for client-side state (cart, language switching, and admin filters).
+- **TypeScript** everywhere for compile-time safety.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deployment
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Detailed instructions for preparing infrastructure, configuring environment variables, and running production builds on Vercel live in [`docs/deployment/vercel.md`](docs/deployment/vercel.md).
