@@ -1,4 +1,4 @@
-import { PrismaClient } from '../src/generated/prisma';
+import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
@@ -453,6 +453,7 @@ async function main() {
   const orders = await Promise.all([
     prisma.order.create({
       data: {
+        orderNumber: 'ORD-1001',
         customerName: 'سارة أحمد محمد',
         customerPhone: '+218911234567',
         customerEmail: 'sara@example.com',
@@ -479,6 +480,7 @@ async function main() {
     }),
     prisma.order.create({
       data: {
+        orderNumber: 'ORD-1002',
         customerName: 'أحمد محمد علي',
         customerPhone: '+218947654321',
         customerEmail: 'ahmed@example.com',
@@ -502,6 +504,7 @@ async function main() {
     }),
     prisma.order.create({
       data: {
+        orderNumber: 'ORD-1003',
         customerName: 'ليلى عبدالسلام',
         customerPhone: '+218912223344',
         customerEmail: 'leila@example.com',

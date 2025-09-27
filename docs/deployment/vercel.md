@@ -32,6 +32,7 @@ If you are migrating data from the legacy Laravel app you also need the `OLD_DB_
 ## 3. Database preparation
 
 1. Provision the production PostgreSQL database and note the connection string.
+
 2. Apply the Prisma migrations against the new database from your local machine:
 
    ```bash
