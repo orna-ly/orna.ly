@@ -15,6 +15,7 @@ export const createProductSchema = z.object({
     ),
   price: z.number().min(0, 'Price must be positive'),
   priceBeforeDiscount: z.number().min(0).optional(),
+  discountPercentage: z.number().min(0).max(100).optional(),
   wrappingPrice: z.number().min(0).optional(),
   stockQuantity: z
     .number()
@@ -26,6 +27,21 @@ export const createProductSchema = z.object({
     .min(1, 'At least one image is required'),
   featured: z.boolean().default(false),
   status: z.enum(['ACTIVE', 'INACTIVE', 'OUT_OF_STOCK']).default('ACTIVE'),
+  category: z
+    .enum(['NATURAL_PEARLS', 'ARTIFICIAL_PEARLS'])
+    .default('NATURAL_PEARLS'),
+  tags: z
+    .object({
+      ar: z.array(z.string().min(1)).optional(),
+      en: z.array(z.string().min(1)).optional(),
+    })
+    .optional(),
+  highlights: z
+    .object({
+      ar: z.array(z.string().min(1)).optional(),
+      en: z.array(z.string().min(1)).optional(),
+    })
+    .optional(),
   subtitle: z
     .object({
       ar: z.string().optional(),
@@ -54,6 +70,8 @@ export const createOrderSchema = z.object({
   wrappingCost: z.number().min(0).optional(),
   needsWrapping: z.boolean().default(false),
   paymentMethod: z.string().optional(),
+  paymentStatus: z.enum(['PENDING', 'PAID', 'FAILED', 'REFUNDED']).optional(),
+  paymentReference: z.string().optional(),
   notes: z.string().optional(),
   items: z
     .array(

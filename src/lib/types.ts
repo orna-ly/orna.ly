@@ -14,6 +14,7 @@ export interface Product {
   slug: string;
   price: number;
   priceBeforeDiscount?: number;
+  discountPercentage?: number;
   images: string[];
   description: Record<string, string>;
   subtitle?: Record<string, string>;
@@ -21,6 +22,9 @@ export interface Product {
   featured: boolean;
   wrappingPrice?: number;
   stockQuantity?: number;
+  category: 'NATURAL_PEARLS' | 'ARTIFICIAL_PEARLS';
+  tags?: Record<string, string[]>;
+  highlights?: Record<string, string[]>;
   status: 'ACTIVE' | 'INACTIVE' | 'OUT_OF_STOCK';
   createdAt: Date;
   updatedAt: Date;
@@ -39,6 +43,7 @@ export interface Order {
   paymentStatus: 'PENDING' | 'PAID' | 'FAILED' | 'REFUNDED';
   paymentUrl?: string;
   paymentMethod?: string;
+  paymentReference?: string;
   status:
     | 'PENDING'
     | 'CONFIRMED'

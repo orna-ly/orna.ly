@@ -11,6 +11,7 @@
     "start": "bunx next start",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
+    "test": "bun test",
     "db:seed": "bunx tsx prisma/seed.ts",
     "db:push": "bunx prisma db push",
     "db:generate": "bunx prisma generate",

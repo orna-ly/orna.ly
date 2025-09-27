@@ -36,8 +36,8 @@ If you are migrating data from the legacy Laravel app you also need the `OLD_DB_
 
    ```bash
    bun install
-   bunx prisma db push --skip-generate
-   bunx prisma db seed
+   bun run db:push -- --skip-generate
+   bun run db:seed
    ```
 
    `db push` is used because this repository currently ships with a declarative schema but no migration history. Re-run the command whenever the schema changes until migrations are introduced.

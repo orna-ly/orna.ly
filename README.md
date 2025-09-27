@@ -13,10 +13,14 @@ A multilingual e-commerce experience for Orna Jewelry built with Next.js 15, the
 
 ```bash
 bun install
+# Apply the latest Prisma schema changes
+bun run db:push
+# Optional: seed the catalog and sample orders
+bun run db:seed
 bun run dev
 ```
 
-The development server runs on [http://localhost:3001](http://localhost:3001). Environment variables required for local development are documented in [`SETUP.md`](SETUP.md) and mirrored in [`.env.example`](.env.example).
+The development server runs on [http://localhost:3001](http://localhost:3001). Environment variables required for local development are documented in [`SETUP.md`](SETUP.md) and mirrored in [`.env.example`](.env.example). Re-run `bun run db:push` whenever new columns or enum values are added so that your database stays aligned with the codebase.
 
 ## Available scripts
 
