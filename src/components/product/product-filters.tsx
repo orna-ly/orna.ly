@@ -2,7 +2,14 @@
 
 import { useMemo } from 'react';
 import { useAtom } from 'jotai';
-import { currentLangAtom, filterCategoryAtom, productsAtom } from '@/lib/atoms';
+import {
+  currentLangAtom,
+  filterCategoryAtom,
+  productsAtom,
+  selectedPriceRangeAtom,
+  selectedMaterialsAtom,
+  clearProductFiltersAtom,
+} from '@/lib/atoms';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +19,9 @@ export function ProductFilters() {
   const [currentLang] = useAtom(currentLangAtom);
   const [filterCategory, setFilterCategory] = useAtom(filterCategoryAtom);
   const [products] = useAtom(productsAtom);
+  const [priceRange, setPriceRange] = useAtom(selectedPriceRangeAtom);
+  const [materials, setMaterials] = useAtom(selectedMaterialsAtom);
+  const [, clearFilters] = useAtom(clearProductFiltersAtom);
 
   const categories = useMemo(() => {
     const counts = products.reduce(
@@ -81,7 +91,7 @@ export function ProductFilters() {
     },
   ];
 
-  const materials = [
+  const materialOptions = [
     { id: 'gold', name: { ar: 'ذهب', en: 'Gold' } },
     { id: 'silver', name: { ar: 'فضة', en: 'Silver' } },
     { id: 'diamond', name: { ar: 'ألماس', en: 'Diamond' } },
@@ -129,14 +139,20 @@ export function ProductFilters() {
           {priceRanges.map((range) => (
             <Button
               key={range.id}
-              variant="ghost"
-              className="w-full justify-start"
-              onClick={() => {
-                // Add price filtering logic here
-                console.log('Price filter:', range);
-              }}
+              variant={priceRange?.id === range.id ? 'default' : 'ghost'}
+              className="w-full justify-between"
+              onClick={() =>
+                setPriceRange(
+                  priceRange?.id === range.id
+                    ? null
+                    : { id: range.id, min: range.min, max: range.max }
+                )
+              }
             >
-              {range.name[currentLang as keyof typeof range.name]}
+              <span>{range.name[currentLang as keyof typeof range.name]}</span>
+              {priceRange?.id === range.id && (
+                <Badge variant="secondary">✓</Badge>
+              )}
             </Button>
           ))}
         </CardContent>
@@ -150,19 +166,28 @@ export function ProductFilters() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
-          {materials.map((material) => (
-            <Button
-              key={material.id}
-              variant="ghost"
-              className="w-full justify-start"
-              onClick={() => {
-                // Add material filtering logic here
-                console.log('Material filter:', material);
-              }}
-            >
-              {material.name[currentLang as keyof typeof material.name]}
-            </Button>
-          ))}
+          {materialOptions.map((material) => {
+            const selected = materials.includes(material.id);
+            return (
+              <Button
+                key={material.id}
+                variant={selected ? 'default' : 'ghost'}
+                className="w-full justify-between"
+                onClick={() => {
+                  setMaterials(
+                    selected
+                      ? materials.filter((m) => m !== material.id)
+                      : [...materials, material.id]
+                  );
+                }}
+              >
+                <span>
+                  {material.name[currentLang as keyof typeof material.name]}
+                </span>
+                {selected && <Badge variant="secondary">✓</Badge>}
+              </Button>
+            );
+          })}
         </CardContent>
       </Card>
 
@@ -173,8 +198,7 @@ export function ProductFilters() {
         variant="outline"
         className="w-full"
         onClick={() => {
-          setFilterCategory('all');
-          // Clear other filters when implemented
+          clearFilters();
         }}
       >
         {currentLang === 'ar' ? 'مسح الفلاتر' : 'Clear Filters'}

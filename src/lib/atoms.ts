@@ -57,6 +57,19 @@ export const loadingAtom = atom(false);
 export const searchQueryAtom = atom('');
 export const filterCategoryAtom = atom<string>('all');
 
+// Product Filters
+export type PriceRangeFilter = { id: string; min: number; max: number } | null;
+export const selectedPriceRangeAtom = atom<PriceRangeFilter>(null);
+export const selectedMaterialsAtom = atom<string[]>([]); // ids from ProductFilters.materials
+
+// Clear all product filters (including search)
+export const clearProductFiltersAtom = atom(null, (get, set) => {
+  set(filterCategoryAtom, 'all');
+  set(searchQueryAtom, '');
+  set(selectedPriceRangeAtom, null);
+  set(selectedMaterialsAtom, []);
+});
+
 // Resource-scoped loading and error states for better UI control
 export const productsLoadingAtom = atom(false);
 export const productsErrorAtom = atom<string | null>(null);

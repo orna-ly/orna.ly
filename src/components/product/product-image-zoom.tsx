@@ -24,6 +24,7 @@ export function ProductImageZoom({
   const [isZoomed, setIsZoomed] = useState(false);
   const [backgroundPosition, setBackgroundPosition] = useState('50% 50%');
   const [isTouch, setIsTouch] = useState(false);
+  const [isPannable, setIsPannable] = useState(false);
 
   useEffect(() => {
     const handleTouch = () => setIsTouch(true);
@@ -60,13 +61,16 @@ export function ProductImageZoom({
     <div
       ref={containerRef}
       className={cn(
-        'relative w-full h-full overflow-hidden group',
+        'relative w-full h-full overflow-hidden group select-none',
         'bg-neutral-100',
         rounded,
         className
       )}
       onPointerEnter={() => !isTouch && setIsZoomed(true)}
-      onPointerLeave={() => setIsZoomed(false)}
+      onPointerLeave={() => {
+        setIsZoomed(false);
+        setIsPannable(false);
+      }}
       onPointerMove={(event) => {
         if (!isTouch) {
           updatePosition(event);
@@ -74,12 +78,16 @@ export function ProductImageZoom({
       }}
       onTouchStart={(event) => {
         setIsZoomed(true);
+        setIsPannable(true);
         updatePosition(event);
       }}
       onTouchMove={(event) => {
-        updatePosition(event);
+        if (isPannable) updatePosition(event);
       }}
-      onTouchEnd={() => setIsZoomed(false)}
+      onTouchEnd={() => {
+        setIsZoomed(false);
+        setIsPannable(false);
+      }}
     >
       <Image
         src={src}
@@ -97,16 +105,23 @@ export function ProductImageZoom({
       <div
         aria-hidden
         className={cn(
-          'pointer-events-none absolute inset-0 transition-opacity duration-200',
+          'pointer-events-none absolute inset-0 transition-opacity duration-200 ease-out',
           isZoomed ? 'opacity-100' : 'opacity-0'
         )}
         style={{
           backgroundImage: `url(${src})`,
           backgroundPosition,
           backgroundSize: `${zoomScale * 100}%`,
+          backgroundRepeat: 'no-repeat',
         }}
       />
       <div className="pointer-events-none absolute inset-0 border border-white/40 mix-blend-overlay" />
+      {/* Helper hint */}
+      {!isTouch && !isZoomed && (
+        <div className="absolute bottom-2 right-2 text-xs bg-black/40 text-white rounded px-2 py-1">
+          ⌘/Ctrl + scroll to zoom
+        </div>
+      )}
     </div>
   );
 }

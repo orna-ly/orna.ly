@@ -197,6 +197,8 @@ export function OrderForm({ onOrderCreated, createOrderFn }: OrderFormProps) {
   });
 
   const [needsWrapping, setNeedsWrapping] = useState(false);
+  const [customShipping, setCustomShipping] = useState<string>('');
+  const [customPackaging, setCustomPackaging] = useState<string>('');
   const [paymentMethod, setPaymentMethod] = useState<
     'card' | 'apple_pay' | 'stc_pay' | 'cod'
   >('card');
@@ -291,14 +293,19 @@ export function OrderForm({ onOrderCreated, createOrderFn }: OrderFormProps) {
       (total, item) => total + item.product.price * item.quantity,
       0
     );
-    const wrappingCost = needsWrapping
+    const wrappingCostDefault = needsWrapping
       ? cartItems.reduce(
           (total, item) =>
             total + (item.product.wrappingPrice || 0) * item.quantity,
           0
         )
       : 0;
-    const shippingCost = 50; // Fixed shipping cost
+    const shippingCost =
+      customShipping !== '' ? parseFloat(customShipping) || 0 : 50;
+    const wrappingCost =
+      customPackaging !== ''
+        ? parseFloat(customPackaging) || 0
+        : wrappingCostDefault;
 
     return {
       subtotal,
@@ -535,6 +542,38 @@ export function OrderForm({ onOrderCreated, createOrderFn }: OrderFormProps) {
                   {errors.customerName}
                 </p>
               )}
+            </div>
+
+            {/* Shipping & Packaging Overrides */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                  {currentLang === 'ar'
+                    ? 'سعر الشحن (اختياري)'
+                    : 'Shipping Cost (optional)'}
+                </label>
+                <Input
+                  type="number"
+                  min="0"
+                  value={customShipping}
+                  onChange={(e) => setCustomShipping(e.target.value)}
+                  placeholder={currentLang === 'ar' ? 'مثال: 50' : 'e.g. 50'}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                  {currentLang === 'ar'
+                    ? 'سعر التغليف (اختياري)'
+                    : 'Packaging Cost (optional)'}
+                </label>
+                <Input
+                  type="number"
+                  min="0"
+                  value={customPackaging}
+                  onChange={(e) => setCustomPackaging(e.target.value)}
+                  placeholder={currentLang === 'ar' ? 'مثال: 25' : 'e.g. 25'}
+                />
+              </div>
             </div>
 
             {/* Phone */}

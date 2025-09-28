@@ -9,6 +9,8 @@ import {
   filterCategoryAtom,
   productsLoadingAtom,
   productsErrorAtom,
+  selectedPriceRangeAtom,
+  selectedMaterialsAtom,
 } from '@/lib/atoms';
 import { ProductGrid } from '@/components/product/product-grid';
 import { Skeleton, SkeletonText } from '@/components/ui/skeleton';
@@ -23,6 +25,9 @@ export default function ProductsPage() {
   const [currentLang] = useAtom(currentLangAtom);
   const [searchQuery, setSearchQuery] = useAtom(searchQueryAtom);
   const [filterCategory] = useAtom(filterCategoryAtom);
+  // New filters
+  const [priceRange] = useAtom(selectedPriceRangeAtom);
+  const [materials] = useAtom(selectedMaterialsAtom);
   // Products are loaded globally by DataProvider, no need to load here
 
   const filteredProducts = useMemo(() => {
@@ -57,8 +62,38 @@ export default function ProductsPage() {
       });
     }
 
+    // Apply price range
+    if (priceRange) {
+      filtered = filtered.filter((product) => {
+        const price = product.price;
+        const withinMin = priceRange.min === 0 || price >= priceRange.min;
+        const withinMax =
+          priceRange.max === Infinity || price <= priceRange.max;
+        return withinMin && withinMax;
+      });
+    }
+
+    // Apply material filter via tags includes
+    if (materials.length > 0) {
+      filtered = filtered.filter((product) => {
+        const arTags = product.tags?.ar || [];
+        const enTags = product.tags?.en || [];
+        const tagSet = new Set(
+          [...arTags, ...enTags].map((t) => t.toLowerCase())
+        );
+        return materials.some((m: string) => tagSet.has(m.toLowerCase()));
+      });
+    }
+
     return filtered;
-  }, [products, searchQuery, filterCategory, currentLang]);
+  }, [
+    products,
+    searchQuery,
+    filterCategory,
+    priceRange,
+    materials,
+    currentLang,
+  ]);
 
   return (
     <div className="min-h-screen bg-neutral-50">
