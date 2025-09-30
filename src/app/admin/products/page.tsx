@@ -40,6 +40,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import Image from 'next/image';
 
 interface CreateProductForm {
   nameAr: string;
@@ -50,6 +51,7 @@ interface CreateProductForm {
   wrappingPrice: string;
   stockQuantity: string;
   images: string;
+  uploadFiles: File[];
   featured: boolean;
   subtitleAr: string;
   subtitleEn: string;
@@ -89,6 +91,7 @@ export default function AdminProductsPage() {
     wrappingPrice: '',
     stockQuantity: '',
     images: '',
+    uploadFiles: [],
     featured: false,
     subtitleAr: '',
     subtitleEn: '',
@@ -265,6 +268,24 @@ export default function AdminProductsPage() {
     e.preventDefault();
     setCreating(true);
     try {
+      // If files are chosen, upload first
+      let finalImages: string[] = form.images
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean);
+
+      if (form.uploadFiles.length > 0) {
+        const data = new FormData();
+        form.uploadFiles.forEach((f) => data.append('files', f));
+        const uploadRes = await fetch('/api/uploads', {
+          method: 'POST',
+          body: data,
+        });
+        if (!uploadRes.ok) throw new Error('Failed to upload images');
+        const uploaded: string[] = await uploadRes.json();
+        finalImages = [...uploaded, ...finalImages];
+      }
+
       const body = {
         name: { ar: form.nameAr, en: form.nameEn },
         slug: form.slug,
@@ -276,10 +297,7 @@ export default function AdminProductsPage() {
           ? parseFloat(form.wrappingPrice)
           : undefined,
         stockQuantity: form.stockQuantity ? parseInt(form.stockQuantity) : 0,
-        images: form.images
-          .split(',')
-          .map((s) => s.trim())
-          .filter(Boolean),
+        images: finalImages,
         featured: form.featured,
         subtitle: { ar: form.subtitleAr, en: form.subtitleEn },
         description: { ar: form.descriptionAr, en: form.descriptionEn },
@@ -301,6 +319,7 @@ export default function AdminProductsPage() {
         wrappingPrice: '',
         stockQuantity: '',
         images: '',
+        uploadFiles: [],
         featured: false,
         subtitleAr: '',
         subtitleEn: '',
@@ -515,6 +534,41 @@ export default function AdminProductsPage() {
                   }
                   className="col-span-2"
                 />
+                {/* File Upload */}
+                <div className="space-y-2">
+                  <Label>
+                    {currentLang === 'ar' ? 'رفع الصور' : 'Upload Images'}
+                  </Label>
+                  <Input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={(e) =>
+                      setForm((f: CreateProductForm) => ({
+                        ...f,
+                        uploadFiles: Array.from(e.target.files || []),
+                      }))
+                    }
+                  />
+                  {/* Previews */}
+                  {form.uploadFiles.length > 0 && (
+                    <div className="grid grid-cols-4 gap-2">
+                      {form.uploadFiles.map((file, idx) => (
+                        <div
+                          key={idx}
+                          className="relative w-full aspect-square rounded overflow-hidden bg-neutral-100"
+                        >
+                          <Image
+                            src={URL.createObjectURL(file)}
+                            alt={file.name}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 <div className="grid grid-cols-2 gap-3">
                   <Input
                     placeholder={
